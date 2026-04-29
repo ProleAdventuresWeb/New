@@ -1,4 +1,4 @@
-export type PostCategory = 'escape' | 'prolenomics' | 'decline' | 'freedom' | 'dispatches';
+export type PostCategory = 'escape' | 'prolenomics' | 'decline' | 'freedom' | 'dispatches' | 'urban-exploration';
 
 export type PostLayout = 'template' | 'markdown';
 

@@ -41,6 +41,13 @@ export const BLOG_CATEGORIES: BlogCategory[] = [
     icon: '📡',
     description: 'Field notes, mission updates, and behind the scenes. The bridge between the analytical and the personal.',
     seoTitle: 'Prole Dispatches: Field Reports & Operations Intelligence'
+  },
+  {
+    id: 'urban-exploration',
+    name: 'Urban Exploration',
+    icon: '🏢',
+    description: 'Venturing into the forgotten and forbidden. Investigations into abandoned spaces and the architecture of the overlooked.',
+    seoTitle: 'Urban Exploration: Abandoned Spaces & Architectural Investigations'
   }
 ];
 

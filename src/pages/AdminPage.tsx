@@ -29,7 +29,7 @@ import {
 import { supabase } from '../lib/supabase';
 import type { Post, PostCategory, PostLayout, TemplateData } from '../types/post';
 
-const CATEGORIES: PostCategory[] = ['escape', 'prolenomics', 'decline', 'freedom', 'dispatches'];
+const CATEGORIES: PostCategory[] = ['escape', 'prolenomics', 'decline', 'freedom', 'dispatches', 'urban-exploration'];
 
 const EMPTY_TEMPLATE: TemplateData = {
   heroImageUrl: '',
