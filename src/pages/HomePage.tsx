@@ -135,7 +135,7 @@ export const HomePage: React.FC = () => {
               to="/stories"
               className="inline-flex items-center px-8 py-4 glass-subtle hover:glass-base text-neutral-100 hover:text-neutral-50 rounded-xl font-medium transition-all duration-300 shadow-glass shadow-investigation"
             >
-              Read More
+              Explore All Chronicles
               <ArrowRight className="w-5 h-5 ml-2" />
             </Link>
           </div>
