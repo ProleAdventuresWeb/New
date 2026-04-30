@@ -6,12 +6,15 @@
 User-agent: *
 Allow: /
 
-# 2. Block AI Crawlers (Standard Directives)
-# These are widely recognized by major AI scrapers
-User-agent: GPTBot
-Disallow: /
+# 2. ALLOW AI Search (These bots send you traffic/visitors)
+User-agent: OAI-SearchBot
+Allow: /
 
-User-agent: ChatGPT-User
+User-agent: PerplexityBot
+Allow: /
+
+# 3. BLOCK AI Training (These bots scrape your content to train models)
+User-agent: GPTBot
 Disallow: /
 
 User-agent: Google-Extended
@@ -20,16 +23,10 @@ Disallow: /
 User-agent: CCBot
 Disallow: /
 
-User-agent: OAI-SearchBot
-Disallow: /
-
 User-agent: Claude-Web
 Disallow: /
 
 User-agent: anthropic-ai
-Disallow: /
-
-User-agent: PerplexityBot
 Disallow: /
 
 # Sitemap location
