@@ -1,8 +1,36 @@
 # ===============================================
 # Robots.txt for Prole Adventures
 # ===============================================
+
+# 1. Standard Search Engines
 User-agent: *
 Allow: /
+
+# 2. Block AI Crawlers (Standard Directives)
+# These are widely recognized by major AI scrapers
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: OAI-SearchBot
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: PerplexityBot
+Disallow: /
 
 # Sitemap location
 Sitemap: https://proleadventures.com/sitemap.xml
@@ -10,3 +38,4 @@ Sitemap: https://proleadventures.com/sitemap.xml
 # Disallow private/admin paths
 Disallow: /admin/
 Disallow: /api/
+Disallow: /prole-control/
