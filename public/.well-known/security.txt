@@ -1,0 +1,5 @@
+Contact: https://proleadventures.com/contact
+Expires: 2027-01-01T00:00:00.000Z
+Languages: en
+Canonical: https://proleadventures.com/.well-known/security.txt
+Policy: https://proleadventures.com/privacy-policy

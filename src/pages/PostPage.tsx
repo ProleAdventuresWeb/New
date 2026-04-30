@@ -246,24 +246,13 @@ export const PostPage: React.FC = () => {
 
   return (
     <div className="pt-24 min-h-screen bg-black pb-20 overflow-x-hidden">
-      {/* @ts-expect-error: React 18 types clash with react-helmet-async */}
-      <Helmet>
-        <title>{post.title} | Prole Adventures</title>
-        <meta name="description" content={post.excerpt} />
-
-        {/* Open Graph */}
-        <meta property="og:type" content="article" />
-        <meta property="og:title" content={post.title} />
-        <meta property="og:description" content={post.excerpt} />
-        {absoluteImageUrl && <meta property="og:image" content={absoluteImageUrl} />}
-        {currentUrl && <meta property="og:url" content={currentUrl} />}
-
-        {/* Twitter Card */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={post.title} />
-        <meta name="twitter:description" content={post.excerpt} />
-        {absoluteImageUrl && <meta name="twitter:image" content={absoluteImageUrl} />}
-      </Helmet>
+      <Head
+        title={post.title}
+        description={post.excerpt}
+        ogImage={absoluteImageUrl}
+        ogUrl={currentUrl}
+        twitterCard="summary_large_image"
+      />
 
       <div className="max-w-5xl mx-auto px-4">
         {/* Navigation */}
@@ -321,7 +310,7 @@ export const PostPage: React.FC = () => {
               <div className="prose-custom max-w-none text-neutral-300 leading-relaxed text-xl post-content">
                 <ReactMarkdown
                   components={{
-                    h1: ({node, ...props}) => <h1 className="text-3xl font-bold text-neutral-50 mt-16 mb-8 border-l-4 border-red-600 pl-6" {...props} />,
+                    h1: ({node, ...props}) => <h2 className="text-3xl font-bold text-neutral-50 mt-16 mb-8 border-l-4 border-red-600 pl-6" {...props} />,
                     h2: ({node, ...props}) => <h2 className="text-2xl font-bold text-neutral-50 mt-12 mb-6 pb-2 border-b border-neutral-800" {...props} />,
                     h3: ({node, ...props}) => <h3 className="text-xl font-bold text-neutral-50 mt-10 mb-4" {...props} />,
                     p: ({node, ...props}) => <p className="mb-8" {...props} />,

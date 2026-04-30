@@ -67,7 +67,7 @@ export const Footer: React.FC = () => {
                 </svg>
               </a>
               {/* Patreon */}
-              <a href="https://patreon.com/proleadventures" aria-label="Patreon" title="Patreon" target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-neutral-700 hover:bg-[#FF424D] rounded-lg flex items-center justify-center transition-colors">
+              <a href="https://www.patreon.com/cw/ProleAdventures" aria-label="Patreon" title="Patreon" target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-neutral-700 hover:bg-[#FF424D] rounded-lg flex items-center justify-center transition-colors">
                 <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M15.386.524c-4.764 0-8.64 3.876-8.64 8.64 0 4.75 3.876 8.613 8.64 8.613 4.75 0 8.614-3.863 8.614-8.613 0-4.764-3.864-8.64-8.614-8.64zM.48 23.513h4.29V.524H.48v22.99z"/>
                 </svg>
