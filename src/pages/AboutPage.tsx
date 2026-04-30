@@ -27,50 +27,38 @@ export const AboutPage: React.FC = () => {
       <section className="py-20 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="glass-elevated rounded-3xl p-12 shadow-glass shadow-investigation">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div>
-                <h2 className="font-display text-3xl md:text-4xl font-bold text-neutral-50 mb-6">
-                  The Story Behind the Adventures
-                </h2>
-                <div className="space-y-6 text-neutral-100 leading-relaxed">
-                  <p>
-                    Prole Adventures is simple: It's what happens when you stop filtering your
-                    perspective on life. The world is saturated with polished content and staged
-                    experiences, this is raw, unfiltered, low level living.
-                  </p>
-                  <p>
-                    Prole Adventures is just here to document my experiences of
-                    ordinary people and overlooked places. From back alleys to sprawling 
-                    landscapes that rarely make the travel brochures, the focus is entirely 
-                    on the authentic. There is a certain kind of beauty in dilapidated structures, 
-                    forgotten infrastructure, and the quiet moments of survival on a budget.
-                  </p>
-                  <p>
-                    Every adventure is about discovering what's left of freedom in a world
-                    that increasingly demands compliance. It's about breaking free from the 
-                    algorithms that try to tell you where to go, what to consume, and how to 
-                    think. By exploring the fringes, observing the decay, and documenting the 
-                    reality of the streets without corporate sponsorship or an influencer's 
-                    agenda, we reclaim a tiny piece of independence. 
-                  </p>
-                  <p>
-                    Whether I am reviewing budget survival gear that actually works, mapping 
-                    out free outdoor routes, or talking to people the system left behind, 
-                    the goal remains the same: keep walking, stay observant, and share the 
-                    truth of what's out there. No flashy editing, no fake drama—just a 
-                    worker navigating the matrix.
-                  </p>
-                </div>
-              </div>
-              <div className="hidden lg:block">
-                <img
-                  src="/images/travel/mysterious_urban_alley_night_graffiti_cobblestone.jpg"
-                  alt="Urban exploration"
-                  className="w-full h-96 object-cover rounded-2xl shadow-glass"
-                  loading="lazy"
-                  width="400"
-                  height="384"
-                />
+            <div className="max-w-3xl mx-auto">
+              <h2 className="font-display text-3xl md:text-4xl font-bold text-neutral-50 mb-6 text-center">
+                The Story Behind the Adventures
+              </h2>
+              <div className="space-y-6 text-neutral-100 leading-relaxed">
+                <p>
+                  Prole Adventures is simple: It's what happens when you stop filtering your
+                  perspective on life. The world is saturated with polished content and staged
+                  experiences, this is raw, unfiltered, low level living.
+                </p>
+                <p>
+                  Prole Adventures is just here to document my experiences of
+                  ordinary people and overlooked places. From back alleys to sprawling 
+                  landscapes that rarely make the travel brochures, the focus is entirely 
+                  on the authentic. There is a certain kind of beauty in dilapidated structures, 
+                  forgotten infrastructure, and the quiet moments of survival on a budget.
+                </p>
+                <p>
+                  Every adventure is about discovering what's left of freedom in a world
+                  that increasingly demands compliance. It's about breaking free from the 
+                  algorithms that try to tell you where to go, what to consume, and how to 
+                  think. By exploring the fringes, observing the decay, and documenting the 
+                  reality of the streets without corporate sponsorship or an influencer's 
+                  agenda, we reclaim a tiny piece of independence. 
+                </p>
+                <p>
+                  Whether I am reviewing budget survival gear that actually works, mapping 
+                  out free outdoor routes, or talking to people the system left behind, 
+                  the goal remains the same: keep walking, stay observant, and share the 
+                  truth of what's out there. No flashy editing, no fake drama—just a 
+                  worker navigating the matrix.
+                </p>
               </div>
             </div>
           </div>
