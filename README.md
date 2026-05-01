@@ -265,7 +265,7 @@ This is a private project. For collaboration requests, please contact through th
 
 - **Email:** hello@proleadventures.com
 - **YouTube:** [@ProleAdventures](https://www.youtube.com/@ProleAdventures)
-- **Website:** [https://ujip9gydssnk.space.minimax.io](https://ujip9gydssnk.space.minimax.io)
+- **Website:** [https://proleadventures.com]
 
 ## 🔄 Next Steps Checklist
 
@@ -283,3 +283,5 @@ This is a private project. For collaboration requests, please contact through th
 ---
 
 **Made with respect for authentic adventure** 🌍
+
+Hello
