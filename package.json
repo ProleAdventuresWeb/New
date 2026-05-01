@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "packageManager": "pnpm@10.27.0",
+  "packageManager": "pnpm@9.15.0",
   "scripts": {
     "dev": "pnpm install --prefer-offline && vite",
     "generate:rss": "tsx scripts/generate-rss.ts",
