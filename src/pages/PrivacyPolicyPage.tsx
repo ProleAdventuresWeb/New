@@ -97,8 +97,8 @@ export const PrivacyPolicyPage: React.FC = () => {
                   <h2 id="contact-us" className="text-2xl font-semibold text-red-400 mb-4">Contact Us</h2>
                   <p>
                     If you have questions about this Privacy Policy, please contact us at{' '}
-                    <a href="mailto:hello@proleadventures.com" className="text-red-400 hover:text-red-300">
-                      hello@proleadventures.com
+                    <a href="mailto:contact@proleadventures.com" className="text-red-400 hover:text-red-300">
+                      contact@proleadventures.com
                     </a>
                   </p>
                 </section>

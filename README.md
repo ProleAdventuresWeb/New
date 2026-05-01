@@ -32,6 +32,8 @@ Prole Adventures is a content-focused website that showcases:
 
 ```
 mysterious-adventure-travel/
+├── .github/workflows/
+│   └── ci.yml              # CI/CD configuration
 ├── public/
 │   ├── images/              # Static images and assets
 │   └── data/               # JSON data files
@@ -263,8 +265,9 @@ This is a private project. For collaboration requests, please contact through th
 
 ## 📞 Support
 
-- **Email:** hello@proleadventures.com
+- **Email:** contact@proleadventures.com
 - **YouTube:** [@ProleAdventures](https://www.youtube.com/@ProleAdventures)
+- **Website:** [https://proleadventures.com](https://proleadventures.com)
 
 ## 🔄 Next Steps Checklist
 

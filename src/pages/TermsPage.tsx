@@ -149,8 +149,8 @@ export const TermsPage: React.FC = () => {
                   <h2 className="text-2xl font-semibold text-red-400 mb-4">Contact Information</h2>
                   <p>
                     If you have any questions about these Terms of Use, please contact us at{' '}
-                    <a href="mailto:hello@proleadventures.com" className="text-red-400 hover:text-red-300">
-                      hello@proleadventures.com
+                    <a href="mailto:contact@proleadventures.com" className="text-red-400 hover:text-red-300">
+                      contact@proleadventures.com
                     </a>
                   </p>
                 </div>

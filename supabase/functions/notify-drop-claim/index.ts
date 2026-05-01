@@ -28,7 +28,7 @@ const SUPABASE_URL     = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_KEY     = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
 const FROM_ADDRESS = 'notifications@proleadventures.com';
-const ADMIN_EMAIL  = 'hello@proleadventures.com';
+const ADMIN_EMAIL  = 'contact@proleadventures.com';
 
 serve(async (req: Request) => {
   try {

@@ -26,7 +26,7 @@ const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
 
 // ── Update these to match your Resend verified domain ─────────────────────
 const FROM_ADDRESS = 'notifications@proleadventures.com';
-const ADMIN_EMAIL  = 'hello@proleadventures.com';   // where YOU get notified
+const ADMIN_EMAIL  = 'contact@proleadventures.com';   // where YOU get notified
 // ──────────────────────────────────────────────────────────────────────────
 
 serve(async (req: Request) => {

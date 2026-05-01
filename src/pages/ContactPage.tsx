@@ -162,10 +162,10 @@ export const ContactPage: React.FC = () => {
                   The best way to reach us for collaboration or story sharing
                 </p>
                 <a
-                  href="mailto:hello@proleadventures.com"
+                  href="mailto:contact@proleadventures.com"
                   className="text-red-400 hover:text-red-300 transition-colors font-medium"
                 >
-                  hello@proleadventures.com
+                  contact@proleadventures.com
                 </a>
               </div>
 
