@@ -7,6 +7,7 @@ export interface TemplateData {
   summary: string;
   affiliateEnabled: boolean;
   affiliateImageUrl: string | null;
+  affiliateUrl: string | null;
   textBlockA: string;
   tweetUrl: string | null;
   textBlockB: string;

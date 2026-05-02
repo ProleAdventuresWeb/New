@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Star, CheckCircle, Filter, Search } from 'lucide-react';
+import { Star, CheckCircle, Filter, Search, ArrowRight } from 'lucide-react';
 import { Head } from '../components/Head';
 import { PageLoader } from '../components/PageLoader';
 interface GearItem {
