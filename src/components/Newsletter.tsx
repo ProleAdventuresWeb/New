@@ -25,27 +25,28 @@ export const Newsletter: React.FC<NewsletterProps> = ({
     setErrorMessage('');
 
     try {
-      // Use the subscribers table as requested
-      const { error } = await supabase
-        .from('subscribers')
-        .insert([{ email }]);
+      const response = await fetch('/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
 
-      if (error) {
-        // Check for duplicate email error specifically
-        if (error.code === '23505' || error.message.includes('duplicate') || error.message.includes('already exists')) {
-          setSubmitStatus('duplicate');
-          setErrorMessage('This email is already subscribed to our newsletter.');
-        } else {
-          setSubmitStatus('error');
-          setErrorMessage(error.message || 'Something went wrong. Please try again.');
-        }
-      } else {
+      if (response.ok) {
         // Track Umami event on successful signup
         if (window.umami) {
           window.umami.track('email_signup');
         }
         setSubmitStatus('success');
-        setEmail(''); // Clear the form on success
+        setEmail('');
+      } else {
+        const data = await response.json() as { error: string };
+        if (response.status === 409 || data.error === 'Duplicate') {
+          setSubmitStatus('duplicate');
+          setErrorMessage('This email is already subscribed to our newsletter.');
+        } else {
+          setSubmitStatus('error');
+          setErrorMessage(data.error || 'Something went wrong. Please try again.');
+        }
       }
     } catch (error) {
       console.error('Newsletter signup error:', error);
