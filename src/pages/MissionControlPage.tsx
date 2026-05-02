@@ -124,15 +124,17 @@ const MissionCard: React.FC<MissionCardProps> = ({ adventure, isSelected, onSele
       `}
     >
       {/* Title + status */}
-      <div className="flex items-start justify-between gap-3 mb-3">
-        <h3 className="font-display text-xl font-bold text-neutral-50 leading-snug flex-1">
-          {adventure.display_title}
-        </h3>
-        <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap flex-shrink-0 ${cfg.badge}`}>
+      {/* Status label ABOVE title */}
+      <div className="mb-4">
+        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] uppercase tracking-widest font-black ${cfg.badge}`}>
           <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
           {cfg.label}
         </span>
       </div>
+
+      <h3 className="font-display text-2xl font-bold text-neutral-50 leading-tight mb-4">
+        {adventure.display_title}
+      </h3>
 
       {/* Scouting location notice */}
       {isScouting && (
@@ -164,13 +166,17 @@ const MissionCard: React.FC<MissionCardProps> = ({ adventure, isSelected, onSele
             <span className="text-neutral-500 font-normal"> / £{adventure.bounty_target.toFixed(2)}</span>
           </span>
         </div>
-        <div className="w-full bg-neutral-800 rounded-full h-2 overflow-hidden">
+        <div className="w-full bg-neutral-800/50 rounded-full h-1.5 overflow-hidden border border-white/5">
           <div
-            className="h-2 rounded-full bg-gradient-to-r from-red-600 to-red-400 transition-all duration-700"
-            style={{ width: `${progress}%` }}
+            className={`h-full rounded-full transition-all duration-1000 ${
+              isDone ? 'bg-neutral-500' : 'bg-gradient-to-r from-red-600 to-red-400'
+            }`}
+            style={{ width: `${adventure.bounty_target > 0 ? progress : 100}%` }}
           />
         </div>
-        <p className="text-xs text-neutral-100 mt-1">{progress.toFixed(0)}% funded</p>
+        <p className="text-[10px] font-mono text-neutral-500 mt-2 uppercase tracking-tighter">
+          {adventure.bounty_target > 0 ? `${progress.toFixed(0)}% funded` : 'Direct Funding Complete'}
+        </p>
       </div>
 
       {/* Contribute or Done */}
@@ -290,7 +296,7 @@ export const MissionControlPage: React.FC = () => {
 
   const handleInitiateContribution = async (amount: number, missionId: string, missionName: string) => {
     try {
-      const response = await fetch('/api/create-checkout-session', {
+      const response = await fetch('/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
