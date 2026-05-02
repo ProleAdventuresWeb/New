@@ -1,5 +1,5 @@
 import Stripe from 'stripe';
-import type { Env } from './env';
+import type { Env } from '../env';
 
 export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const corsHeaders = {
