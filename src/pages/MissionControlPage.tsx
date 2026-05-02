@@ -575,29 +575,45 @@ export const MissionControlPage: React.FC = () => {
       {/* ─── Filters ─────────────────────────────────────────────────────── */}
       <section className="px-4 pb-6">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-wrap gap-2">
-            {filters.map(f => (
-              <button
-                key={f.id}
-                onClick={() => setStatusFilter(f.id)}
-                className={`
-                  px-6 py-2.5 rounded-lg text-sm font-bold transition-all duration-300
-                  border backdrop-blur-sm
-                  ${statusFilter === f.id
-                    ? 'bg-red-950/40 border-red-500/60 text-white shadow-[0_0_15px_rgba(239,68,68,0.2)]'
-                    : 'bg-neutral-900/60 border-red-500/20 text-neutral-400 hover:border-red-500/40 hover:text-neutral-100'}
-                `}
-              >
-                {f.label}
-                <span className={`ml-2 text-[10px] px-1.5 py-0.5 rounded-full ${
-                  statusFilter === f.id ? 'bg-red-500/20 text-red-300' : 'bg-neutral-800 text-neutral-500'
-                }`}>
-                  {f.id === 'all'
-                    ? adventures.length
-                    : adventures.filter(a => a.status === f.id).length}
-                </span>
-              </button>
-            ))}
+          <div className="flex flex-wrap gap-4">
+            {filters.map(f => {
+              const count = f.id === 'all' 
+                ? adventures.length 
+                : adventures.filter(a => a.status === f.id).length;
+              
+              // Map colors explicitly for the deliberate look
+              const colors: Record<string, { text: string; border: string; glow: string; bg: string }> = {
+                all: { text: 'text-red-500', border: 'border-red-500', glow: 'shadow-[0_0_15px_rgba(239,68,68,0.25)]', bg: 'bg-red-500/5' },
+                active: { text: 'text-blue-400', border: 'border-blue-400', glow: 'shadow-[0_0_15px_rgba(96,165,250,0.25)]', bg: 'bg-blue-400/5' },
+                greenlit: { text: 'text-green-400', border: 'border-green-400', glow: 'shadow-[0_0_15px_rgba(74,222,128,0.25)]', bg: 'bg-green-400/5' },
+                scouting: { text: 'text-amber-400', border: 'border-amber-400', glow: 'shadow-[0_0_15px_rgba(251,191,36,0.25)]', bg: 'bg-amber-400/5' },
+                complete: { text: 'text-neutral-400', border: 'border-neutral-500', glow: 'shadow-[0_0_15px_rgba(156,163,175,0.2)]', bg: 'bg-neutral-500/5' }
+              };
+              const c = colors[f.id] || colors.all;
+              const isActive = statusFilter === f.id;
+
+              return (
+                <button
+                  key={f.id}
+                  onClick={() => setStatusFilter(f.id)}
+                  className={`
+                    flex flex-col items-center justify-center
+                    w-28 h-28 rounded-2xl transition-all duration-300
+                    border-[3px] backdrop-blur-md
+                    ${isActive
+                      ? `${c.bg} ${c.border} ${c.glow} scale-105 z-10`
+                      : `bg-neutral-900/80 border-neutral-800/50 hover:border-neutral-700`}
+                  `}
+                >
+                  <span className={`text-4xl font-black font-display mb-1 ${isActive ? c.text : 'text-neutral-600'}`}>
+                    {count}
+                  </span>
+                  <span className={`text-[11px] font-bold uppercase tracking-widest ${isActive ? 'text-neutral-100' : 'text-neutral-500'}`}>
+                    {f.label}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </section>
