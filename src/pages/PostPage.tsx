@@ -28,13 +28,17 @@ const TemplateLayout: React.FC<{ data: TemplateData; title: string }> = ({ data,
       </section>
 
       {/* 2. Affiliate banner */}
-      {data.affiliateEnabled && data.affiliateImageUrl && (
         <section className="animate-in fade-in duration-1000 delay-300">
-          <div className="glass-elevated rounded-2xl overflow-hidden border border-red-500/20 shadow-lg shadow-red-950/10 group cursor-pointer">
+          <a 
+            href={data.affiliateUrl || '#'} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            data-umami-event="affiliate_click"
+            className="block glass-elevated rounded-2xl overflow-hidden border border-red-500/20 shadow-lg shadow-red-950/10 group cursor-pointer"
+          >
             <img src={data.affiliateImageUrl} alt="Recommended Gear" className="w-full h-auto group-hover:scale-[1.02] transition-transform duration-500" />
-          </div>
+          </a>
         </section>
-      )}
 
       {/* 3. Text Block A */}
       <section className="prose-custom max-w-none text-neutral-300 leading-relaxed text-lg">
@@ -55,6 +59,8 @@ const TemplateLayout: React.FC<{ data: TemplateData; title: string }> = ({ data,
                 href={data.tweetUrl} 
                 target="_blank" 
                 rel="noopener noreferrer" 
+                data-umami-event="outbound_click"
+                data-umami-event-type="tweet"
                 className="inline-block w-full py-3 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 text-center rounded-xl font-bold text-xs uppercase tracking-widest border border-sky-500/20 transition-all duration-300"
               >
                 Inspect Original Entry
@@ -90,6 +96,8 @@ const TemplateLayout: React.FC<{ data: TemplateData; title: string }> = ({ data,
             href={data.patreonUrl || '#'} 
             target="_blank" 
             rel="noopener noreferrer"
+            data-umami-event="outbound_click"
+            data-umami-event-type="patreon"
             className="inline-flex items-center px-10 py-5 bg-red-600 hover:bg-red-500 text-white rounded-xl font-bold transition-all duration-300 shadow-lg shadow-red-900/40 group relative z-10"
           >
             Join the Resistance
@@ -325,7 +333,19 @@ export const PostPage: React.FC = () => {
                         ? <code className="bg-neutral-800 text-red-400 px-2 py-1 rounded font-mono text-base" {...props} />
                         : <pre className="bg-neutral-950 p-6 rounded-2xl border border-neutral-800 overflow-x-auto mb-10 shadow-glass"><code className="text-neutral-300 font-mono text-sm leading-relaxed" {...props} /></pre>
                     ),
-                    a: ({node, ...props}) => <a className="text-red-400 hover:text-red-300 underline decoration-red-500/40 underline-offset-8 transition-all duration-300 font-medium" {...props} />,
+                    a: ({node, ...props}) => {
+                      const isAffiliate = props.href?.includes('amazon') || props.href?.includes('amzn.to');
+                      return (
+                        <a 
+                          className="text-red-400 hover:text-red-300 underline decoration-red-500/40 underline-offset-8 transition-all duration-300 font-medium" 
+                          data-umami-event={isAffiliate ? 'affiliate_click' : 'outbound_click'}
+                          data-umami-event-url={props.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          {...props} 
+                        />
+                      );
+                    },
                     img: ({node, ...props}) => <img className="rounded-3xl border border-neutral-800 shadow-2xl my-16 w-full hover:scale-[1.01] transition-transform duration-700" {...props} />
                   }}
                 >

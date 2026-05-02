@@ -186,6 +186,25 @@ export const GearPage: React.FC = () => {
                         ))}
                       </div>
                     </div>
+
+                    <div className="mt-8 pt-4 border-t border-red-500/10">
+                      <a
+                        href={item.affiliate_link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        data-umami-event="affiliate_click"
+                        data-umami-event-item={item.name}
+                        className="
+                          w-full py-4 px-6 rounded-xl flex items-center justify-center gap-3
+                          bg-neutral-900 border border-red-500/20 text-red-400 font-bold
+                          hover:bg-red-600 hover:text-white hover:border-red-600
+                          transition-all duration-300 transform hover:scale-[1.02]
+                        "
+                      >
+                        INVESTIGATE GEAR
+                        <ArrowRight className="w-4 h-4" />
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>

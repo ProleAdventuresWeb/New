@@ -40,6 +40,10 @@ export const Newsletter: React.FC<NewsletterProps> = ({
           setErrorMessage(error.message || 'Something went wrong. Please try again.');
         }
       } else {
+        // Track Umami event on successful signup
+        if (window.umami) {
+          window.umami.track('email_signup');
+        }
         setSubmitStatus('success');
         setEmail(''); // Clear the form on success
       }

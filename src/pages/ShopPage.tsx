@@ -128,6 +128,13 @@ export const ShopPage: React.FC = () => {
           variants: item.product_variants || []
         }));
         setProducts(mappedProducts);
+        
+        // Track Umami product views
+        if (window.umami) {
+          mappedProducts.forEach(p => {
+            window.umami.track('product_view', { product: p.name });
+          });
+        }
 
         // Pre-select the first variant for each product
         const initialSelections: Record<string, ProductVariant> = {};
@@ -269,6 +276,8 @@ export const ShopPage: React.FC = () => {
 
                   <button
                     onClick={() => handleBuyNow(product)}
+                    data-umami-event="checkout_click"
+                    data-umami-event-product={product.name}
                     disabled={loadingId !== null}
                     className="
                       w-full py-4 px-6 rounded-xl flex items-center justify-center gap-3

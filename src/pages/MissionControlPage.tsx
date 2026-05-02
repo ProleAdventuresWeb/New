@@ -530,6 +530,7 @@ export const MissionControlPage: React.FC = () => {
                               ) : !isDone && (
                                 <button
                                   onClick={() => scrollToCard(adv)}
+                                  data-umami-event="donation_click"
                                   className="w-full flex items-center justify-center gap-2 py-2.5 bg-neutral-100/5 hover:bg-neutral-100/10 border border-neutral-100/20 rounded-full !text-white text-sm font-bold transition-all"
                                   style={{ color: 'white' }}
                                 >
