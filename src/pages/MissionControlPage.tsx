@@ -26,26 +26,34 @@ L.Icon.Default.mergeOptions({
 });
 
 // ─── Status config: plain-English labels + colours ─────────────────────────
-const STATUS_CONFIG: Record<string, { label: string; dot: string; badge: string }> = {
+const STATUS_CONFIG: Record<string, { label: string; dot: string; badge: string; glow: string; border: string }> = {
   scouting: {
     label: 'Planning',
     dot: 'bg-amber-400',
     badge: 'text-amber-400 bg-amber-400/10 border border-amber-400/30',
+    glow: 'shadow-[0_0_20px_rgba(251,191,36,0.15)]',
+    border: 'border-amber-400/30'
   },
   greenlit: {
     label: 'Confirmed',
     dot: 'bg-green-400',
     badge: 'text-green-400 bg-green-400/10 border border-green-400/30',
+    glow: 'shadow-[0_0_20px_rgba(74,222,128,0.15)]',
+    border: 'border-green-400/30'
   },
   active: {
     label: 'In Progress',
     dot: 'bg-blue-400 animate-pulse',
     badge: 'text-blue-400 bg-blue-400/10 border border-blue-400/30',
+    glow: 'shadow-[0_0_20px_rgba(96,165,250,0.15)]',
+    border: 'border-blue-400/30'
   },
   complete: {
     label: 'Done',
     dot: 'bg-neutral-500',
     badge: 'text-neutral-400 bg-neutral-400/10 border border-neutral-400/30',
+    glow: 'shadow-none',
+    border: 'border-neutral-700/50'
   },
 };
 
@@ -118,20 +126,11 @@ const MissionCard: React.FC<MissionCardProps> = ({ adventure, isSelected, onSele
       className={`
         glass-base rounded-2xl p-6 cursor-pointer
         transition-all duration-300 border
-        ${isSelected
-          ? 'border-red-400/60 shadow-investigation ring-1 ring-red-500/20 scale-[1.01]'
-          : 'border-red-500/20 hover:border-red-400/40 hover:scale-[1.005]'}
+        ${isSelected 
+          ? `ring-1 ring-red-500/30 scale-[1.01] ${cfg.glow} ${cfg.border}` 
+          : `hover:scale-[1.005] ${cfg.border} hover:border-red-400/40`}
       `}
     >
-      {/* Title + status */}
-      {/* Status label ABOVE title */}
-      <div className="mb-4">
-        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] uppercase tracking-widest font-black ${cfg.badge}`}>
-          <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
-          {cfg.label}
-        </span>
-      </div>
-
       <h3 className="font-display text-2xl font-bold text-neutral-50 leading-tight mb-4">
         {adventure.display_title}
       </h3>
@@ -582,17 +581,20 @@ export const MissionControlPage: React.FC = () => {
                 key={f.id}
                 onClick={() => setStatusFilter(f.id)}
                 className={`
-                  px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-200
+                  px-6 py-2.5 rounded-lg text-sm font-bold transition-all duration-300
+                  border backdrop-blur-sm
                   ${statusFilter === f.id
-                    ? 'bg-red-600 text-white shadow-investigation'
-                    : 'glass-subtle text-neutral-400 hover:text-neutral-100 hover:glass-base'}
+                    ? 'bg-red-950/40 border-red-500/60 text-white shadow-[0_0_15px_rgba(239,68,68,0.2)]'
+                    : 'bg-neutral-900/60 border-red-500/20 text-neutral-400 hover:border-red-500/40 hover:text-neutral-100'}
                 `}
               >
                 {f.label}
-                <span className="ml-2 text-xs opacity-50">
-                  ({f.id === 'all'
+                <span className={`ml-2 text-[10px] px-1.5 py-0.5 rounded-full ${
+                  statusFilter === f.id ? 'bg-red-500/20 text-red-300' : 'bg-neutral-800 text-neutral-500'
+                }`}>
+                  {f.id === 'all'
                     ? adventures.length
-                    : adventures.filter(a => a.status === f.id).length})
+                    : adventures.filter(a => a.status === f.id).length}
                 </span>
               </button>
             ))}
