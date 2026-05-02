@@ -1,10 +1,19 @@
--- Prole Control Master Mission Seed
--- Use this to manage all missions. Safe to re-run multiple times.
+-- 1. Schema setup: Add missing columns if they don't exist
+ALTER TABLE public.adventures 
+ADD COLUMN IF NOT EXISTS video_url TEXT,
+ADD COLUMN IF NOT EXISTS thumbnail_url TEXT,
+ADD COLUMN IF NOT EXISTS images TEXT[] DEFAULT '{}';
 
--- 1. Ensure the table has the correct unique constraint for the upsert to work
--- Run this once if it's not already unique
--- ALTER TABLE public.adventures ADD CONSTRAINT adventures_title_key UNIQUE (title);
+-- 2. Ensure title is unique so the update logic (ON CONFLICT) works
+-- We use a DO block to add the constraint only if it doesn't exist
+DO $$ 
+BEGIN 
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'adventures_title_key') THEN
+    ALTER TABLE public.adventures ADD CONSTRAINT adventures_title_key UNIQUE (title);
+  END IF;
+END $$;
 
+-- 3. Unified Upsert: Insert or Update mission data
 INSERT INTO public.adventures (
   title, 
   codename, 
