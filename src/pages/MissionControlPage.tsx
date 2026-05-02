@@ -4,10 +4,15 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Shield, MapPin, ArrowLeft, ArrowRight, CheckCircle, Lock, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { SecureAdventure } from '../lib/supabase';
+import { Head } from '../components/Head';
+import { 
+  getAdventures, 
+  SecureAdventure, 
+  isMissionRedacted, 
+  applyCoordinateJitter 
+} from '../lib/supabase';
 import { AdventureService } from '../services/adventureService';
 import { MockAdventureService } from '../services/mockAdventureService';
-import { Head } from '../components/Head';
 import { PageLoader } from '../components/PageLoader';
 import { EmbeddedCheckoutModal } from '../components/EmbeddedCheckoutModal';
 import { useSearchParams } from 'react-router-dom';
@@ -125,9 +130,9 @@ const MissionCard: React.FC<MissionCardProps> = ({ adventure, isSelected, onSele
       onClick={onSelect}
       className={`
         glass-base rounded-2xl p-6 cursor-pointer
-        transition-all duration-300 border
+        transition-all duration-300 border-[3px]
         ${isSelected 
-          ? `ring-1 ring-red-500/30 scale-[1.01] ${cfg.glow} ${cfg.border}` 
+          ? `ring-2 ring-red-500/40 scale-[1.02] ${cfg.glow} ${cfg.border}` 
           : `hover:scale-[1.005] ${cfg.border} hover:border-red-400/40`}
       `}
     >
@@ -247,16 +252,11 @@ const MapUpdater = ({ selected, trigger }: { selected: SecureAdventure | null, t
 
   useEffect(() => {
     if (selected) {
-      // Calculate offset: we want the marker to appear 300px LOWER than the center.
-      // To do this, we fly to a point that is 300px ABOVE the marker's actual coordinates.
       const targetLatLng: L.LatLngExpression = [selected.display_lat, selected.display_lng];
       
       const timer = setTimeout(() => {
-        // Project the marker to pixel coordinates at the target zoom (13)
         const targetPoint = map.project(targetLatLng, 13);
-        // Subtract 300px from Y (moving the center UP, which moves the marker DOWN on screen)
         const offsetPoint = L.point(targetPoint.x, targetPoint.y - 300);
-        // Unproject back to LatLng
         const offsetLatLng = map.unproject(offsetPoint, 13);
 
         map.flyTo(offsetLatLng, 13, { animate: true, duration: 1.5 });
@@ -282,7 +282,6 @@ export const MissionControlPage: React.FC = () => {
 
   useEffect(() => {
     if (success) {
-      // Clean URL after 5 seconds of showing success message
       const timer = setTimeout(() => {
         searchParams.delete('success');
         searchParams.delete('session_id');
@@ -300,7 +299,7 @@ export const MissionControlPage: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: `Contribution: ${missionName}`,
-          price: amount * 100, // to pence
+          price: amount * 100,
           quantity: 1,
           mode: 'contribution',
           missionId,
@@ -310,7 +309,6 @@ export const MissionControlPage: React.FC = () => {
 
       const data = (await response.json()) as CheckoutSession;
       if (data.clientSecret) {
-        // We append mission_id to the URL temporarily so we can highlight the correct card on return
         searchParams.set('mission_id', missionId);
         setSearchParams(searchParams, { replace: true });
         setCheckoutData(data);
@@ -368,13 +366,6 @@ export const MissionControlPage: React.FC = () => {
     }, 50);
   };
 
-  const stats = [
-    { label: 'In Progress', count: adventures.filter(a => a.status === 'active').length, color: 'text-blue-400' },
-    { label: 'Confirmed', count: adventures.filter(a => a.status === 'greenlit').length, color: 'text-green-400' },
-    { label: 'Planning', count: adventures.filter(a => a.status === 'scouting').length, color: 'text-amber-400' },
-    { label: 'Done', count: adventures.filter(a => a.status === 'complete').length, color: 'text-neutral-400' },
-  ];
-
   if (loading) {
     return (
       <div className="pt-16 min-h-screen bg-black">
@@ -386,8 +377,8 @@ export const MissionControlPage: React.FC = () => {
   return (
     <div className="pt-16 min-h-screen bg-black">
       <Head
-        title="Prole Control"
-        description="Track active Prole Adventures missions and contribute to the cause."
+        title="Prole Control | Mission Briefings & Funding"
+        description="Direct funding for Prole Adventures. Browse active missions, see what's in planning, and help fund the clandestine operations."
       />
 
       {/* ─── Header ─────────────────────────────────────────────────────── */}
@@ -395,7 +386,7 @@ export const MissionControlPage: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           <Link
             to="/"
-            className="inline-flex items-center gap-2 text-neutral-500 hover:text-red-400 transition-colors text-sm mb-6"
+            className="inline-flex items-center gap-2 text-neutral-500 hover:text-red-400 transition-colors text-sm mb-6 font-mono"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Home
@@ -403,23 +394,13 @@ export const MissionControlPage: React.FC = () => {
 
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
             <div>
-              <h1 className="font-display text-5xl md:text-6xl font-bold text-neutral-50 mb-3">
+              <h1 className="font-display text-6xl md:text-8xl font-black text-neutral-50 mb-3 tracking-tighter uppercase">
                 Prole Control
               </h1>
-              <p className="text-neutral-400 text-lg max-w-2xl">
-                Every adventure needs a budget. Browse active missions, see what's in planning,
-                and help fund the ones worth doing.
+              <p className="text-xl text-neutral-400 max-w-2xl leading-relaxed">
+                Every adventure needs a budget. Browse active missions, see what's in planning, and 
+                help fund the ones worth doing.
               </p>
-            </div>
-
-            {/* Stat chips */}
-            <div className="flex gap-3 flex-wrap">
-              {stats.map(s => (
-                <div key={s.label} className="glass-subtle rounded-xl px-4 py-3 text-center min-w-[72px] border border-red-500/10">
-                  <p className={`text-2xl font-bold font-display ${s.color}`}>{s.count}</p>
-                  <p className="text-xs text-neutral-100 mt-0.5">{s.label}</p>
-                </div>
-              ))}
             </div>
           </div>
 
