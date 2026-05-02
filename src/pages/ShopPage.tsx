@@ -2,9 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { ShoppingBag, Loader2, Info, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Head } from '../components/Head';
 import { JsonLd } from '../components/JsonLd';
-import { products, Product } from '../data/products';
 import { useAuth } from '../lib/auth';
 import { analytics } from '../lib/analytics';
+import { supabase } from '../lib/supabase';
+
+export interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number; // in pence
+  image: string;
+  images: string[];
+  category: string;
+}
 
 type CheckoutRedirect = {
   url: string;
@@ -77,10 +87,40 @@ const ProductImage: React.FC<{ product: Product }> = ({ product }) => {
 export const ShopPage: React.FC = () => {
   const { user } = useAuth();
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoadingProducts, setIsLoadingProducts] = useState(true);
 
-  // Track page view
+  // Track page view and fetch products
   useEffect(() => {
     analytics.pageView('shop');
+    
+    const fetchProducts = async () => {
+      setIsLoadingProducts(true);
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('active', true)
+        .order('category', { ascending: true })
+        .order('name', { ascending: true });
+        
+      if (error) {
+        console.error('Error fetching products:', error);
+      } else if (data) {
+        const mappedProducts: Product[] = data.map((item: any) => ({
+          id: item.id,
+          name: item.name,
+          description: item.description,
+          price: item.base_price_pence,
+          image: item.image_url,
+          images: item.images || [item.image_url],
+          category: item.category
+        }));
+        setProducts(mappedProducts);
+      }
+      setIsLoadingProducts(false);
+    };
+    
+    fetchProducts();
   }, []);
 
   const handleBuyNow = async (product: Product) => {
@@ -134,9 +174,18 @@ export const ShopPage: React.FC = () => {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 pb-24">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {products.map((product) => (
-            <React.Fragment key={product.id}>
+        {isLoadingProducts ? (
+          <div className="flex justify-center items-center py-20">
+            <Loader2 className="w-8 h-8 text-red-500 animate-spin" />
+          </div>
+        ) : products.length === 0 ? (
+          <div className="text-center text-neutral-400 py-20">
+            <p>No products available at the moment. Check back soon.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {products.map((product) => (
+              <React.Fragment key={product.id}>
               <JsonLd 
                 type="product"
                 data={{
@@ -196,6 +245,7 @@ export const ShopPage: React.FC = () => {
             </React.Fragment>
           ))}
         </div>
+        )}
 
         <section className="mt-20 glass-subtle rounded-2xl p-8 border border-red-500/10 max-w-4xl mx-auto">
           <div className="flex items-start gap-4">
