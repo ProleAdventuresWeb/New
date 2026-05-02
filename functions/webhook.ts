@@ -304,10 +304,18 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
         }
 
         if (order) {
-          const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
+          const lineItems = await stripe.checkout.sessions.listLineItems(session.id, {
+            expand: ['data.price.product']
+          });
           for (const item of lineItems.data) {
+            const productMetadata = (item.price?.product as Stripe.Product)?.metadata || {};
+            const variantId = productMetadata.variantId && productMetadata.variantId !== 'none' 
+              ? productMetadata.variantId 
+              : null;
+
             await supabase.from('order_items').insert({
               order_id: order.id,
+              variant_id: variantId,
               product_name: item.description || 'Product',
               quantity: item.quantity || 1,
               unit_price_pence: item.price?.unit_amount || 0,
