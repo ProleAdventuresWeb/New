@@ -6,6 +6,14 @@ import { useAuth } from '../lib/auth';
 import { analytics } from '../lib/analytics';
 import { supabase } from '../lib/supabase';
 
+export interface ProductVariant {
+  id: string;
+  sku: string;
+  name: string;
+  price_override_pence: number | null;
+  printful_variant_id: string;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -14,6 +22,7 @@ export interface Product {
   image: string;
   images: string[];
   category: string;
+  variants: ProductVariant[];
 }
 
 type CheckoutRedirect = {
@@ -88,6 +97,7 @@ export const ShopPage: React.FC = () => {
   const { user } = useAuth();
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
+  const [selectedVariants, setSelectedVariants] = useState<Record<string, ProductVariant>>({});
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
 
   // Track page view and fetch products
@@ -98,7 +108,7 @@ export const ShopPage: React.FC = () => {
       setIsLoadingProducts(true);
       const { data, error } = await supabase
         .from('products')
-        .select('*')
+        .select('*, product_variants(*)')
         .eq('active', true)
         .order('category', { ascending: true })
         .order('name', { ascending: true });
@@ -113,9 +123,19 @@ export const ShopPage: React.FC = () => {
           price: item.base_price_pence,
           image: item.image_url,
           images: item.images || [item.image_url],
-          category: item.category
+          category: item.category,
+          variants: item.product_variants || []
         }));
         setProducts(mappedProducts);
+
+        // Pre-select the first variant for each product
+        const initialSelections: Record<string, ProductVariant> = {};
+        mappedProducts.forEach(p => {
+          if (p.variants && p.variants.length > 0) {
+            initialSelections[p.id] = p.variants[0];
+          }
+        });
+        setSelectedVariants(initialSelections);
       }
       setIsLoadingProducts(false);
     };
@@ -124,19 +144,24 @@ export const ShopPage: React.FC = () => {
   }, []);
 
   const handleBuyNow = async (product: Product) => {
+    const selectedVariant = selectedVariants[product.id];
+    const finalPrice = selectedVariant?.price_override_pence || product.price;
+
     setLoadingId(product.id);
-    analytics.beginCheckout(product.price, 1);
+    analytics.beginCheckout(finalPrice, 1);
     try {
-      const response = await fetch('/api/create-checkout-session', {
+      const response = await fetch('/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: product.name,
-          price: product.price,
+          name: selectedVariant ? `${product.name} - ${selectedVariant.name}` : product.name,
+          price: finalPrice,
           quantity: 1,
           productId: product.id,
+          variantId: selectedVariant?.id,
+          sku: selectedVariant?.sku,
           profileId: user?.id || null,
         }),
       });
@@ -209,13 +234,37 @@ export const ShopPage: React.FC = () => {
                       {product.name}
                     </h3>
                     <span className="text-xl font-mono text-red-400">
-                      £{(product.price / 100).toFixed(2)}
+                      £{((selectedVariants[product.id]?.price_override_pence || product.price) / 100).toFixed(2)}
                     </span>
                   </div>
                   
                   <p className="text-neutral-400 text-sm leading-relaxed mb-6 flex-grow">
                     {product.description}
                   </p>
+
+                  {product.variants && product.variants.length > 0 && (
+                    <div className="mb-6">
+                      <select 
+                        value={selectedVariants[product.id]?.id || ''}
+                        onChange={(e) => {
+                          const variant = product.variants.find(v => v.id === e.target.value);
+                          if (variant) {
+                            setSelectedVariants(prev => ({ ...prev, [product.id]: variant }));
+                          }
+                        }}
+                        className="w-full bg-neutral-900 border border-red-500/20 text-neutral-200 rounded-lg p-3 focus:outline-none focus:border-red-500 transition-colors cursor-pointer appearance-none"
+                      >
+                        {product.variants.map(v => (
+                          <option key={v.id} value={v.id}>
+                            {v.name} {v.price_override_pence && v.price_override_pence !== product.price ? `(£${(v.price_override_pence / 100).toFixed(2)})` : ''}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2">
+                        {/* We use appearance-none but don't strictly need a custom arrow unless requested */}
+                      </div>
+                    </div>
+                  )}
 
                   <button
                     onClick={() => handleBuyNow(product)}
