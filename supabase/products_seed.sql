@@ -15,72 +15,72 @@ ALTER TABLE public.products ADD COLUMN IF NOT EXISTS images JSONB DEFAULT '[]'::
 INSERT INTO public.products (slug, name, description, category, base_price_pence, currency, active, image_url, images) VALUES
 
 -- ── APPAREL ──────────────────────────────────────────────────────
-('trespassing-prole-tshirt', 'Trespassing Prole t-shirt', 'When you absolutely must go trespassing, you need all the stealth you can get. Heavy-weight Bella + Canvas jersey, black on black. Designed for low-light environments and plausible deniability.', 'Apparel', 2000, 'gbp', true, 
+('trespassing-prole-tshirt', 'Trespassing Prole t-shirt', 'Clandestine cotton apparel for temperate trespassing and adventures.', 'Apparel', 2000, 'gbp', true, 
   '/images/products/trespassing-prole-tshirt/trespassing-prole-tshirt_1.webp',
   '["/images/products/trespassing-prole-tshirt/trespassing-prole-tshirt_1.webp", "/images/products/trespassing-prole-tshirt/trespassing-prole-tshirt_2.webp", "/images/products/trespassing-prole-tshirt/trespassing-prole-tshirt_3.webp"]'::jsonb),
 
-('trespassing-tshirt', 'Trespassing t-shirt', 'The trespass-ready uniform. Heavy-weight Bella + Canvas 3001 jersey in black heather. Built for urban exploration and field operations. Wear it. Mean it.', 'Apparel', 2000, 'gbp', true, 
+('trespassing-tshirt', 'Trespassing t-shirt', 'Trespassing is a civil matter so it helps to look civilised in this smart shirt.', 'Apparel', 2000, 'gbp', true, 
   '/images/products/trespassing-tshirt/trespassing-tshirt_1.webp',
   '["/images/products/trespassing-tshirt/trespassing-tshirt_1.webp", "/images/products/trespassing-tshirt/trespassing-tshirt_2.webp", "/images/products/trespassing-tshirt/trespassing-tshirt_3.webp"]'::jsonb),
 
-('binbag-adventures-tshirt', 'Binbag Adventures t-shirt', 'The Binbag Adventures tee. Designed to ensure you are seen by the right people and missed by everyone else. Black on black, Bella + Canvas 3001 Unisex Jersey. Heavyweight and built for the decline.', 'Apparel', 2000, 'gbp', true, 
+('binbag-adventures-tshirt', 'Binbag Adventures t-shirt', 'The "Binbag" Tee is designed to ensure you''re seen by the right people . Featuring the black on black "binbag" aesthetic in a high-quality, heavy-weight black cotton construction.', 'Apparel', 2000, 'gbp', true, 
   '/images/products/binbag-adventures-tshirt/binbag-adventures-tshirt_1.webp',
   '["/images/products/binbag-adventures-tshirt/binbag-adventures-tshirt_1.webp", "/images/products/binbag-adventures-tshirt/binbag-adventures-tshirt_2.webp", "/images/products/binbag-adventures-tshirt/binbag-adventures-tshirt_3.webp"]'::jsonb),
 
-('binliner-adventures', 'Binliner Adventures', 'The definitive uniform for the modern Prole. Black on black Bella + Canvas 3001 jersey. Heavyweight, durable, and built to withstand whatever the decline throws at you.', 'Apparel', 2000, 'gbp', true, 
+('binliner-adventures', 'Binliner Adventures', 'The Binliner Adventures tee. For the urban explorer who doesn''t care if they are seen.', 'Apparel', 2000, 'gbp', true, 
   '/images/products/binliner-adventures/binliner-adventures_1.webp',
   '["/images/products/binliner-adventures/binliner-adventures_1.webp", "/images/products/binliner-adventures/binliner-adventures_2.webp", "/images/products/binliner-adventures/binliner-adventures_3.webp"]'::jsonb),
 
-('trespassing-prole-hoodie', 'Trespassing Prole Hoodie', 'When you absolutely must go trespassing, you need all the stealth you can get. Heavyweight Gildan 18500 Adult Hoodie. Comfortable, durable, and optimized for low-light environments.', 'Apparel', 3500, 'gbp', true, 
+('trespassing-prole-hoodie', 'Trespassing Prole Hoodie', 'When you absolutely must go trespassing, you need all the stealth you can get. Heavyweight, comfortable, and optimized for low light environments.', 'Apparel', 3500, 'gbp', true, 
   '/images/products/trespassing-prole-hoodie/trespassing-prole-hoodie_1.webp',
   '["/images/products/trespassing-prole-hoodie/trespassing-prole-hoodie_1.webp", "/images/products/trespassing-prole-hoodie/trespassing-prole-hoodie_2.webp", "/images/products/trespassing-prole-hoodie/trespassing-prole-hoodie_3.webp"]'::jsonb),
 
-('binbag-prole-hoodie', 'Binbag Prole Hoodie', 'High-performance urban stealth hoodie. Engineered for the modern Prole — heavyweight Gildan 18500 cotton blend, built for durability and comfort in the field. No logos. No compromise.', 'Apparel', 3500, 'gbp', true, 
+('binbag-prole-hoodie', 'Binbag Prole Hoodie', 'The Binbag Prole hoodie. Pull it on and let everyone know, you don''t care what they think.', 'Apparel', 3500, 'gbp', true, 
   '/images/products/binbag-prole-hoodie/binbag-prole-hoodie_1.webp',
   '["/images/products/binbag-prole-hoodie/binbag-prole-hoodie_1.webp", "/images/products/binbag-prole-hoodie/binbag-prole-hoodie_2.webp", "/images/products/binbag-prole-hoodie/binbag-prole-hoodie_3.webp"]'::jsonb),
 
-('binbag-adventures-hoodie', 'Binbag Adventures Hoodie', 'The Binbag Adventures hoodie. Heavyweight Gildan 18500 Adult Hooded Sweat. Black on black, built for the elements, designed for the decline. Pull the hood up and disappear.', 'Apparel', 3500, 'gbp', true, 
+('binbag-adventures-hoodie', 'Binbag Adventures Hoodie', 'High-performance urban stealth hoodie. Engineered for the modern Prole, featuring a heavyweight black cotton blend designed for durability and comfort in the field.', 'Apparel', 3500, 'gbp', true, 
   '/images/products/binbag-adventures-hoodie/binbag-adventures-hoodie_1.webp',
   '["/images/products/binbag-adventures-hoodie/binbag-adventures-hoodie_1.webp", "/images/products/binbag-adventures-hoodie/binbag-adventures-hoodie_2.webp", "/images/products/binbag-adventures-hoodie/binbag-adventures-hoodie_3.webp"]'::jsonb),
 
 -- ── ACCESSORIES ───────────────────────────────────────────────────
-('tinny-mug', 'Tinny Mug', 'The classic mission-ready enamel mug. Lightweight, durable, and built for the field. Whether it is your morning caffeine or a late-night brew on location, the Tinny has your back.', 'Accessories', 1600, 'gbp', true, 
+('tinny-mug', 'Tinny Mug', 'The classic mission ready enamel mug. Lightweight, durable and ready for action. Perfect for your morning caffeine or late night brew.', 'Accessories', 1600, 'gbp', true, 
   '/images/products/tinny-mug/tinny-mug_1.webp',
   '["/images/products/tinny-mug/tinny-mug_1.webp", "/images/products/tinny-mug/tinny-mug_2.webp", "/images/products/tinny-mug/tinny-mug_3.webp"]'::jsonb),
 
-('big-black-cup', 'Big Black Cup', 'When you need a stiff drink, reach for the Big Black Cup. Glossy black ceramic, substantial in the hand, and built to handle whatever the decline pours your way.', 'Accessories', 1500, 'gbp', true, 
+('big-black-cup', 'Big Black Cup', 'When you need a stiff drink, reach for The Prole Adventure Big Black Cup. Sleek, glossy, and substantial.', 'Accessories', 1500, 'gbp', true, 
   '/images/products/big-black-cup/big-black-cup_1.webp',
   '["/images/products/big-black-cup/big-black-cup_1.webp", "/images/products/big-black-cup/big-black-cup_2.webp", "/images/products/big-black-cup/big-black-cup_3.webp"]'::jsonb),
 
-('big-black-mug', 'Big Black Mug', 'Sleek, glossy, and uncompromisingly black. The Big Black Mug is your field-ready ceramic companion for any brew, any hour, any situation.', 'Accessories', 1500, 'gbp', true, 
+('big-black-mug', 'Big Black Mug', 'A big, bold black ceramic cup. Prole Adventures branded. Made for strong tea and stronger people', 'Accessories', 1500, 'gbp', true, 
   '/images/products/big-black-mug/big-black-mug_1.webp',
   '["/images/products/big-black-mug/big-black-mug_1.webp", "/images/products/big-black-mug/big-black-mug_2.webp", "/images/products/big-black-mug/big-black-mug_3.webp"]'::jsonb),
 
-('whitey-mug', 'Whitey mug', 'Clean. Simple. White. The Whitey Mug keeps things brutally minimal. Glossy ceramic, three sizes, zero nonsense. For the Prole who takes their tea seriously.', 'Accessories', 1200, 'gbp', true, 
+('whitey-mug', 'Whitey mug', 'A smaller ceramic mug for those who already discovered their limits', 'Accessories', 1200, 'gbp', true, 
   '/images/products/whitey-mug/whitey-mug_1.webp',
   '["/images/products/whitey-mug/whitey-mug_1.webp", "/images/products/whitey-mug/whitey-mug_2.webp", "/images/products/whitey-mug/whitey-mug_3.webp"]'::jsonb),
 
-('huge-whitey', 'Huge Whitey', 'For when a normal mug is not enough. The Huge Whitey is an oversized glossy ceramic vessel for the truly committed. Comes in sizes that make your colleagues uncomfortable.', 'Accessories', 1050, 'gbp', true, 
+('huge-whitey', 'Huge Whitey', 'Bigger than a Sports Direct Mug. Perfect for when you''re welded to the sofa', 'Accessories', 1050, 'gbp', true, 
   '/images/products/huge-whitey/huge-whitey_1.webp',
   '["/images/products/huge-whitey/huge-whitey_1.webp", "/images/products/huge-whitey/huge-whitey_2.webp", "/images/products/huge-whitey/huge-whitey_3.webp"]'::jsonb),
 
-('black-hole-mug', 'Black Hole Mug', 'Black on the outside. Colour on the inside. The Black Hole Mug — a ceramic contradiction for the modern Prole. Looks menacing. Feels surprisingly cheerful.', 'Accessories', 1500, 'gbp', true, 
+('black-hole-mug', 'Black Hole Mug', 'The Black Hole Mug. Pour tea inside and watch as it disappears.', 'Accessories', 1500, 'gbp', true, 
   '/images/products/black-hole-mug/black-hole-mug_1.webp',
   '["/images/products/black-hole-mug/black-hole-mug_1.webp", "/images/products/black-hole-mug/black-hole-mug_2.webp", "/images/products/black-hole-mug/black-hole-mug_3.webp"]'::jsonb),
 
-('prole-patch', 'Prole Patch', 'Show your allegiance to the cause. High-quality embroidered tactical patch for your gear, jacket, or bag. Iron-on and sew-on backing. Built to last in the field.', 'Accessories', 1350, 'gbp', true, 
+('prole-patch', 'Prole Patch', 'The original Prole Adventures patch. Sticks to anything with velcro', 'Accessories', 1350, 'gbp', true, 
   '/images/products/prole-patch/prole-patch_1.webp',
   '["/images/products/prole-patch/prole-patch_1.webp"]'::jsonb),
 
-('prole-binbag-patch', 'Prole Binbag Patch', 'The binbag aesthetic in embroidered form. Tactical patch for your kit. Iron-on and sew-on backing, built for field use. Small act of resistance for your everyday carry.', 'Accessories', 1350, 'gbp', true, 
+('prole-binbag-patch', 'Prole Binbag Patch', 'Prole Binbag patch. Stick it on a jacket, a bag, wherever you have velcro', 'Accessories', 1350, 'gbp', true, 
   '/images/products/prole-binbag-patch/prole-binbag-patch_1.webp',
   '["/images/products/prole-binbag-patch/prole-binbag-patch_1.webp"]'::jsonb),
 
-('prole-cap', 'Prole Cap', 'The YP Classics dad cap. Low-profile, unstructured, and built for long days in the field. Wear it forward. Wear it back. Just keep moving.', 'Accessories', 2500, 'gbp', true, 
+('prole-cap', 'Prole Cap', 'The Prole cap. It''s a cap, it says Prole on it.', 'Accessories', 2500, 'gbp', true, 
   '/images/products/prole-cap/prole-cap_1.webp',
   '["/images/products/prole-cap/prole-cap_1.webp", "/images/products/prole-cap/prole-cap_2.webp", "/images/products/prole-cap/prole-cap_3.webp", "/images/products/prole-cap/prole-cap_4.webp", "/images/products/prole-cap/prole-cap_5.webp"]'::jsonb),
 
-('vintage-prole-cap', 'Vintage Prole Cap', 'Six-panel low-profile dad hat with a worn-in feel. The Vintage Prole Cap — for blending in at the ruins of the old world.', 'Accessories', 2500, 'gbp', true, 
+('vintage-prole-cap', 'Vintage Prole Cap', 'One for the old heads, the ones who already know.', 'Accessories', 2500, 'gbp', true, 
   '/images/products/vintage-prole-cap/vintage-prole-cap_1.webp',
   '["/images/products/vintage-prole-cap/vintage-prole-cap_1.webp", "/images/products/vintage-prole-cap/vintage-prole-cap_2.webp", "/images/products/vintage-prole-cap/vintage-prole-cap_3.webp", "/images/products/vintage-prole-cap/vintage-prole-cap_4.webp", "/images/products/vintage-prole-cap/vintage-prole-cap_5.webp"]'::jsonb)
 
