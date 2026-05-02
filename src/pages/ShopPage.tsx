@@ -116,6 +116,7 @@ export const ShopPage: React.FC = () => {
       if (error) {
         console.error('Error fetching products:', error);
       } else if (data) {
+        console.log('Fetched products from Supabase:', data);
         const mappedProducts: Product[] = data.map((item: any) => ({
           id: item.id,
           name: item.name,
