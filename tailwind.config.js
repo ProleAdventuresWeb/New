@@ -68,8 +68,8 @@ module.exports = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        display: ["'Orbitron'", "'Space Grotesk'", "sans-serif"],
-        body: ["'Inter'", "'SF Pro Text'", "system-ui", "sans-serif"],
+        display: ["'Chelsea Market'", "'Orbitron'", "'Space Grotesk'", "sans-serif"],
+        body: ["'Chelsea Market'", "'Inter'", "'SF Pro Text'", "system-ui", "sans-serif"],
         mono: ["'Fira Code'", "'SF Mono'", "monospace"],
       },
       keyframes: {
