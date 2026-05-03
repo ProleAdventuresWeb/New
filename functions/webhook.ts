@@ -70,7 +70,7 @@ async function sendTransactionalEmail(
     order_confirmed: 1,
     shipping_update: 2,
     delivered: 3,
-    mission_reward: 4,
+    mission_reward: 5,
   };
   const templateId = templateIds[templateKey];
   if (!templateId) {
