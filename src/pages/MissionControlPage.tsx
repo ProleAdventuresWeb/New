@@ -327,7 +327,7 @@ export const MissionControlPage: React.FC = () => {
           mode: 'contribution',
           missionId,
           missionName,
-          missionSlug: missionCodename.toLowerCase().replace(/\s+/g, '-'),
+          missionSlug: (missionCodename || '').toLowerCase().replace(/\s+/g, '-'),
           rewardType: rewardType || null,
           rewardTitle: rewardTitle || null
         })
