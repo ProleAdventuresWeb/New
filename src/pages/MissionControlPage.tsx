@@ -333,11 +333,11 @@ export const MissionControlPage: React.FC = () => {
         })
       });
 
-      const data = (await response.json()) as CheckoutSession;
-      if (data.clientSecret) {
-        searchParams.set('mission_id', missionId);
-        setSearchParams(searchParams, { replace: true });
-        setCheckoutData(data);
+      const data = await response.json() as { url?: string; error?: string };
+      if (data.url) {
+        window.location.href = data.url;
+      } else if (data.error) {
+        throw new Error(data.error);
       }
     } catch (err) {
       console.error('Failed to initiate contribution:', err);
@@ -669,14 +669,6 @@ export const MissionControlPage: React.FC = () => {
           </div>
         </div>
       </section>
-
-      {/* ─── Checkout Modal ───────────────────────────────────────────────── */}
-      {checkoutData && (
-        <EmbeddedCheckoutModal
-          clientSecret={checkoutData.clientSecret}
-          onClose={() => setCheckoutData(null)}
-        />
-      )}
     </div>
   );
 };

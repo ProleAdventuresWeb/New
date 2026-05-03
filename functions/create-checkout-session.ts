@@ -72,8 +72,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     };
 
     if (isContribution) {
-      (sessionOptions as Record<string, unknown>).ui_mode = 'embedded';
-      sessionOptions.return_url = `${origin}/prole-control?success=true&mission_id=${missionId}&session_id={CHECKOUT_SESSION_ID}`;
+      sessionOptions.success_url = `${origin}/prole-control?success=true&mission_id=${missionId}&session_id={CHECKOUT_SESSION_ID}`;
+      sessionOptions.cancel_url = `${origin}/prole-control`;
       sessionOptions.payment_intent_data = {
         metadata: {
           mission_id: String(missionId || 'none'),
@@ -102,15 +102,9 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
 
     const session = await stripe.checkout.sessions.create(sessionOptions);
 
-    if (isContribution) {
-      return new Response(JSON.stringify({ clientSecret: session.client_secret }), {
-        status: 200, headers: corsHeaders,
-      });
-    } else {
-      return new Response(JSON.stringify({ url: session.url }), {
-        status: 200, headers: corsHeaders,
-      });
-    }
+    return new Response(JSON.stringify({ url: session.url }), {
+      status: 200, headers: corsHeaders,
+    });
   } catch (error: unknown) {
     console.error('Stripe error:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown Stripe error';
