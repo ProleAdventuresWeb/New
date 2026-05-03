@@ -70,6 +70,7 @@ async function sendTransactionalEmail(
     order_confirmed: 1,
     shipping_update: 2,
     delivered: 3,
+    mission_reward: 4,
   };
   const templateId = templateIds[templateKey];
   if (!templateId) {
@@ -263,6 +264,54 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
         if (error) {
           console.error('Error saving contribution:', error);
           throw error;
+        }
+
+        // If there's a reward, fetch its URL and send it
+        if (session.metadata?.reward_title && session.metadata?.reward_title !== 'none') {
+          const { data: adv } = await supabase
+            .from('adventures')
+            .select('reward_url')
+            .eq('id', contributionData.mission_id)
+            .single();
+
+          if (adv?.reward_url) {
+            await sendTransactionalEmail(supabase, env, contributionData.customer_email, 'mission_reward', {
+              mission_name: contributionData.mission_name,
+              reward_title: session.metadata.reward_title,
+              reward_url: adv.reward_url,
+              amount: `£${contributionData.amount.toFixed(2)}`
+            });
+            
+            await supabase
+              .from('mission_contributions')
+              .update({ reward_delivered: true })
+              .eq('stripe_session_id', session.id);
+          }
+        }
+
+        // Increment the bounty_current in the adventures table
+        if (session.metadata?.mission_id && session.metadata.mission_id !== 'unknown') {
+          const { error: updateError } = await supabase.rpc('increment_mission_bounty', {
+            mission_uuid: session.metadata.mission_id,
+            amount_to_add: contributionData.amount
+          });
+          
+          if (updateError) {
+            // Fallback if RPC doesn't exist
+            console.warn('RPC increment_mission_bounty failed, falling back to manual update:', updateError);
+            const { data: adv } = await supabase
+              .from('adventures')
+              .select('bounty_current')
+              .eq('id', session.metadata.mission_id)
+              .single();
+              
+            if (adv) {
+              await supabase
+                .from('adventures')
+                .update({ bounty_current: (adv.bounty_current || 0) + contributionData.amount })
+                .eq('id', session.metadata.mission_id);
+            }
+          }
         }
       } else {
         const customerEmail = session.customer_details?.email || 'unknown';

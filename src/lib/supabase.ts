@@ -80,6 +80,12 @@ export interface Adventure {
   lng: number;
   bounty_target: number;
   bounty_current: number;
+  reward_type?: string;
+  reward_title?: string;
+  reward_description?: string;
+  reward_delivery_mode?: string;
+  reward_url?: string;
+  is_reward_active?: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -99,6 +105,12 @@ export interface SecureAdventure {
   lng: number;
   bounty_target: number;
   bounty_current: number;
+  reward_type?: string;
+  reward_title?: string;
+  reward_description?: string;
+  reward_delivery_mode?: string;
+  reward_url?: string;
+  is_reward_active?: boolean;
   created_at: string;
   updated_at: string;
 }

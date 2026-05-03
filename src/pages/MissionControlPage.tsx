@@ -99,7 +99,7 @@ interface MissionCardProps {
   adventure: SecureAdventure;
   isSelected: boolean;
   onSelect: () => void;
-  onContribute: (amount: number, missionId: string, missionName: string) => Promise<void>;
+  onContribute: (amount: number, missionId: string, missionName: string, missionCodename: string, rewardType?: string, rewardTitle?: string) => Promise<void>;
   contributionSuccess: boolean;
 }
 
@@ -120,7 +120,7 @@ const MissionCard: React.FC<MissionCardProps> = ({ adventure, isSelected, onSele
     }
 
     setLocalLoading(true);
-    await onContribute(val, adventure.id, adventure.display_title);
+    await onContribute(val, adventure.id, adventure.display_title, adventure.codename, adventure.reward_type, adventure.reward_title);
     setLocalLoading(false);
   };
 
@@ -158,6 +158,29 @@ const MissionCard: React.FC<MissionCardProps> = ({ adventure, isSelected, onSele
         <div className="flex items-center gap-2 text-xs text-neutral-100 mb-4 font-mono">
           <MapPin className="w-3 h-3 text-red-400/70" />
           {adventure.display_lat.toFixed(4)}°N, {adventure.display_lng.toFixed(4)}°E
+        </div>
+      )}
+
+      {/* Mission Reward Block */}
+      {adventure.is_reward_active && adventure.reward_title && (
+        <div className="mb-5 bg-neutral-900/60 border border-neutral-700/50 rounded-xl p-4 flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <span className="bg-red-500/20 text-red-400 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              Instant Reward
+            </span>
+            <span className="text-white text-sm font-bold">{adventure.reward_title}</span>
+          </div>
+          {adventure.reward_description && (
+            <p className="text-neutral-400 text-xs leading-relaxed">
+              {adventure.reward_description}
+            </p>
+          )}
+          <div className="flex items-center gap-1.5 mt-1">
+            <CheckCircle className="w-3.5 h-3.5 text-green-400/80" />
+            <span className="text-neutral-500 text-[11px] font-mono uppercase">
+              {adventure.reward_delivery_mode === 'email' ? 'Delivered instantly by email after payment' : 'Delivered instantly after payment'}
+            </span>
+          </div>
         </div>
       )}
 
@@ -236,7 +259,7 @@ const MissionCard: React.FC<MissionCardProps> = ({ adventure, isSelected, onSele
                 ) : (
                   <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
                 )}
-                Contribute
+                {adventure.is_reward_active ? 'Fund & Get Reward' : 'Contribute'}
               </button>
             </div>
           )}
@@ -292,7 +315,7 @@ export const MissionControlPage: React.FC = () => {
     }
   }, [success, searchParams, setSearchParams]);
 
-  const handleInitiateContribution = async (amount: number, missionId: string, missionName: string) => {
+  const handleInitiateContribution = async (amount: number, missionId: string, missionName: string, missionCodename: string, rewardType?: string, rewardTitle?: string) => {
     try {
       const response = await fetch('/create-checkout-session', {
         method: 'POST',
@@ -303,7 +326,10 @@ export const MissionControlPage: React.FC = () => {
           quantity: 1,
           mode: 'contribution',
           missionId,
-          missionName
+          missionName,
+          missionSlug: missionCodename.toLowerCase().replace(/\s+/g, '-'),
+          rewardType: rewardType || null,
+          rewardTitle: rewardTitle || null
         })
       });
 
@@ -535,7 +561,7 @@ export const MissionControlPage: React.FC = () => {
                                   style={{ color: 'white' }}
                                 >
                                   <div className={`w-2 h-2 rounded-full ${cfg.dot} ${adv.status === 'active' ? 'animate-pulse' : ''}`} />
-                                  {isPlanning ? 'FUND THIS MISSION' : 'CONTRIBUTE TO MISSION'}
+                                  {adv.is_reward_active ? 'FUND & GET REWARD' : isPlanning ? 'FUND THIS MISSION' : 'CONTRIBUTE TO MISSION'}
                                 </button>
                               )}
                             </div>

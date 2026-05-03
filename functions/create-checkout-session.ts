@@ -22,7 +22,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   }
 
   const { name, price, quantity, productId, variantId, sku, mode, 
-          missionId, missionName, profileId } = body as Record<string, string | number>;
+          missionId, missionName, missionSlug, rewardType, rewardTitle, profileId } = body as Record<string, string | number>;
 
   if (!name || !price || !quantity) {
     return new Response(JSON.stringify({ error: 'Missing required fields' }), {
@@ -63,6 +63,9 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
         sku: String(sku || 'none'),
         mission_id: String(missionId || 'none'),
         mission_name: String(missionName || 'none'),
+        mission_slug: String(missionSlug || 'none'),
+        reward_type: String(rewardType || 'none'),
+        reward_title: String(rewardTitle || 'none'),
         type: isContribution ? 'contribution' : 'product',
         profile_id: String(profileId || 'none'),
       },
@@ -75,6 +78,9 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
         metadata: {
           mission_id: String(missionId || 'none'),
           mission_name: String(missionName || 'none'),
+          mission_slug: String(missionSlug || 'none'),
+          reward_type: String(rewardType || 'none'),
+          reward_title: String(rewardTitle || 'none'),
           type: 'contribution',
         },
       };
