@@ -26,7 +26,7 @@ import {
   updatePost, 
   deletePost 
 } from '../lib/posts';
-import { supabase } from '../lib/supabase';
+import { useAuth } from '../lib/auth';
 import type { Post, PostCategory, PostLayout, TemplateData } from '../types/post';
 
 const CATEGORIES: PostCategory[] = ['escape', 'prolenomics', 'decline', 'freedom', 'dispatches', 'urban-exploration'];
@@ -99,7 +99,9 @@ export const AdminPage: React.FC = () => {
     return estimateReadTime(combinedText);
   }, []);
 
-  const fetchPosts = async () => {
+  const { user, initialized: authInitialized } = useAuth();
+
+  const fetchPosts = useCallback(async () => {
     setLoading(true);
     try {
       const data = await getAllPostsAdmin();
@@ -110,38 +112,21 @@ export const AdminPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const checkAuth = async () => {
-      try {
-        const { data, error } = await supabase?.auth.getSession() || { data: { session: null }, error: null };
-        if (error) {
-          console.error('Error checking auth session', error);
-        }
-        if (!isMounted) return;
-        setIsAuthenticated(data?.session?.user?.email === 'contact@proleadventures.com');
-      } catch (err) {
-        console.error('Unexpected auth check error', err);
-      } finally {
-        if (isMounted) setAuthLoading(false);
-      }
-    };
-
-    checkAuth();
-
-    return () => {
-      isMounted = false;
-    };
   }, []);
+
+  // Update authentication status based on the central auth hook
+  useEffect(() => {
+    if (authInitialized) {
+      setIsAuthenticated(user?.email === 'contact@proleadventures.com');
+      setAuthLoading(false);
+    }
+  }, [user, authInitialized]);
 
   useEffect(() => {
     if (isAuthenticated) {
       fetchPosts();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, fetchPosts]);
 
   // Clear success/error messages after delay
   useEffect(() => {
