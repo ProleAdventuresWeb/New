@@ -41,7 +41,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          templateId: 4, // Newsletter Welcome Template
+          templateId: 6, // Newsletter Welcome Template
           to: [{ email }],
           sender: { name: 'Prole Adventures', email: senderEmail },
           params: {

@@ -67,10 +67,10 @@ async function sendTransactionalEmail(
 
   const senderEmail = env.BREVO_SENDER_EMAIL || 'contact@proleadventures.com';
   const templateIds: Record<string, number> = {
-    order_confirmed: 1,
-    shipping_update: 2,
-    delivered: 3,
-    mission_reward: 5,
+    order_confirmed: 3,
+    shipping_update: 4,
+    delivered: 5,
+    mission_reward: 7,
   };
   const templateId = templateIds[templateKey];
   if (!templateId) {

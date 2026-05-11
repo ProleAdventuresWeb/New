@@ -69,7 +69,7 @@ async function sendShippingEmail(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        templateId: 2,
+        templateId: 4,
         to: [{ email }],
         sender: { name: 'Prole Adventures', email: senderEmail },
         params: { order_number: orderNumber, tracking_number: trackingNumber, carrier, tracking_url: trackingUrl },
