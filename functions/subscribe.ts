@@ -30,7 +30,27 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       throw dbError;
     }
 
-    // 2. Send Welcome Email via Brevo (Template ID: 4)
+    // 2. Add contact to Brevo list (List ID: 5) for automation workflows
+    if (env.BREVO_API_KEY) {
+      const contactResponse = await fetch('https://api.brevo.com/v3/contacts', {
+        method: 'POST',
+        headers: {
+          'api-key': env.BREVO_API_KEY,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          listIds: [5],
+          updateEnabled: true,
+        }),
+      });
+
+      if (!contactResponse.ok) {
+        console.error('Brevo contact creation failed:', await contactResponse.text());
+      }
+    }
+
+    // 3. Send Welcome Email via Brevo (Template ID: 6)
     if (env.BREVO_API_KEY) {
       const senderEmail = env.BREVO_SENDER_EMAIL || 'contact@proleadventures.com';
       
