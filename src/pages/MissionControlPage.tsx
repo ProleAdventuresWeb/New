@@ -195,10 +195,17 @@ const MissionCard: React.FC<MissionCardProps> = ({ adventure, isSelected, onSele
         </div>
         <div className="w-full bg-neutral-800/50 rounded-full h-1.5 overflow-hidden border border-white/5">
           <div
-            className={`h-full rounded-full transition-all duration-1000 ${
-              isDone ? 'bg-neutral-500' : 'bg-gradient-to-r from-red-600 to-red-400'
-            }`}
-            style={{ width: `${adventure.bounty_target > 0 ? progress : 100}%` }}
+            className="h-full rounded-full transition-all duration-1000"
+            style={{
+              width: `${adventure.bounty_target > 0 ? progress : 100}%`,
+              background: (() => {
+                const pct = adventure.bounty_target > 0 ? progress : 100;
+                // Hue: 0 = red, 120 = green; interpolate linearly with progress
+                const hue = Math.round((pct / 100) * 120);
+                const startHue = Math.max(0, hue - 15);
+                return `linear-gradient(to right, hsl(${startHue}, 90%, 40%), hsl(${hue}, 90%, 50%))`;
+              })(),
+            }}
           />
         </div>
         <p className="text-[10px] font-mono text-neutral-500 mt-2 uppercase tracking-tighter">

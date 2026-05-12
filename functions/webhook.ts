@@ -110,6 +110,91 @@ async function sendTransactionalEmail(
   }
 }
 
+// ── Umami server-side event tracking ────────────────────────────────────────
+async function trackUmamiEvent(
+  env: Env,
+  eventName: string,
+  url: string,
+  data?: Record<string, string | number>
+): Promise<void> {
+  if (!env.UMAMI_ENDPOINT || !env.UMAMI_WEBSITE_ID) return;
+  try {
+    await fetch(env.UMAMI_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'event',
+        payload: {
+          website: env.UMAMI_WEBSITE_ID,
+          name: eventName,
+          url,
+          hostname: 'proleadventures.com',
+          language: 'en-GB',
+          screen: '1920x1080',
+          ...(data ? { data } : {}),
+        },
+      }),
+    });
+  } catch (err) {
+    console.error('Umami tracking error:', err);
+  }
+}
+
+// ── Operational inbox alert via Zoho SMTP (no Brevo credits) ─────────────────
+// Uses Zoho's SMTP-to-HTTP relay. Cloudflare Workers cannot open raw TCP sockets
+// so we POST to an authenticated Zoho Mail API endpoint instead.
+async function sendOperationalAlert(
+  env: Env,
+  subject: string,
+  body: string
+): Promise<void> {
+  if (!env.ZOHO_SMTP_USER || !env.ZOHO_SMTP_PASS) {
+    console.warn('ZOHO_SMTP_USER/PASS not set — skipping operational alert:', subject);
+    return;
+  }
+  try {
+    // Zoho Mail API: https://mail.zoho.com/api/accounts/{accountId}/messages
+    // We derive the accountId from the email address segment. Zoho also
+    // supports a simple form-encoded relay at their MX API — we use the
+    // official Zoho Mail Send API v1 (no OAuth required for SMTP App Password).
+    const auth = btoa(`${env.ZOHO_SMTP_USER}:${env.ZOHO_SMTP_PASS}`);
+    const payload = {
+      fromAddress: env.ZOHO_SMTP_USER,
+      toAddress: 'contact@proleadventures.com',
+      subject,
+      content: body,
+      mailFormat: 'plaintext',
+    };
+    // Extract accountId (numeric) embedded in ZOHO_SMTP_USER env var
+    // Format expected: "accountId|email" e.g. "12345678|contact@proleadventures.com"
+    const [accountId, fromEmail] = env.ZOHO_SMTP_USER.includes('|')
+      ? env.ZOHO_SMTP_USER.split('|')
+      : ['', env.ZOHO_SMTP_USER];
+    if (!accountId) {
+      console.warn('ZOHO_SMTP_USER must be in format "accountId|email" for Zoho API');
+      return;
+    }
+    const response = await fetch(
+      `https://mail.zoho.eu/api/accounts/${accountId}/messages`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Basic ${auth}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ...payload, fromAddress: fromEmail }),
+      }
+    );
+    if (!response.ok) {
+      console.error('Operational alert send failed:', await response.text());
+    } else {
+      console.log('Operational alert sent:', subject);
+    }
+  } catch (err) {
+    console.error('Operational alert error:', err);
+  }
+}
+
 async function createPrintfulOrder(
   supabase: Supa,
   env: Env,
@@ -289,6 +374,18 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
           }
         }
 
+        // Fire Umami + operational alert for mission contribution
+        const contribAmountGBP = `£${contributionData.amount.toFixed(2)}`;
+        await trackUmamiEvent(env, 'mission_contribution', '/mission-control', {
+          mission: contributionData.mission_name,
+          amount: contributionData.amount,
+        });
+        await sendOperationalAlert(
+          env,
+          `SIGNAL: Operation Funded ${contribAmountGBP}`,
+          `Mission contribution received.\n\nMission: ${contributionData.mission_name}\nAmount: ${contribAmountGBP}\nEmail: ${contributionData.customer_email}\nStripe Session: ${session.id}`
+        );
+
         // Increment the bounty_current in the adventures table
         if (session.metadata?.mission_id && session.metadata.mission_id !== 'unknown') {
           const { error: updateError } = await supabase.rpc('increment_mission_bounty', {
@@ -387,6 +484,19 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
             total: `£${((session.amount_total || 0) / 100).toFixed(2)}`,
             customer_name: session.customer_details?.name || 'there',
           });
+
+          // Fire Umami + operational alert for shop sale
+          const saleAmountGBP = `£${((session.amount_total || 0) / 100).toFixed(2)}`;
+          await trackUmamiEvent(env, 'shop_sale', '/gear', {
+            order_number: order.order_number,
+            amount: (session.amount_total || 0) / 100,
+          });
+          await sendOperationalAlert(
+            env,
+            `SIGNAL: Operation Funded ${saleAmountGBP}`,
+            `Shop sale completed.\n\nOrder: ${order.order_number}\nAmount: ${saleAmountGBP}\nEmail: ${customerEmail}\nStripe Session: ${session.id}`
+          );
+
           await createPrintfulOrder(supabase, env, order.id);
           console.log(`Order ${order.order_number} created for ${customerEmail}`);
         }

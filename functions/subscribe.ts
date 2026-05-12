@@ -77,6 +77,25 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       console.warn('BREVO_API_KEY not set, skipping welcome email');
     }
 
+    // 4. Fire Umami server-side event — bypasses ad-blockers
+    if (env.UMAMI_ENDPOINT && env.UMAMI_WEBSITE_ID) {
+      fetch(env.UMAMI_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'event',
+          payload: {
+            website: env.UMAMI_WEBSITE_ID,
+            name: 'newsletter_signup',
+            url: '/subscribe',
+            hostname: 'proleadventures.com',
+            language: 'en-GB',
+            screen: '1920x1080',
+          },
+        }),
+      }).catch((err) => console.error('Umami tracking error:', err));
+    }
+
     return new Response(JSON.stringify({ success: true }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
