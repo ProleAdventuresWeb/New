@@ -45,13 +45,16 @@ BEGIN
     );
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- Drop if exists to make idempotent
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
     AFTER INSERT ON auth.users
     FOR EACH ROW EXECUTE FUNCTION handle_new_user();
+
+-- Revoke execute from public roles to prevent direct RPC execution
+REVOKE EXECUTE ON FUNCTION public.handle_new_user() FROM PUBLIC, anon, authenticated;
 
 
 -- =============================================
@@ -207,16 +210,19 @@ CREATE OR REPLACE FUNCTION generate_order_number()
 RETURNS TRIGGER AS $$
 BEGIN
     IF NEW.order_number IS NULL OR NEW.order_number = '' THEN
-        NEW.order_number := 'PA-' || LPAD(nextval('order_number_seq')::TEXT, 6, '0');
+        NEW.order_number := 'PA-' || LPAD(nextval('public.order_number_seq')::TEXT, 6, '0');
     END IF;
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 DROP TRIGGER IF EXISTS set_order_number ON shop_orders;
 CREATE TRIGGER set_order_number
     BEFORE INSERT ON shop_orders
     FOR EACH ROW EXECUTE FUNCTION generate_order_number();
+
+-- Revoke execute from public roles to prevent direct RPC execution
+REVOKE EXECUTE ON FUNCTION public.generate_order_number() FROM PUBLIC, anon, authenticated;
 
 
 -- =============================================
@@ -394,9 +400,8 @@ CREATE POLICY "Users can view own email events"
     ON email_events FOR SELECT
     USING (auth.uid() = profile_id);
 
-CREATE POLICY "Service role full access to email events"
-    ON email_events FOR ALL
-    USING (auth.role() = 'service_role');
+-- Service role does not need an explicit policy because it naturally bypasses RLS in Supabase.
+-- This prevents the "RLS Policy Always True" linter warning.
 
 
 -- =============================================
@@ -419,9 +424,8 @@ CREATE INDEX idx_webhook_events_lookup ON webhook_events(provider, event_id);
 ALTER TABLE webhook_events ENABLE ROW LEVEL SECURITY;
 
 -- Only service role should access webhook events
-CREATE POLICY "Service role full access to webhook events"
-    ON webhook_events FOR ALL
-    USING (auth.role() = 'service_role');
+-- Service role does not need an explicit policy because it naturally bypasses RLS in Supabase.
+-- This prevents the "RLS Policy Always True" linter warning.
 
 
 -- =============================================
@@ -446,7 +450,8 @@ ALTER TABLE email_signups ENABLE ROW LEVEL SECURITY;
 -- Allow inserts from anon (for signup forms)
 CREATE POLICY "Anyone can subscribe"
     ON email_signups FOR INSERT
-    WITH CHECK (true);
+    TO anon
+    WITH CHECK (email IS NOT NULL);
 
 CREATE POLICY "Service role full access to email signups"
     ON email_signups FOR ALL
