@@ -1,1 +1,125 @@
-{"current_kit": [{"id": "gear_001", "name": "GoPro 12 Black", "category": "camera", "price": "£379", "affiliate_link": "https://www.amazon.com/dp/B0C1P8YQ9V", "rating": 4.7, "description": "The ultimate adventure companion—tiny, rugged, and always ready when freedom calls.", "specs": {"sensor": "27MP 1/1.9-inch CMOS", "video": "5.3K 60p, 4K 120p", "battery": "1.5 hours", "weight": "159g"}, "missions": ["action-adventures", "stealth-documentation", "extreme-weather"], "why_essential": "Pocket-sized power that goes where bigger cameras can't. Perfect for documenting real adventures without the weight.", "tested_conditions": ["mountain-climbing", "urban-exploration", "waterproof-operations"], "image": "/imgs/gopro12.webp"}, {"id": "gear_002", "name": "DJI Mic Mini", "category": "microphone", "price": "£139", "affiliate_link": "https://www.amazon.com/dp/B0D11K5YQ3", "rating": 4.6, "description": "Crystal clear audio capture in a pocket-sized package. Because great adventures deserve great sound.", "specs": {"range": "250m transmission", "battery": "11 hours recording", "weight": "10g each", "connectivity": "USB-C, Lightning, 3.5mm"}, "missions": ["interview-documentation", "field-recording", "adventure-storytelling"], "why_essential": "Professional audio quality without the bulk. Perfect for capturing authentic voices and ambient sounds.", "tested_conditions": ["windy-mountains", "urban-environments", "long-distance-recording"], "image": "/imgs/mic mini.webp"}, {"id": "gear_004", "name": "MSI Katana 15 B13V", "category": "laptop", "price": "£999", "affiliate_link": "https://www.amazon.com/dp/B0C1P8YQ9V", "rating": 4.5, "description": "Portable powerhouse for editing adventures on the move. Because the best stories wait for no one.", "specs": {"processor": "Intel Core i7-13620H", "graphics": "RTX 4050 6GB", "memory": "16GB DDR5", "storage": "512GB NVMe SSD", "display": "15.6\" 144Hz", "weight": "2.25kg"}, "missions": ["mobile-editing", "field-reporting", "content-creation"], "why_essential": "Enough power to edit 4K footage anywhere, yet portable enough to disappear in any environment.", "tested_conditions": ["coffee-shop-editing", "mountain-lodge-post-production", "remote-location-work"], "image": "/imgs/msilaptop.webp"}, {"id": "gear_003", "name": "Osprey Farpoint 40", "category": "bag", "price": "£129", "affiliate_link": "https://www.amazon.com/dp/B07Q9LQKB4", "rating": 4.8, "description": "The perfect size for day adventures and urban exploration—compact yet carries everything you need.", "specs": {"capacity": "40 liters", "weight": "1.4kg", "material": "210D High Tenacity Nylon", "frame": "Internal lightweight frame"}, "missions": ["day-adventures", "urban-exploration", "weekend-trips"], "why_essential": "Perfect carry-on size that fits overhead compartments while holding all your essential gear for full-day missions.", "tested_conditions": ["city-adventures", "train-travel", "short-hikes"], "image": "/imgs/farpoint.webp"}], "testimonials": [{"item": "GoPro 12 Black", "quote": "Captured an entire mountain descent without anyone knowing I was filming. Tiny but mighty.", "mission": "Highland Ridge Descent"}, {"item": "DJI Mic Mini", "quote": "Recorded crystal clear interviews in the middle of a bustling market. No cables, no fuss, just pure audio gold.", "mission": "Street Vendor Interviews"}, {"item": "MSI Katana 15 B13V", "quote": "Edited a full 4K adventure documentary from a Scottish bothy. Performance that doesn't compromise mobility.", "mission": "Highlands Documentary Post-Production"}]}
+{
+  "current_kit": [
+    {
+      "id": "gear_005",
+      "name": "Water to Go Eco Active 75cl Bottle - Blue",
+      "category": "hydration",
+      "price": "£39.95",
+      "affiliate_link": "https://watertogo.eu/refer/1014/",
+      "rating": 5.0,
+      "description": "Advanced 3-in-1 filtration lets you drink safely from rivers, streams, and taps—ideal for off-grid exploring and long rides.",
+      "specs": {
+        "capacity": "75cl",
+        "weight": "138g",
+        "material": "Sustainable eco materials (BPA-free)",
+        "filter": "3-in-1 filter, 200-litre lifespan",
+        "lid": "Single-handed click lid, covers spout for hygiene",
+        "extras": "Detachable carabiner clip, translucent body with fill markings"
+      },
+      "missions": ["wild-water-refills", "off-grid-exploration", "long-rides"],
+      "why_essential": "Filters up to 99.9999% of bacteria, protozoa, viruses, chemicals, and heavy metals from virtually any water source, so you can refill on the move instead of carrying bottled water or hunting for taps mid-adventure.",
+      "tested_conditions": ["wild-water-refills", "urban-exploration", "bikepacking"],
+      "image": "/images/products/eco-blue-75cl-muddy-pond.webp"
+    },
+    {
+      "id": "gear_001",
+      "name": "GoPro 12 Black",
+      "category": "camera",
+      "price": "£379",
+      "affiliate_link": "https://www.amazon.com/dp/B0C1P8YQ9V",
+      "rating": 4.7,
+      "description": "The ultimate adventure companion—tiny, rugged, and always ready when freedom calls.",
+      "specs": {
+        "sensor": "27MP 1/1.9-inch CMOS",
+        "video": "5.3K 60p, 4K 120p",
+        "battery": "1.5 hours",
+        "weight": "159g"
+      },
+      "missions": ["action-adventures", "stealth-documentation", "extreme-weather"],
+      "why_essential": "Pocket-sized power that goes where bigger cameras can't. Perfect for documenting real adventures without the weight.",
+      "tested_conditions": ["mountain-climbing", "urban-exploration", "waterproof-operations"],
+      "image": "/imgs/gopro12.webp"
+    },
+    {
+      "id": "gear_002",
+      "name": "DJI Mic Mini",
+      "category": "microphone",
+      "price": "£139",
+      "affiliate_link": "https://www.amazon.com/dp/B0D11K5YQ3",
+      "rating": 4.6,
+      "description": "Crystal clear audio capture in a pocket-sized package. Because great adventures deserve great sound.",
+      "specs": {
+        "range": "250m transmission",
+        "battery": "11 hours recording",
+        "weight": "10g each",
+        "connectivity": "USB-C, Lightning, 3.5mm"
+      },
+      "missions": ["interview-documentation", "field-recording", "adventure-storytelling"],
+      "why_essential": "Professional audio quality without the bulk. Perfect for capturing authentic voices and ambient sounds.",
+      "tested_conditions": ["windy-mountains", "urban-environments", "long-distance-recording"],
+      "image": "/imgs/mic mini.webp"
+    },
+    {
+      "id": "gear_004",
+      "name": "MSI Katana 15 B13V",
+      "category": "laptop",
+      "price": "£999",
+      "affiliate_link": "https://www.amazon.com/dp/B0C1P8YQ9V",
+      "rating": 4.5,
+      "description": "Portable powerhouse for editing adventures on the move. Because the best stories wait for no one.",
+      "specs": {
+        "processor": "Intel Core i7-13620H",
+        "graphics": "RTX 4050 6GB",
+        "memory": "16GB DDR5",
+        "storage": "512GB NVMe SSD",
+        "display": "15.6\" 144Hz",
+        "weight": "2.25kg"
+      },
+      "missions": ["mobile-editing", "field-reporting", "content-creation"],
+      "why_essential": "Enough power to edit 4K footage anywhere, yet portable enough to disappear in any environment.",
+      "tested_conditions": ["coffee-shop-editing", "mountain-lodge-post-production", "remote-location-work"],
+      "image": "/imgs/msilaptop.webp"
+    },
+    {
+      "id": "gear_003",
+      "name": "Osprey Farpoint 40",
+      "category": "bag",
+      "price": "£129",
+      "affiliate_link": "https://www.amazon.com/dp/B07Q9LQKB4",
+      "rating": 4.8,
+      "description": "The perfect size for day adventures and urban exploration—compact yet carries everything you need.",
+      "specs": {
+        "capacity": "40 liters",
+        "weight": "1.4kg",
+        "material": "210D High Tenacity Nylon",
+        "frame": "Internal lightweight frame"
+      },
+      "missions": ["day-adventures", "urban-exploration", "weekend-trips"],
+      "why_essential": "Perfect carry-on size that fits overhead compartments while holding all your essential gear for full-day missions.",
+      "tested_conditions": ["city-adventures", "train-travel", "short-hikes"],
+      "image": "/imgs/farpoint.webp"
+    }
+  ],
+  "testimonials": [
+    {
+      "item": "Water to Go Eco Active 75cl Bottle - Blue",
+      "quote": "Filtered murky river water right into drinking water on a multi-day bikepacking trail. Zero stomach issues.",
+      "mission": "Off-Grid Expedition"
+    },
+    {
+      "item": "GoPro 12 Black",
+      "quote": "Captured an entire mountain descent without anyone knowing I was filming. Tiny but mighty.",
+      "mission": "Highland Ridge Descent"
+    },
+    {
+      "item": "DJI Mic Mini",
+      "quote": "Recorded crystal clear interviews in the middle of a bustling market. No cables, no fuss, just pure audio gold.",
+      "mission": "Street Vendor Interviews"
+    },
+    {
+      "item": "MSI Katana 15 B13V",
+      "quote": "Edited a full 4K adventure documentary from a Scottish bothy. Performance that doesn't compromise mobility.",
+      "mission": "Highlands Documentary Post-Production"
+    }
+  ]
+}

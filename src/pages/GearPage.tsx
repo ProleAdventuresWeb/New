@@ -106,6 +106,7 @@ export const GearPage: React.FC = () => {
                 <option className="text-primary-300" value="laptop">Laptop</option>
                 <option className="text-primary-300" value="power">Power</option>
                 <option className="text-primary-300" value="protection">Protection</option>
+                <option className="text-primary-300" value="hydration">Hydration</option>
                 <option className="text-primary-300" value="documentation">Documentation</option>
               </select>
             </div>

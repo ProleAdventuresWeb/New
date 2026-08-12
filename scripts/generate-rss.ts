@@ -56,8 +56,8 @@ async function generateRss() {
     .order('published_at', { ascending: false });
 
   if (error) {
-    console.error('Error retrieving chronicles from archive:', error.message);
-    process.exit(1);
+    console.warn('Warning: Could not retrieve chronicles from archive during build:', error.message);
+    console.warn('Proceeding with empty RSS feed generation.');
   }
 
   const items = posts || [];
