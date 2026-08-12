@@ -1,13 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { Star, CheckCircle, Filter, Search, ArrowRight } from 'lucide-react';
+import { Star, CheckCircle, Filter, Search } from 'lucide-react';
 import { Head } from '../components/Head';
 import { PageLoader } from '../components/PageLoader';
+import { GearLink } from '../components/GearLink';
+
 interface GearItem {
   id: string;
   name: string;
   category: string;
   price: string;
-  affiliate_link: string;
+  /** Primary affiliate referral link URL */
+  affiliateUrl?: string;
+  /** Legacy JSON field fallback for affiliate link */
+  affiliate_link?: string;
+  /** Non-affiliate external resource URL */
+  externalUrl?: string;
+  /** Explicit override flag to force link sponsorship status */
+  isAffiliate?: boolean;
   rating: number;
   description: string;
   specs: Record<string, string>;
@@ -189,22 +198,13 @@ export const GearPage: React.FC = () => {
                     </div>
 
                     <div className="mt-8 pt-4 border-t border-red-500/10">
-                      <a
-                        href={item.affiliate_link}
-                        target="_blank"
-                        rel="sponsored noopener noreferrer"
-                        data-umami-event="affiliate_click"
-                        data-umami-event-item={item.name}
-                        className="
-                          w-full py-4 px-6 rounded-xl flex items-center justify-center gap-3
-                          bg-neutral-900 border border-red-500/20 text-red-400 font-bold
-                          hover:bg-red-600 hover:text-white hover:border-red-600
-                          transition-all duration-300 transform hover:scale-[1.02]
-                        "
-                      >
-                        INVESTIGATE GEAR
-                        <ArrowRight className="w-4 h-4" />
-                      </a>
+                      <GearLink
+                        affiliateUrl={item.affiliateUrl}
+                        affiliate_link={item.affiliate_link}
+                        externalUrl={item.externalUrl}
+                        isAffiliate={item.isAffiliate}
+                        itemName={item.name}
+                      />
                     </div>
                   </div>
                 </div>

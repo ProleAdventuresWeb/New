@@ -5,7 +5,7 @@
       "name": "Water to Go Eco Active 75cl Bottle - Blue",
       "category": "hydration",
       "price": "£39.95",
-      "affiliate_link": "https://watertogo.eu/refer/1014/",
+      "affiliateUrl": "https://watertogo.eu/refer/1014/",
       "rating": 5.0,
       "description": "Advanced 3-in-1 filtration lets you drink safely from rivers, streams, and taps—ideal for off-grid exploring and long rides.",
       "specs": {
@@ -26,7 +26,7 @@
       "name": "GoPro 12 Black",
       "category": "camera",
       "price": "£379",
-      "affiliate_link": "https://www.amazon.com/dp/B0C1P8YQ9V",
+      "affiliateUrl": "https://www.amazon.com/dp/B0C1P8YQ9V",
       "rating": 4.7,
       "description": "The ultimate adventure companion—tiny, rugged, and always ready when freedom calls.",
       "specs": {
@@ -45,7 +45,7 @@
       "name": "DJI Mic Mini",
       "category": "microphone",
       "price": "£139",
-      "affiliate_link": "https://www.amazon.com/dp/B0D11K5YQ3",
+      "affiliateUrl": "https://www.amazon.com/dp/B0D11K5YQ3",
       "rating": 4.6,
       "description": "Crystal clear audio capture in a pocket-sized package. Because great adventures deserve great sound.",
       "specs": {
@@ -64,7 +64,7 @@
       "name": "MSI Katana 15 B13V",
       "category": "laptop",
       "price": "£999",
-      "affiliate_link": "https://www.amazon.com/dp/B0C1P8YQ9V",
+      "affiliateUrl": "https://www.amazon.com/dp/B0C1P8YQ9V",
       "rating": 4.5,
       "description": "Portable powerhouse for editing adventures on the move. Because the best stories wait for no one.",
       "specs": {
@@ -85,7 +85,7 @@
       "name": "Osprey Farpoint 40",
       "category": "bag",
       "price": "£129",
-      "affiliate_link": "https://www.amazon.com/dp/B07Q9LQKB4",
+      "affiliateUrl": "https://www.amazon.com/dp/B07Q9LQKB4",
       "rating": 4.8,
       "description": "The perfect size for day adventures and urban exploration—compact yet carries everything you need.",
       "specs": {

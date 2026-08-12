@@ -21,3 +21,8 @@
 ## Maintenance & Script Approval Process
 - Any new package requesting build/install script execution must be audited for authenticity before adding to `onlyBuiltDependencies` in `pnpm-workspace.yaml` and `package.json`.
 - Blanket script executions (`dangerouslyAllowAllBuilds` or blanket `ignore-scripts=false`) remain prohibited.
+
+## Affiliate Link SEO & Security Standard
+- All affiliate links are enforced via `<GearLink />` component ([src/components/GearLink.tsx](file:///c:/Users/Deano/Desktop/THE%20WEBSITE/web-main/src/components/GearLink.tsx)).
+- Affiliate links automatically enforce `rel="sponsored noopener noreferrer"` per Google Link Spam policies. See [AFFILIATE-LINKS.md](file:///c:/Users/Deano/Desktop/THE%20WEBSITE/web-main/AFFILIATE-LINKS.md) for full guidelines.
+
