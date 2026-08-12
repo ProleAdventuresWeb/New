@@ -43,7 +43,6 @@ export const Head: React.FC<HeadProps> = ({
   const canonical = currentUrl;
 
   return (
-    // @ts-expect-error: React 18 types clash with react-helmet-async
     <Helmet>
       <title>{fullTitle}</title>
       <meta name="description" content={fullDescription} />
