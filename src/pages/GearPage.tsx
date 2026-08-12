@@ -192,7 +192,7 @@ export const GearPage: React.FC = () => {
                       <a
                         href={item.affiliate_link}
                         target="_blank"
-                        rel="noopener noreferrer"
+                        rel="sponsored noopener noreferrer"
                         data-umami-event="affiliate_click"
                         data-umami-event-item={item.name}
                         className="
