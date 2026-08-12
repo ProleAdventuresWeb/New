@@ -25,7 +25,9 @@ export const Footer: React.FC = () => {
           
           {/* Quick Links */}
           <div>
-            <h3 className="font-semibold text-neutral-50 mb-4">Outpost</h3>
+            <h3 className="font-semibold text-neutral-50 mb-4">
+              <a href="https://proleadventures.com/contact" className="hover:text-primary-300 transition-colors">Contact</a>
+            </h3>
             <ul className="space-y-2" role="list">
               <li><a href="/watch" className="text-neutral-300 hover:text-primary-300 transition-colors">Watch</a></li>
               <li><a href="/stories" className="text-neutral-300 hover:text-primary-300 transition-colors">Read</a></li>
