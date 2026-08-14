@@ -114,6 +114,7 @@ export const GearPage: React.FC = () => {
                 <option className="text-primary-300" value="bag">Bags & Packs</option>
                 <option className="text-primary-300" value="laptop">Laptop</option>
                 <option className="text-primary-300" value="power">Power</option>
+                <option className="text-primary-300" value="lighting">Lighting</option>
                 <option className="text-primary-300" value="protection">Protection</option>
                 <option className="text-primary-300" value="hydration">Hydration</option>
                 <option className="text-primary-300" value="documentation">Documentation</option>
@@ -213,7 +214,14 @@ export const GearPage: React.FC = () => {
           </div>
         </div>
       </section>
-
+      {/* Affiliate Disclosure */}
+      <section className="py-8 px-4">
+        <div className="max-w-7xl mx-auto">
+          <p className="text-xs text-neutral-500 text-center leading-relaxed border-t border-neutral-800 pt-6">
+            <span className="font-medium text-neutral-400">Affiliate Disclosure:</span> Some links on this page may be affiliate links. If you click through and make a purchase, we may earn a small commission at no extra cost to you. We only recommend gear we genuinely use and stand behind — affiliate status never influences what makes the cut.
+          </p>
+        </div>
+      </section>
 
     </div>
   );

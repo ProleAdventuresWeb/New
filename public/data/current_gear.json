@@ -25,8 +25,8 @@
       "id": "gear_001",
       "name": "GoPro 12 Black",
       "category": "camera",
-      "price": "£379",
-      "affiliateUrl": "https://www.amazon.com/dp/B0C1P8YQ9V",
+      "price": "£225",
+      "affiliateUrl": "https://link.amazon/B0c34JjNr",
       "rating": 4.7,
       "description": "The ultimate adventure companion—tiny, rugged, and always ready when freedom calls.",
       "specs": {
@@ -45,7 +45,7 @@
       "name": "DJI Mic Mini",
       "category": "microphone",
       "price": "£139",
-      "affiliateUrl": "https://www.amazon.com/dp/B0D11K5YQ3",
+      "affiliateUrl": "https://link.amazon/B0g9wm0r4",
       "rating": 4.6,
       "description": "Crystal clear audio capture in a pocket-sized package. Because great adventures deserve great sound.",
       "specs": {
@@ -64,7 +64,8 @@
       "name": "MSI Katana 15 B13V",
       "category": "laptop",
       "price": "£999",
-      "affiliateUrl": "https://www.amazon.com/dp/B0C1P8YQ9V",
+      "externalUrl": "https://www.msi.com/Laptop/Katana-15-B13VX/Specification",
+      "isAffiliate": false,
       "rating": 4.5,
       "description": "Portable powerhouse for editing adventures on the move. Because the best stories wait for no one.",
       "specs": {
@@ -82,22 +83,111 @@
     },
     {
       "id": "gear_003",
-      "name": "Osprey Farpoint 40",
+      "name": "Forclaz Backpack Travel 100 40L - Black",
       "category": "bag",
-      "price": "£129",
-      "affiliateUrl": "https://www.amazon.com/dp/B07Q9LQKB4",
-      "rating": 4.8,
-      "description": "The perfect size for day adventures and urban exploration—compact yet carries everything you need.",
+      "price": "No longer available",
+      "externalUrl": "https://www.decathlon.co.uk/p/travel-backpack-40-l-travel-100-black/_/R-p-303040",
+      "isAffiliate": false,
+      "rating": 4.7,
+      "description": "Cabin-ready 40L travel pack with lockable zips, padded back support, and water-resistant polyester—compact yet carries everything you need.",
       "specs": {
         "capacity": "40 liters",
-        "weight": "1.4kg",
-        "material": "210D High Tenacity Nylon",
-        "frame": "Internal lightweight frame"
+        "weight": "1.8kg",
+        "dimensions": "55 x 30 x 30cm",
+        "material": "100% Polyester (PES)",
+        "features": "Lockable zips, back padding",
+        "warranty": "2 Years"
       },
       "missions": ["day-adventures", "urban-exploration", "weekend-trips"],
-      "why_essential": "Perfect carry-on size that fits overhead compartments while holding all your essential gear for full-day missions.",
+      "why_essential": "Cabin-sized 40L capacity with lockable zippers to safeguard gear in transit, plus padded backing and water-resistant fabric for all-day carrying comfort.",
       "tested_conditions": ["city-adventures", "train-travel", "short-hikes"],
-      "image": "/imgs/farpoint.webp"
+      "image": "/images/products/decathlon-40-ltr-backpacking-backpack.webp"
+    },
+    {
+      "id": "gear_006",
+      "name": "DD Tarp 4x4 - Forest Green",
+      "category": "protection",
+      "price": "£55.00",
+      "externalUrl": "https://www.ddhammocks.com/products/tarp-4x4-large-group-shelter",
+      "isAffiliate": false,
+      "rating": 4.9,
+      "description": "The ultimate stormproof shelter and dry-cover solution—featuring 19 reinforced attachment points for versatile group camps and extreme trail setups.",
+      "specs": {
+        "size": "4m x 4m (Packed: 36 x 19 x 10cm)",
+        "weight": "1.29kg (excl. pegs)",
+        "material": "190T Polyester (PU 3000mm)",
+        "attachment": "19 Reinforced tie-out points",
+        "protection": "UV50+ rating, taped seams",
+        "includes": "4 pegs, guy lines & stuff sack"
+      },
+      "missions": ["wilderness-shelter", "group-expeditions", "off-grid-camping"],
+      "why_essential": "Massive 4m x 4m coverage with 19 reinforced attachment points lets you adapt instantly to any terrain or weather—from full-enclosure bivvies to multi-hammock overhead protection.",
+      "tested_conditions": ["heavy-rainstorms", "highland-camps", "wilderness-bivvies"],
+      "image": "/images/products/DD 4x4 tarp.webp"
+    },
+    {
+      "id": "gear_007",
+      "name": "Exposure Sirius 5 Light",
+      "category": "lighting",
+      "price": "No longer available",
+      "externalUrl": "https://www.exposurelights.com/products/sirius-11",
+      "isAffiliate": false,
+      "rating": 5.0,
+      "description": "This light has been my go-to light since 2017 and is still going strong—bombproof CNC aluminium construction with reliable day and night illumination.",
+      "specs": {
+        "output": "550 Lumens (High-power LED)",
+        "runtime": "2 hrs high, up to 36 hrs low",
+        "housing": "CNC-machined aluminium",
+        "battery": "Integrated rechargeable Li-ion",
+        "indicator": "Rear fuel-gauge / status display",
+        "features": "Cable-free, Intelligent Thermal Management"
+      },
+      "missions": ["urban-commuting", "night-riding", "bikepacking"],
+      "why_essential": "Compact, cable-free British-built illumination that stands up to years of daily abuse, foul weather, and non-stop road vibrations without missing a beat.",
+      "tested_conditions": ["night-commutes", "winter-weather", "long-distance-riding"],
+      "image": "/images/products/exposure sirius 5.webp"
+    },
+    {
+      "id": "gear_008",
+      "name": "UGREEN Nexode Power Bank 20000mAh 130W",
+      "category": "power",
+      "price": "£69.99",
+      "affiliateUrl": "https://link.amazon/B02DedcCX",
+      "rating": 4.8,
+      "description": "130W laptop-grade power in your pocket—20,000mAh keeps your laptop, phone, and earbuds all charged simultaneously, no wall socket needed.",
+      "specs": {
+        "capacity": "20,000mAh",
+        "output": "130W total (USB-C1: 100W, USB-C2: 30W)",
+        "ports": "2x USB-C + 1x USB-A",
+        "weight": "480g",
+        "display": "TFT real-time wattage & charge screen",
+        "compatibility": "PD, PPS, QC, SCP — laptops to AirPods"
+      },
+      "missions": ["field-power", "off-grid-work", "long-haul-travel"],
+      "why_essential": "130W output means your laptop charges at full speed alongside your phone—and the live TFT display tells you exactly how much juice is left and where it's going.",
+      "tested_conditions": ["remote-location-work", "long-haul-travel", "off-grid-content-creation"],
+      "image": "/images/products/UGREEN Nexode Power Bank 20000mAh 130W.webp"
+    },
+    {
+      "id": "gear_009",
+      "name": "UGREEN Nexode 100W 4-Port GaN Charger",
+      "category": "power",
+      "price": "£32.99",
+      "affiliateUrl": "https://link.amazon/B0eqTmZKi",
+      "rating": 4.8,
+      "description": "Four devices, one tiny plug—GaN technology squeezes 100W of total output into a charger barely bigger than a standard UK brick.",
+      "specs": {
+        "output": "100W total (USB-C1: 65W, C2/C3: 30W, USB-A: 22.5W)",
+        "ports": "3x USB-C + 1x USB-A",
+        "protocols": "PD 3.0, QC 4.0+/3.0/2.0, PPS, AFC, SCP",
+        "technology": "GaN (Gallium Nitride)",
+        "compatibility": "MacBook Pro/Air, iPhone 17/16/15, Galaxy S24, iPad Pro",
+        "form factor": "Compact — significantly smaller than traditional 100W chargers"
+      },
+      "missions": ["base-camp-charging", "travel-power", "multi-device-setup"],
+      "why_essential": "Replaces a tangle of separate chargers with one compact plug — laptop, phone, mic, and camera battery all charging at full speed from a single socket.",
+      "tested_conditions": ["hotel-rooms", "van-life", "field-base-camp"],
+      "image": "/images/products/Ugreen gan charger 100w.webp"
     }
   ],
   "testimonials": [
@@ -120,6 +210,26 @@
       "item": "MSI Katana 15 B13V",
       "quote": "Edited a full 4K adventure documentary from a Scottish bothy. Performance that doesn't compromise mobility.",
       "mission": "Highlands Documentary Post-Production"
+    },
+    {
+      "item": "DD Tarp 4x4 - Forest Green",
+      "quote": "Weathered an absolute torrential downpour across the Highlands. Kept the whole camp bone dry with zero fuss.",
+      "mission": "Highlands Group Bivvy"
+    },
+    {
+      "item": "Exposure Sirius 5 Light",
+      "quote": "My go-to light since 2017 and still going strong after years of winter commutes and wet night rides. Truly bombproof.",
+      "mission": "Daily Night Commutes"
+    },
+    {
+      "item": "UGREEN Nexode Power Bank 20000mAh 130W",
+      "quote": "Charged the laptop and phone at full speed from a van in the middle of nowhere. The TFT screen showing live wattage is a genuinely useful touch.",
+      "mission": "Off-Grid Content Creation"
+    },
+    {
+      "item": "UGREEN Nexode 100W 4-Port GaN Charger",
+      "quote": "One plug. Laptop, phone, mic, and camera battery—all charging at full speed. Nothing else comes close for the size.",
+      "mission": "Hotel Room Base Camp"
     }
   ]
 }
