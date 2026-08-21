@@ -17,7 +17,38 @@ interface ProductSchema {
     price: string;
     priceCurrency: string;
     availability: string;
+    hasMerchantReturnPolicy?: {
+      applicableCountry: string;
+      returnPolicyCategory: string;
+      merchantReturnDays: number;
+      returnMethod: string;
+      returnFees: string;
+    };
+    shippingDetails?: {
+      shippingDestination: {
+        addressCountry: string;
+      };
+      shippingRate: {
+        value: string;
+        currency: string;
+      };
+      deliveryTime: {
+        handlingTimeMin: number;
+        handlingTimeMax: number;
+        transitTimeMin: number;
+        transitTimeMax: number;
+      };
+    };
   };
+  aggregateRating?: {
+    ratingValue: string;
+    reviewCount: string;
+  };
+  review?: {
+    author: string;
+    ratingValue: string;
+    reviewBody?: string;
+  }[];
 }
 
 interface ArticleSchema {
@@ -69,7 +100,59 @@ export const JsonLd: React.FC<SchemaType> = ({ type, data }) => {
             price: (data as ProductSchema).offers?.price,
             priceCurrency: (data as ProductSchema).offers?.priceCurrency,
             availability: (data as ProductSchema).offers?.availability,
+            hasMerchantReturnPolicy: (data as ProductSchema).offers?.hasMerchantReturnPolicy ? {
+              '@type': 'MerchantReturnPolicy',
+              applicableCountry: (data as ProductSchema).offers?.hasMerchantReturnPolicy?.applicableCountry,
+              returnPolicyCategory: (data as ProductSchema).offers?.hasMerchantReturnPolicy?.returnPolicyCategory,
+              merchantReturnDays: (data as ProductSchema).offers?.hasMerchantReturnPolicy?.merchantReturnDays,
+              returnMethod: (data as ProductSchema).offers?.hasMerchantReturnPolicy?.returnMethod,
+              returnFees: (data as ProductSchema).offers?.hasMerchantReturnPolicy?.returnFees,
+            } : undefined,
+            shippingDetails: (data as ProductSchema).offers?.shippingDetails ? {
+              '@type': 'OfferShippingDetails',
+              shippingDestination: {
+                '@type': 'DefinedRegion',
+                addressCountry: (data as ProductSchema).offers?.shippingDetails?.shippingDestination.addressCountry,
+              },
+              shippingRate: {
+                '@type': 'MonetaryAmount',
+                value: (data as ProductSchema).offers?.shippingDetails?.shippingRate.value,
+                currency: (data as ProductSchema).offers?.shippingDetails?.shippingRate.currency,
+              },
+              deliveryTime: {
+                '@type': 'ShippingDeliveryTime',
+                handlingTime: {
+                  '@type': 'QuantitativeValue',
+                  minValue: (data as ProductSchema).offers?.shippingDetails?.deliveryTime.handlingTimeMin,
+                  maxValue: (data as ProductSchema).offers?.shippingDetails?.deliveryTime.handlingTimeMax,
+                  unitCode: 'DAY',
+                },
+                transitTime: {
+                  '@type': 'QuantitativeValue',
+                  minValue: (data as ProductSchema).offers?.shippingDetails?.deliveryTime.transitTimeMin,
+                  maxValue: (data as ProductSchema).offers?.shippingDetails?.deliveryTime.transitTimeMax,
+                  unitCode: 'DAY',
+                },
+              },
+            } : undefined,
           } : undefined,
+          aggregateRating: (data as ProductSchema).aggregateRating ? {
+            '@type': 'AggregateRating',
+            ratingValue: (data as ProductSchema).aggregateRating?.ratingValue,
+            reviewCount: (data as ProductSchema).aggregateRating?.reviewCount,
+          } : undefined,
+          review: (data as ProductSchema).review ? (data as ProductSchema).review?.map(r => ({
+            '@type': 'Review',
+            reviewRating: {
+              '@type': 'Rating',
+              ratingValue: r.ratingValue,
+            },
+            author: {
+              '@type': 'Person',
+              name: r.author,
+            },
+            reviewBody: r.reviewBody,
+          })) : undefined,
         };
       case 'article':
         return {

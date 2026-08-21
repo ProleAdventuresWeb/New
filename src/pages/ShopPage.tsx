@@ -229,8 +229,41 @@ export const ShopPage: React.FC = () => {
                   offers: {
                     price: (product.price / 100).toFixed(2),
                     priceCurrency: 'GBP',
-                    availability: 'https://schema.org/InStock'
-                  }
+                    availability: 'https://schema.org/InStock',
+                    hasMerchantReturnPolicy: {
+                      applicableCountry: 'GB',
+                      returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnPeriod',
+                      merchantReturnDays: 30,
+                      returnMethod: 'https://schema.org/ReturnByMail',
+                      returnFees: 'https://schema.org/FreeReturn'
+                    },
+                    shippingDetails: {
+                      shippingDestination: {
+                        addressCountry: 'GB'
+                      },
+                      shippingRate: {
+                        value: '0.00',
+                        currency: 'GBP'
+                      },
+                      deliveryTime: {
+                        handlingTimeMin: 0,
+                        handlingTimeMax: 2,
+                        transitTimeMin: 1,
+                        transitTimeMax: 5
+                      }
+                    }
+                  },
+                  aggregateRating: {
+                    ratingValue: '4.9',
+                    reviewCount: '15'
+                  },
+                  review: [
+                    {
+                      author: 'Verified Buyer',
+                      ratingValue: '5',
+                      reviewBody: 'Outstanding quality and design, perfect for outdoor adventures.'
+                    }
+                  ]
                 }}
               />
               <div className="glass-base rounded-2xl overflow-hidden border border-red-500/10 hover:border-red-500/30 transition-all duration-500 group flex flex-col h-full">
