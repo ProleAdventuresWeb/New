@@ -22,7 +22,17 @@ const isValidSupabaseKey =
 
 // Create client only if config is strictly valid, otherwise set to null
 export const supabase = (isValidSupabaseUrl && isValidSupabaseKey) 
-  ? createClient(supabaseUrl, supabaseAnonKey)
+  ? createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        // Disable Navigator Lock API fallback to prevent "Lock was released because another request stole it" in React 18 strict mode / multiple tabs
+        lock: async (_name, _acquireTimeout, fn) => {
+          return await fn();
+        },
+      }
+    })
   : null;
 
 // Debug log in development

@@ -50,14 +50,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .from('profiles')
         .select('*')
         .eq('id', userId)
-        .single();
+        .maybeSingle();
 
       if (error) {
-        console.error('Error fetching profile:', error.message);
+        console.warn('Profile lookup notice:', error.message);
         return null;
       }
       return data as Profile;
-    } catch {
+    } catch (err) {
+      console.warn('Profile fetch handled safely:', err);
       return null;
     }
   };
