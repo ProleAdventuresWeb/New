@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, useSearchParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import ReactMarkdown from 'react-markdown';
-import { Calendar, Clock, ArrowLeft, ArrowRight, Share2, Twitter, Copy, Check, Youtube, Heart } from 'lucide-react';
+import { Calendar, Clock, ArrowLeft, ArrowRight, Share2, Twitter, Copy, Check, Youtube, Heart, Lock, Key, ShieldCheck, Unlock, AlertTriangle } from 'lucide-react';
 import { getPostBySlug, getPostsByCategory, getAdjacentPosts } from '../lib/posts';
+import { useAuth } from '../lib/auth';
 import type { Post, PostPreview, TemplateData } from '../types/post';
 import { Head } from '../components/Head';
 
@@ -140,12 +141,19 @@ const TemplateLayout: React.FC<{ data: TemplateData; title: string }> = ({ data,
 
 export const PostPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
+  const [searchParams] = useSearchParams();
+  const { user } = useAuth();
   const [post, setPost] = useState<Post | null>(null);
   const [relatedPosts, setRelatedPosts] = useState<PostPreview[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [copied, setCopied] = useState(false);
   const [adjacent, setAdjacent] = useState<{ next: PostPreview | null; prev: PostPreview | null }>({ next: null, prev: null });
+
+  // Gated Access State
+  const [enteredCode, setEnteredCode] = useState('');
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [unlockError, setUnlockError] = useState<string | null>(null);
 
   const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
   const absoluteImageUrl = post?.cover_image_url.startsWith('http') 
@@ -165,6 +173,31 @@ export const PostPage: React.FC = () => {
     }
   };
 
+  const verifyAndUnlock = (codeToCheck: string, correctCode?: string | null) => {
+    if (!correctCode) return false;
+    const cleanInput = codeToCheck.trim().toUpperCase();
+    const cleanTarget = correctCode.trim().toUpperCase();
+    if (cleanInput === cleanTarget) {
+      setIsUnlocked(true);
+      setUnlockError(null);
+      if (slug && typeof window !== 'undefined') {
+        localStorage.setItem(`prole_access_${slug}`, cleanTarget);
+      }
+      return true;
+    }
+    return false;
+  };
+
+  const handleManualUnlock = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!post?.access_code) return;
+    if (verifyAndUnlock(enteredCode, post.access_code)) {
+      setUnlockError(null);
+    } else {
+      setUnlockError('Invalid Access Clearance Code. Please check your contributor email.');
+    }
+  };
+
   useEffect(() => {
     if (!slug) return;
 
@@ -180,6 +213,28 @@ export const PostPage: React.FC = () => {
         }
 
         setPost(result);
+
+        // Check unlock status
+        if (!result.is_gated) {
+          setIsUnlocked(true);
+        } else {
+          // Check if admin is logged in
+          if (user?.email === 'contact@proleadventures.com') {
+            setIsUnlocked(true);
+          } else {
+            // Check query param (?code=...)
+            const urlCode = searchParams.get('code');
+            const storedCode = typeof window !== 'undefined' ? localStorage.getItem(`prole_access_${slug}`) : null;
+            
+            if (urlCode && verifyAndUnlock(urlCode, result.access_code)) {
+              // URL code unlocked it
+            } else if (storedCode && verifyAndUnlock(storedCode, result.access_code)) {
+              // Stored code unlocked it
+            } else {
+              setIsUnlocked(false);
+            }
+          }
+        }
 
         // Fetch related and adjacent posts
         const [related, adj] = await Promise.all([
@@ -202,7 +257,7 @@ export const PostPage: React.FC = () => {
 
     loadData();
     window.scrollTo(0, 0);
-  }, [slug]);
+  }, [slug, searchParams, user]);
 
   if (!slug) {
     return (
@@ -279,7 +334,144 @@ export const PostPage: React.FC = () => {
           </div>
         </div>
 
-        {isTemplate && post.template_data ? (
+        {/* Gated Post Status Header Badge */}
+        {post.is_gated && (
+          <div className="mb-6 flex items-center justify-between p-3.5 bg-neutral-900/60 border border-neutral-800 rounded-2xl">
+            <div className="flex items-center gap-2 text-xs font-mono">
+              {isUnlocked ? (
+                <>
+                  <ShieldCheck className="w-4 h-4 text-green-400" />
+                  <span className="text-green-400 font-bold uppercase tracking-wider">Access Granted</span>
+                  <span className="text-neutral-500">• Contributor Clearance Active</span>
+                </>
+              ) : (
+                <>
+                  <Lock className="w-4 h-4 text-amber-400" />
+                  <span className="text-amber-400 font-bold uppercase tracking-wider">Classified Transmission</span>
+                  <span className="text-neutral-500">• Restricted to Prole Contributors</span>
+                </>
+              )}
+            </div>
+            {isUnlocked && (
+              <span className="text-[10px] bg-green-950/40 text-green-300 border border-green-500/30 px-2.5 py-0.5 rounded-full font-mono">
+                CLEARED
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Content Render: If gated and not unlocked, render SEO Teaser & Unlock Gate */}
+        {post.is_gated && !isUnlocked ? (
+          <div className="space-y-12 animate-in fade-in duration-500">
+            {/* SEO & Public Hook Section */}
+            <section className="glass-elevated rounded-3xl overflow-hidden shadow-glass border border-neutral-800/50">
+              <div className="aspect-video w-full overflow-hidden relative">
+                <img 
+                  src={post.cover_image_url} 
+                  alt={post.title}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-80" />
+                <div className="absolute bottom-6 left-6 right-6">
+                  <span className="px-3.5 py-1 bg-red-600 text-white rounded-md font-bold uppercase tracking-[0.2em] text-[9px] mb-3 inline-block">
+                    {post.category.replace('-', ' ')}
+                  </span>
+                  <h1 className="text-3xl md:text-5xl font-display font-bold text-neutral-50 leading-tight">
+                    {post.title}
+                  </h1>
+                </div>
+              </div>
+
+              <div className="p-8 md:p-12 space-y-6">
+                <div className="flex flex-wrap items-center gap-6 text-sm text-neutral-400 font-mono pb-6 border-b border-neutral-800">
+                  <div className="flex items-center">
+                    <Calendar className="w-4 h-4 mr-2 text-neutral-500" />
+                    {post.published_at 
+                      ? new Date(post.published_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+                      : 'Live Dispatch'}
+                  </div>
+                  <div className="flex items-center">
+                    <Clock className="w-4 h-4 mr-2 text-neutral-500" />
+                    {post.read_time} Min Full Report
+                  </div>
+                </div>
+
+                {/* Excerpt / Teaser narrative */}
+                <div className="prose-custom max-w-none text-neutral-300 text-lg leading-relaxed">
+                  <p className="font-medium text-neutral-200 italic text-xl border-l-2 border-red-500 pl-4">
+                    {post.excerpt}
+                  </p>
+                  {isTemplate && post.template_data?.summary && (
+                    <p className="text-neutral-400 mt-4 leading-relaxed">
+                      {post.template_data.summary}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </section>
+
+            {/* Contributor Access Code Unlock Box */}
+            <section className="glass-elevated p-8 md:p-12 rounded-3xl border border-red-500/30 bg-gradient-to-b from-red-950/20 via-neutral-900/60 to-black shadow-2xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+                <Lock className="w-32 h-32 text-red-500" />
+              </div>
+
+              <div className="max-w-xl mx-auto text-center space-y-6 relative z-10">
+                <div className="w-14 h-14 bg-red-950/60 border border-red-500/40 rounded-2xl flex items-center justify-center mx-auto text-red-400 shadow-lg shadow-red-900/30">
+                  <Key className="w-7 h-7 animate-pulse" />
+                </div>
+
+                <div>
+                  <h2 className="text-2xl md:text-3xl font-display font-bold text-neutral-50 mb-2">
+                    Enter Contributor Clearance Code
+                  </h2>
+                  <p className="text-neutral-400 text-sm leading-relaxed">
+                    This complete investigation is restricted to financial supporters. A clearance code was emailed to all contributors when this dispatch went live.
+                  </p>
+                </div>
+
+                <form onSubmit={handleManualUnlock} className="space-y-4 pt-2">
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <input
+                      type="text"
+                      value={enteredCode}
+                      onChange={(e) => setEnteredCode(e.target.value.toUpperCase())}
+                      placeholder="ENTER ACCESS CODE (E.G. PROLE-XXXX)"
+                      className="flex-1 bg-neutral-950 border border-neutral-800 focus:border-red-500/70 rounded-xl p-4 text-center font-mono text-base font-bold text-red-400 uppercase tracking-widest placeholder:text-neutral-600 outline-none transition-colors"
+                    />
+                    <button
+                      type="submit"
+                      className="px-8 py-4 bg-red-600 hover:bg-red-500 text-white rounded-xl font-bold transition-all duration-300 shadow-lg shadow-red-900/40 text-sm uppercase tracking-wider flex items-center justify-center gap-2"
+                    >
+                      <Unlock className="w-4 h-4" />
+                      Unlock
+                    </button>
+                  </div>
+
+                  {unlockError && (
+                    <div className="flex items-center justify-center gap-2 text-xs text-red-400 bg-red-950/40 p-3 rounded-xl border border-red-500/30 animate-in fade-in">
+                      <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+                      <span>{unlockError}</span>
+                    </div>
+                  )}
+                </form>
+
+                <div className="pt-6 border-t border-neutral-800/80 flex flex-col sm:flex-row items-center justify-center gap-4 text-xs text-neutral-500">
+                  <span>Haven't contributed yet?</span>
+                  <div className="flex items-center gap-3">
+                    <Link to="/prole-control" className="text-red-400 hover:text-red-300 font-bold underline transition-colors">
+                      Fund an Adventure
+                    </Link>
+                    <span>•</span>
+                    <Link to="/gear" className="text-red-400 hover:text-red-300 font-bold underline transition-colors">
+                      Visit Merch Shop
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        ) : isTemplate && post.template_data ? (
           <TemplateLayout data={post.template_data} title={post.title} />
         ) : (
           /* Existing Markdown Hero Card */

@@ -1,7 +1,7 @@
 import { supabase } from './supabase';
 import type { Post, PostPreview, PostCategory } from '../types/post';
 
-const POST_PREVIEW_SELECT = 'id, slug, title, excerpt, category, cover_image_url, read_time, published_at, layout';
+const POST_PREVIEW_SELECT = 'id, slug, title, excerpt, category, cover_image_url, read_time, published_at, layout, is_gated';
 
 /**
  * Fetches all published posts for catalog display.

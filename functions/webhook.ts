@@ -374,6 +374,36 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
           }
         }
 
+        // Auto-enroll contributor into subscribers and email_signups
+        if (contributionData.customer_email && contributionData.customer_email !== 'unknown') {
+          try {
+            await supabase.from('subscribers').upsert(
+              { email: contributionData.customer_email },
+              { onConflict: 'email', ignoreDuplicates: true }
+            );
+            await supabase.from('email_signups').upsert(
+              { email: contributionData.customer_email, source: 'contribution' },
+              { onConflict: 'email', ignoreDuplicates: true }
+            );
+            if (env.BREVO_API_KEY) {
+              await fetch('https://api.brevo.com/v3/contacts', {
+                method: 'POST',
+                headers: {
+                  'api-key': env.BREVO_API_KEY,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  email: contributionData.customer_email,
+                  listIds: [5],
+                  updateEnabled: true,
+                }),
+              }).catch((e) => console.error('Brevo sync error for contributor:', e));
+            }
+          } catch (enrollErr) {
+            console.warn('Auto-enroll error for contributor:', enrollErr);
+          }
+        }
+
         // Fire Umami + operational alert for mission contribution
         const contribAmountGBP = `£${contributionData.amount.toFixed(2)}`;
         await trackUmamiEvent(env, 'mission_contribution', '/mission-control', {
@@ -484,6 +514,36 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
             total: `£${((session.amount_total || 0) / 100).toFixed(2)}`,
             customer_name: session.customer_details?.name || 'there',
           });
+
+          // Auto-enroll buyer into subscribers and email_signups
+          if (customerEmail && customerEmail !== 'unknown') {
+            try {
+              await supabase.from('subscribers').upsert(
+                { email: customerEmail },
+                { onConflict: 'email', ignoreDuplicates: true }
+              );
+              await supabase.from('email_signups').upsert(
+                { email: customerEmail, source: 'shop_order' },
+                { onConflict: 'email', ignoreDuplicates: true }
+              );
+              if (env.BREVO_API_KEY) {
+                await fetch('https://api.brevo.com/v3/contacts', {
+                  method: 'POST',
+                  headers: {
+                    'api-key': env.BREVO_API_KEY,
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    email: customerEmail,
+                    listIds: [5],
+                    updateEnabled: true,
+                  }),
+                }).catch((e) => console.error('Brevo sync error for buyer:', e));
+              }
+            } catch (enrollErr) {
+              console.warn('Auto-enroll error for buyer:', enrollErr);
+            }
+          }
 
           // Fire Umami + operational alert for shop sale
           const saleAmountGBP = `£${((session.amount_total || 0) / 100).toFixed(2)}`;

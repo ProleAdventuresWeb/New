@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Calendar, Clock, ArrowRight, Search, XCircle } from 'lucide-react';
+import { Calendar, Clock, ArrowRight, Search, XCircle, Lock } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Newsletter } from '../components/Newsletter';
 import { Head } from '../components/Head';
@@ -228,6 +228,11 @@ export const StoriesPage: React.FC = () => {
                         <span className="px-3 py-1 bg-red-500/20 text-red-400 border border-red-500/30 rounded-md text-sm font-medium uppercase tracking-wide inline-block">
                           {featuredPost.category.replace(/-/g, ' ')}
                         </span>
+                        {featuredPost.is_gated && (
+                          <span className="px-2.5 py-1 bg-amber-950/40 text-amber-400 border border-amber-500/30 rounded-md text-xs font-mono uppercase tracking-wider flex items-center gap-1">
+                            <Lock className="w-3 h-3" /> Classified
+                          </span>
+                        )}
                         <span className="text-neutral-500 text-sm font-mono">{featuredPost.read_time} MIN</span>
                       </div>
 
@@ -288,9 +293,16 @@ export const StoriesPage: React.FC = () => {
 
                       <div className="p-6">
                         <div className="flex items-center justify-between mb-3">
-                          <span className="px-2 py-0.5 bg-red-500/20 text-red-400 border border-red-500/30 rounded text-[10px] font-bold uppercase tracking-widest">
-                            {post.category.replace(/-/g, ' ')}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <span className="px-2 py-0.5 bg-red-500/20 text-red-400 border border-red-500/30 rounded text-[10px] font-bold uppercase tracking-widest">
+                              {post.category.replace(/-/g, ' ')}
+                            </span>
+                            {post.is_gated && (
+                              <span className="px-1.5 py-0.5 bg-amber-950/40 text-amber-400 border border-amber-500/30 rounded text-[9px] font-mono uppercase tracking-tighter flex items-center gap-0.5">
+                                <Lock className="w-2.5 h-2.5" /> Gated
+                              </span>
+                            )}
+                          </div>
                           <span className="text-[10px] text-neutral-500 font-mono tracking-tighter flex items-center">
                             <Clock className="w-3 h-3 mr-1" />
                             {post.read_time}M

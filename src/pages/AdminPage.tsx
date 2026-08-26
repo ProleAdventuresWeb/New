@@ -17,7 +17,11 @@ import {
   Image as ImageIcon,
   Youtube,
   Twitter as TwitterIcon,
-  Heart
+  Heart,
+  Lock,
+  Key,
+  Send,
+  RefreshCw
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { 
@@ -76,8 +80,21 @@ export const AdminPage: React.FC = () => {
     content: '',
     cover_image_url: '',
     read_time: 5,
-    published: false
+    published: false,
+    is_gated: false,
+    access_code: ''
   });
+
+  const [notifying, setNotifying] = useState(false);
+
+  const generateAccessCode = () => {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let code = 'PROLE-';
+    for (let i = 0; i < 4; i++) {
+      code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return code;
+  };
 
   const [templateData, setTemplateData] = useState<TemplateData>(EMPTY_TEMPLATE);
 
@@ -151,7 +168,9 @@ export const AdminPage: React.FC = () => {
       content: post.content || '',
       cover_image_url: post.cover_image_url,
       read_time: post.read_time,
-      published: post.published
+      published: post.published,
+      is_gated: post.is_gated || false,
+      access_code: post.access_code || ''
     });
     setTemplateData(post.template_data || EMPTY_TEMPLATE);
     setReadTimeManuallyEdited(false);
@@ -170,7 +189,9 @@ export const AdminPage: React.FC = () => {
       content: '',
       cover_image_url: '',
       read_time: 1,
-      published: false
+      published: false,
+      is_gated: false,
+      access_code: generateAccessCode()
     });
     setTemplateData(EMPTY_TEMPLATE);
     setReadTimeManuallyEdited(false);
@@ -186,7 +207,46 @@ export const AdminPage: React.FC = () => {
       .replace(/^-+|-+$/g, '');
   };
 
-  const handleSave = async (e: React.FormEvent) => {
+  const handleNotifySubscribers = async (postToNotify: { id?: string; slug: string; title: string; excerpt: string; access_code?: string | null }) => {
+    if (!window.confirm(`Broadcast notification email to all subscribers/contributors for "${postToNotify.title}"?`)) {
+      return;
+    }
+
+    setNotifying(true);
+    try {
+      const { data: sessionData } = await (await import('../lib/supabase')).supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      
+      const res = await fetch('/notify-post', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          postId: postToNotify.id,
+          slug: postToNotify.slug,
+          title: postToNotify.title,
+          excerpt: postToNotify.excerpt,
+          accessCode: postToNotify.access_code || undefined
+        })
+      });
+
+      const result = (await res.json()) as { success?: boolean; count?: number; error?: string };
+      if (res.ok && result.success) {
+        setSuccess(`Broadcast complete: Sent to ${result.count} subscribers.`);
+      } else {
+        setError(`Broadcast failed: ${result.error || 'Unknown error'}`);
+      }
+    } catch (err: any) {
+      console.error('Broadcast error:', err);
+      setError(`Failed to send broadcast: ${err.message || err}`);
+    } finally {
+      setNotifying(false);
+    }
+  };
+
+  const handleSave = async (e: React.FormEvent, andNotify: boolean = false) => {
     e.preventDefault();
     setSaving(true);
     setError(null);
@@ -214,30 +274,39 @@ export const AdminPage: React.FC = () => {
       slug: finalSlug,
       layout: layoutMode,
       template_data: layoutMode === 'template' ? templateData : null,
-      content: layoutMode === 'markdown' ? formValues.content : `Template Mode: ${formValues.title}`
+      content: layoutMode === 'markdown' ? formValues.content : `Template Mode: ${formValues.title}`,
+      is_gated: formValues.is_gated,
+      access_code: formValues.is_gated ? (formValues.access_code || generateAccessCode()) : null
     };
 
     try {
+      let savedPost: Post | null = null;
       if (selectedPost) {
         // Update
-        const updated = await updatePost(selectedPost.slug, payload);
-        if (updated) {
-          setSuccess(`Story "${updated.title}" updated successfully.`);
+        savedPost = await updatePost(selectedPost.slug, payload);
+        if (savedPost) {
+          setSuccess(`Story "${savedPost.title}" updated successfully.`);
           await fetchPosts();
-          setIsSidebarOpen(false);
         } else {
           setError('Failed to update the story.');
         }
       } else {
         // Create
-        const created = await createPost(payload);
-        if (created) {
-          setSuccess(`New story "${created.title}" archived.`);
+        savedPost = await createPost(payload);
+        if (savedPost) {
+          setSuccess(`New story "${savedPost.title}" archived.`);
           await fetchPosts();
-          setIsSidebarOpen(false);
         } else {
           setError('Failed to create the new story.');
         }
+      }
+
+      if (savedPost && andNotify) {
+        await handleNotifySubscribers(savedPost);
+      }
+      
+      if (savedPost) {
+        setIsSidebarOpen(false);
       }
     } catch (err) {
       setError('An unexpected transmission error occurred.');
@@ -389,13 +458,27 @@ export const AdminPage: React.FC = () => {
                             }`}>
                               {post.layout || 'Template'}
                             </span>
+                            {post.is_gated && (
+                              <span className="text-[9px] px-1.5 py-0.5 rounded border uppercase font-bold tracking-tighter bg-amber-950/30 text-amber-400 border-amber-500/30 flex items-center gap-0.5">
+                                <Lock className="w-2.5 h-2.5" /> Gated
+                              </span>
+                            )}
                           </div>
                           <p className="text-xs text-neutral-500 font-mono">
-                            {post.category.replace('-', ' ')} • {new Date(post.created_at).toLocaleDateString()}
+                            {post.category.replace('-', ' ')} • {new Date(post.created_at).toLocaleDateString()} {post.access_code && `• Code: ${post.access_code}`}
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 ml-4">
+                        {post.published && (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleNotifySubscribers(post); }}
+                            className="p-2 hover:bg-neutral-800 rounded-lg text-neutral-400 hover:text-amber-400 transition-colors"
+                            title="Broadcast notification email to contributors"
+                          >
+                            <Send className="w-4 h-4" />
+                          </button>
+                        )}
                         <button
                           onClick={(e) => { e.stopPropagation(); handleEdit(post); }}
                           className="p-2 hover:bg-neutral-800 rounded-lg text-neutral-400 hover:text-white transition-colors"
@@ -545,6 +628,54 @@ export const AdminPage: React.FC = () => {
                         </label>
                       </div>
                     </div>
+                  </div>
+
+                  {/* Gated / Classified Settings */}
+                  <div className="p-4 bg-red-950/20 border border-red-500/20 rounded-2xl space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Lock className="w-4 h-4 text-red-400" />
+                        <div>
+                          <span className="text-xs font-bold text-neutral-200 uppercase tracking-widest block">Contributor Gated Content</span>
+                          <span className="text-[11px] text-neutral-500">Restricts full intelligence to contributors with an access code</span>
+                        </div>
+                      </div>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input 
+                          type="checkbox" 
+                          className="sr-only peer" 
+                          checked={formValues.is_gated}
+                          onChange={(e) => setFormValues({...formValues, is_gated: e.target.checked})}
+                        />
+                        <div className="w-9 h-5 bg-neutral-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-red-600"></div>
+                      </label>
+                    </div>
+
+                    {formValues.is_gated && (
+                      <div className="pt-3 border-t border-red-500/10 flex items-center gap-3">
+                        <div className="flex-1">
+                          <label className="block text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-1 flex items-center gap-1">
+                            <Key className="w-3 h-3 text-red-400" /> Contributor Access Code
+                          </label>
+                          <input
+                            type="text"
+                            value={formValues.access_code}
+                            onChange={(e) => setFormValues({...formValues, access_code: e.target.value.toUpperCase()})}
+                            placeholder="PROLE-XXXX"
+                            className="w-full bg-neutral-900 border border-neutral-800 focus:border-red-500/50 rounded-xl p-2.5 text-red-400 font-mono text-sm font-bold tracking-wider outline-none"
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setFormValues({...formValues, access_code: generateAccessCode()})}
+                          className="mt-4 px-3 py-2.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 rounded-xl text-xs font-mono flex items-center gap-1.5 transition-colors"
+                          title="Generate new access code"
+                        >
+                          <RefreshCw className="w-3.5 h-3.5" />
+                          Regen
+                        </button>
+                      </div>
+                    )}
                   </div>
 
                   <div>
@@ -750,19 +881,31 @@ export const AdminPage: React.FC = () => {
                     )}
                   </div>
 
-                  <div className="flex gap-4 pt-8">
+                  <div className="flex flex-col sm:flex-row gap-3 pt-8">
                     <button
                       type="submit"
-                      disabled={saving}
-                      className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-red-600 hover:bg-red-500 disabled:bg-neutral-800 disabled:text-neutral-500 text-white rounded-xl font-bold transition-all duration-300 shadow-lg shadow-red-900/10"
+                      disabled={saving || notifying}
+                      className="flex-1 flex items-center justify-center gap-2 px-5 py-4 bg-red-600 hover:bg-red-500 disabled:bg-neutral-800 disabled:text-neutral-500 text-white rounded-xl font-bold transition-all duration-300 shadow-lg shadow-red-900/10 text-sm"
                     >
-                      {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+                      {saving && !notifying ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                       Sync Chronicle
                     </button>
+                    {formValues.published && (
+                      <button
+                        type="button"
+                        disabled={saving || notifying}
+                        onClick={(e) => handleSave(e, true)}
+                        className="flex-1 flex items-center justify-center gap-2 px-5 py-4 bg-red-950/80 hover:bg-red-900 border border-red-500/40 text-red-200 disabled:bg-neutral-800 disabled:text-neutral-500 rounded-xl font-bold transition-all duration-300 text-sm"
+                        title="Save story and email all subscribers with access code"
+                      >
+                        {notifying ? <Loader2 className="w-4 h-4 animate-spin text-red-400" /> : <Send className="w-4 h-4 text-red-400" />}
+                        Sync & Broadcast
+                      </button>
+                    )}
                     <button
                       type="button"
                       onClick={() => setIsSidebarOpen(false)}
-                      className="px-6 py-4 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 rounded-xl font-bold transition-all duration-300"
+                      className="px-5 py-4 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 rounded-xl font-bold transition-all duration-300 text-sm"
                     >
                       Cancel
                     </button>

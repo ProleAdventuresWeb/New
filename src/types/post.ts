@@ -32,6 +32,8 @@ export interface Post {
   published_at: string | null;
   layout: PostLayout;
   template_data: TemplateData | null;
+  is_gated?: boolean;
+  access_code?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -47,4 +49,5 @@ export type PostPreview = Pick<
   | 'read_time'
   | 'published_at'
   | 'layout'
+  | 'is_gated'
 >;
