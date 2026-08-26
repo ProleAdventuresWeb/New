@@ -2,11 +2,107 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useSearchParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import ReactMarkdown from 'react-markdown';
-import { Calendar, Clock, ArrowLeft, ArrowRight, Share2, Twitter, Copy, Check, Youtube, Heart, Lock, Key, ShieldCheck, Unlock, AlertTriangle } from 'lucide-react';
+import { Calendar, Clock, ArrowLeft, ArrowRight, Share2, Twitter, Copy, Check, Youtube, Heart, Lock, Key, ShieldCheck, Unlock, AlertTriangle, Shield, Target, Sparkles } from 'lucide-react';
 import { getPostBySlug, getPostsByCategory, getAdjacentPosts } from '../lib/posts';
+import { getAdventures, type SecureAdventure } from '../lib/supabase';
 import { useAuth } from '../lib/auth';
 import type { Post, PostPreview, TemplateData } from '../types/post';
 import { Head } from '../components/Head';
+
+const MissionFundingCallout: React.FC<{ missionId?: string | null }> = ({ missionId }) => {
+  const [mission, setMission] = useState<SecureAdventure | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    getAdventures()
+      .then((adventures) => {
+        if (!isMounted || !adventures || adventures.length === 0) {
+          setLoading(false);
+          return;
+        }
+
+        if (missionId && missionId !== 'auto') {
+          const found = adventures.find(a => a.id === missionId);
+          if (found) {
+            setMission(found);
+            setLoading(false);
+            return;
+          }
+        }
+
+        // Auto selection: find active/scouting mission nearest to 100% or highest current bounty
+        const uncompleted = adventures.filter(a => a.status !== 'complete');
+        const sorted = (uncompleted.length > 0 ? uncompleted : adventures).sort((a, b) => {
+          const pctA = (a.bounty_current || 0) / (a.bounty_target || 1);
+          const pctB = (b.bounty_current || 0) / (b.bounty_target || 1);
+          return pctB - pctA;
+        });
+
+        setMission(sorted[0] || null);
+        setLoading(false);
+      })
+      .catch(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => { isMounted = false; };
+  }, [missionId]);
+
+  if (loading || !mission) return null;
+
+  const current = Number(mission.bounty_current || 0);
+  const target = Number(mission.bounty_target || 100);
+  const percentage = Math.min(100, Math.round((current / target) * 100));
+
+  return (
+    <section className="bg-gradient-to-br from-red-950/40 via-neutral-900/90 to-black p-8 md:p-12 rounded-3xl border border-red-500/30 shadow-2xl relative overflow-hidden group">
+      <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform duration-700 pointer-events-none">
+        <Shield className="w-32 h-32 text-red-500" />
+      </div>
+
+      <div className="max-w-2xl mx-auto text-center relative z-10 space-y-6">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-red-950/80 border border-red-500/40 rounded-full text-red-400 text-xs font-mono font-bold uppercase tracking-widest">
+          <Sparkles className="w-3.5 h-3.5" /> Next Operation Awaiting Fuel
+        </div>
+
+        <div>
+          <h3 className="text-2xl md:text-3xl font-display font-bold text-neutral-50 mb-2">
+            Fund The Next Expedition: <span className="text-red-500">{mission.codename || mission.display_title}</span>
+          </h3>
+          <p className="text-neutral-400 text-sm md:text-base leading-relaxed max-w-lg mx-auto">
+            Directly back this investigation on Prole Control. Financial contributors become recognized operatives and automatically receive classified clearance codes for all future dispatches.
+          </p>
+        </div>
+
+        {/* Live Funding Progress Bar */}
+        <div className="bg-neutral-950/80 border border-neutral-800 rounded-2xl p-5 space-y-3">
+          <div className="flex items-center justify-between text-xs font-mono">
+            <span className="text-neutral-400">OPERATION BOUNTY</span>
+            <span className="text-red-400 font-bold">£{current.toFixed(2)} / £{target.toFixed(2)} ({percentage}%)</span>
+          </div>
+          <div className="w-full h-3 bg-neutral-900 rounded-full overflow-hidden border border-neutral-800">
+            <div 
+              className="h-full bg-gradient-to-r from-red-600 to-amber-500 rounded-full transition-all duration-1000 shadow-[0_0_12px_rgba(239,68,68,0.5)]"
+              style={{ width: `${percentage}%` }}
+            />
+          </div>
+        </div>
+
+        <div>
+          <Link
+            to={`/prole-control?mission_id=${mission.id}`}
+            className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-red-600 hover:bg-red-500 text-white rounded-xl font-bold transition-all duration-300 shadow-lg shadow-red-900/40 text-sm uppercase tracking-wider group"
+          >
+            <Target className="w-4 h-4" />
+            Fuel This Mission on Prole Control
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+};
 
 const TemplateLayout: React.FC<{ data: TemplateData; title: string }> = ({ data, title }) => {
   return (
@@ -83,28 +179,9 @@ const TemplateLayout: React.FC<{ data: TemplateData; title: string }> = ({ data,
         <p>{data.textBlockC}</p>
       </section>
 
-      {/* 6. Patreon CTA */}
-      {data.patreonCtaEnabled && (
-        <section className="bg-gradient-to-br from-red-950/40 via-black to-black p-12 rounded-3xl border border-red-500/20 shadow-glass text-center relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform duration-700">
-            <Heart className="w-24 h-24 text-red-500" />
-          </div>
-          <h3 className="text-2xl font-bold text-neutral-50 mb-4 relative z-10">Want deeper chronicles without the noise?</h3>
-          <p className="text-neutral-400 mb-8 max-w-xl mx-auto text-lg leading-relaxed relative z-10">
-            Support Prole Adventures on Patreon for detailed reports, raw footage, and ad-free investigations.
-          </p>
-          <a 
-            href={data.patreonUrl || '#'} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            data-umami-event="outbound_click"
-            data-umami-event-type="patreon"
-            className="inline-flex items-center px-10 py-5 bg-red-600 hover:bg-red-500 text-white rounded-xl font-bold transition-all duration-300 shadow-lg shadow-red-900/40 group relative z-10"
-          >
-            Join the Resistance
-            <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-          </a>
-        </section>
+      {/* 6. Prole Control Mission Funding Callout */}
+      {(data.missionCalloutEnabled ?? data.patreonCtaEnabled ?? true) && (
+        <MissionFundingCallout missionId={data.missionCalloutId} />
       )}
 
       {/* 7. Text Block D */}

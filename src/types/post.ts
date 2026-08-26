@@ -12,8 +12,10 @@ export interface TemplateData {
   tweetUrl: string | null;
   textBlockB: string;
   textBlockC: string;
-  patreonCtaEnabled: boolean;
-  patreonUrl: string | null;
+  missionCalloutEnabled?: boolean;
+  missionCalloutId?: string | null; // null or 'auto' for nearest to goal
+  patreonCtaEnabled?: boolean; // legacy compatibility
+  patreonUrl?: string | null; // legacy compatibility
   textBlockD: string;
   youtubeUrl: string | null;
   closeoutText: string;

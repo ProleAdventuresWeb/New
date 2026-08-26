@@ -21,7 +21,9 @@ import {
   Lock,
   Key,
   Send,
-  RefreshCw
+  RefreshCw,
+  Shield,
+  Target
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { 
@@ -30,6 +32,7 @@ import {
   updatePost, 
   deletePost 
 } from '../lib/posts';
+import { getAdventures, type SecureAdventure } from '../lib/supabase';
 import { useAuth } from '../lib/auth';
 import type { Post, PostCategory, PostLayout, TemplateData } from '../types/post';
 
@@ -44,8 +47,8 @@ const EMPTY_TEMPLATE: TemplateData = {
   tweetUrl: '',
   textBlockB: '',
   textBlockC: '',
-  patreonCtaEnabled: false,
-  patreonUrl: '',
+  missionCalloutEnabled: true,
+  missionCalloutId: 'auto',
   textBlockD: '',
   youtubeUrl: '',
   closeoutText: ''
@@ -54,6 +57,7 @@ const EMPTY_TEMPLATE: TemplateData = {
 export const AdminPage: React.FC = () => {
   // Data state
   const [posts, setPosts] = useState<Post[]>([]);
+  const [missions, setMissions] = useState<SecureAdventure[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   
@@ -121,8 +125,12 @@ export const AdminPage: React.FC = () => {
   const fetchPosts = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await getAllPostsAdmin();
-      setPosts(data);
+      const [postsData, missionsData] = await Promise.all([
+        getAllPostsAdmin(),
+        getAdventures().catch(() => [])
+      ]);
+      setPosts(postsData);
+      setMissions(missionsData);
     } catch (err) {
       setError('Failed to fetch posts from archive.');
       console.error(err);
@@ -818,30 +826,47 @@ export const AdminPage: React.FC = () => {
                           />
                         </div>
 
-                        {/* Patreon */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-orange-950/20 p-4 rounded-2xl border border-orange-500/20">
+                        {/* Prole Control Mission Funding Callout */}
+                        <div className="bg-red-950/20 p-4 rounded-2xl border border-red-500/20 space-y-3">
                           <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold text-orange-400 flex items-center gap-2">
-                              <Heart className="w-3 h-3" /> Patreon CTA
-                            </span>
+                            <div>
+                              <span className="text-xs font-bold text-red-400 flex items-center gap-2">
+                                <Shield className="w-3.5 h-3.5" /> Mission Funding Callout (Prole Control)
+                              </span>
+                              <span className="text-[11px] text-neutral-500">Promotes an active operation with live progress bar to readers</span>
+                            </div>
                             <label className="relative inline-flex items-center cursor-pointer">
                               <input 
                                 type="checkbox" 
                                 className="sr-only peer" 
-                                checked={templateData.patreonCtaEnabled}
-                                onChange={(e) => setTemplateData({...templateData, patreonCtaEnabled: e.target.checked})}
+                                checked={templateData.missionCalloutEnabled ?? true}
+                                onChange={(e) => setTemplateData({...templateData, missionCalloutEnabled: e.target.checked})}
                               />
-                              <div className="w-9 h-5 bg-neutral-800 rounded-full peer peer-checked:bg-orange-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full"></div>
+                              <div className="w-9 h-5 bg-neutral-800 rounded-full peer peer-checked:bg-red-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full"></div>
                             </label>
                           </div>
-                          <input
-                            type="text"
-                            placeholder="Patreon Link URL"
-                            value={templateData.patreonUrl || ''}
-                            onChange={(e) => setTemplateData({...templateData, patreonUrl: e.target.value})}
-                            className="bg-neutral-950 border border-neutral-800 rounded-lg p-2 text-[10px] font-mono outline-none text-orange-200"
-                            disabled={!templateData.patreonCtaEnabled}
-                          />
+
+                          {(templateData.missionCalloutEnabled ?? true) && (
+                            <div className="pt-2 border-t border-red-500/10 flex flex-col sm:flex-row items-center gap-3">
+                              <div className="flex-1 w-full">
+                                <label className="block text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-1 flex items-center gap-1">
+                                  <Target className="w-3 h-3 text-red-400" /> Target Mission
+                                </label>
+                                <select
+                                  value={templateData.missionCalloutId || 'auto'}
+                                  onChange={(e) => setTemplateData({...templateData, missionCalloutId: e.target.value})}
+                                  className="w-full bg-neutral-950 border border-neutral-800 focus:border-red-500/50 rounded-xl p-2.5 text-xs text-neutral-200 outline-none"
+                                >
+                                  <option value="auto">⚡ Auto: Live Mission Nearest to Funding Goal</option>
+                                  {missions.map(m => (
+                                    <option key={m.id} value={m.id}>
+                                      {m.codename || m.display_title} (£{m.bounty_current} / £{m.bounty_target})
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                            </div>
+                          )}
                         </div>
 
                         {/* Block D */}
