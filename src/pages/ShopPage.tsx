@@ -102,53 +102,76 @@ export const ShopPage: React.FC = () => {
 
   // Track page view and fetch products
   useEffect(() => {
+    let isMounted = true;
     analytics.pageView('shop');
     
     const fetchProducts = async () => {
-      setIsLoadingProducts(true);
-      const { data, error } = await supabase
-        .from('products')
-        .select('*, product_variants(*)')
-        .eq('active', true)
-        .order('category', { ascending: true })
-        .order('name', { ascending: true });
-        
-      if (error) {
-        console.error('Error fetching products:', error);
-      } else if (data) {
-        console.log('Fetched products from Supabase:', data);
-        const mappedProducts: Product[] = data.map((item: any) => ({
-          id: item.id,
-          name: item.name,
-          description: item.description,
-          price: item.base_price_pence,
-          image: item.image_url,
-          images: item.images || [item.image_url],
-          category: item.category,
-          variants: item.product_variants || []
-        }));
-        setProducts(mappedProducts);
-        
-        // Track Umami product views
-        if (window.umami) {
-          mappedProducts.forEach(p => {
-            window.umami.track('product_view', { product: p.name });
-          });
-        }
-
-        // Pre-select the first variant for each product
-        const initialSelections: Record<string, ProductVariant> = {};
-        mappedProducts.forEach(p => {
-          if (p.variants && p.variants.length > 0) {
-            initialSelections[p.id] = p.variants[0];
-          }
-        });
-        setSelectedVariants(initialSelections);
+      if (!supabase) {
+        if (isMounted) setIsLoadingProducts(false);
+        return;
       }
-      setIsLoadingProducts(false);
+
+      setIsLoadingProducts(true);
+      try {
+        const timeoutPromise = new Promise<{ data: null; error: Error }>((_, reject) =>
+          setTimeout(() => reject(new Error('Products fetch timed out')), 5000)
+        );
+
+        const fetchPromise = supabase
+          .from('products')
+          .select('*, product_variants(*)')
+          .eq('active', true)
+          .order('category', { ascending: true })
+          .order('name', { ascending: true });
+
+        const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
+          
+        if (error) {
+          console.error('Error fetching products:', error);
+        } else if (data && isMounted) {
+          console.log('Fetched products from Supabase:', data);
+          const mappedProducts: Product[] = data.map((item: any) => ({
+            id: item.id,
+            name: item.name,
+            description: item.description,
+            price: item.base_price_pence,
+            image: item.image_url,
+            images: item.images || [item.image_url],
+            category: item.category,
+            variants: item.product_variants || []
+          }));
+          setProducts(mappedProducts);
+          
+          // Track Umami product views
+          if (window.umami) {
+            mappedProducts.forEach(p => {
+              window.umami.track('product_view', { product: p.name });
+            });
+          }
+
+          // Pre-select the first variant for each product
+          const initialSelections: Record<string, ProductVariant> = {};
+          mappedProducts.forEach(p => {
+            if (p.variants && p.variants.length > 0) {
+              initialSelections[p.id] = p.variants[0];
+            }
+          });
+          setSelectedVariants(initialSelections);
+        }
+      } catch (err) {
+        console.error('Failed to load products safely:', err);
+      } finally {
+        if (isMounted) {
+          setIsLoadingProducts(false);
+        }
+      }
     };
     
     fetchProducts();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleBuyNow = async (product: Product) => {

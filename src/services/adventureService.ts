@@ -70,12 +70,14 @@ export class AdventureService {
   static async initializeSampleData(): Promise<void> {
     // Skip if Supabase is not configured
     if (!supabase) {
-      console.log('Supabase not configured, skipping database initialization');
       return;
     }
 
     try {
-      const existingAdventures = await getAdventures();
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('Sample data check timeout')), 3000)
+      );
+      const existingAdventures = await Promise.race([getAdventures(), timeoutPromise]);
 
       // Only create sample data if no adventures exist
       if (existingAdventures.length === 0) {
@@ -88,8 +90,7 @@ export class AdventureService {
         console.log('Sample adventure data created successfully');
       }
     } catch (error) {
-      console.error('Failed to initialize sample data:', error);
-      throw error;
+      console.warn('Sample data check completed or bypassed:', error);
     }
   }
 
@@ -102,9 +103,10 @@ export class AdventureService {
     }
 
     try {
-      // This would use the secure view in production
-      // For now, we'll apply client-side filtering as a demonstration
-      const adventures = await getAdventures();
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('Missions fetch timed out')), 5000)
+      );
+      const adventures = await Promise.race([getAdventures(), timeoutPromise]);
 
       return adventures.map(adventure => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -112,8 +114,8 @@ export class AdventureService {
 
         if (adventure.status === 'scouting') {
           // Jitter coordinates to obscure exact location — but show real description
-          const jitterLat = adventure.lat + (Math.random() - 0.5) * 0.025;
-          const jitterLng = adventure.lng + (Math.random() - 0.5) * 0.025;
+          const jitterLat = Number(adventure.lat) + (Math.random() - 0.5) * 0.025;
+          const jitterLng = Number(adventure.lng) + (Math.random() - 0.5) * 0.025;
 
           return {
             ...adventure,
@@ -126,8 +128,8 @@ export class AdventureService {
 
         return {
           ...adventure,
-          display_lat: adventure.lat,
-          display_lng: adventure.lng,
+          display_lat: Number(adventure.lat),
+          display_lng: Number(adventure.lng),
           display_title: adventure.codename,
           display_description: rawDescription,
           video_url: (adventure as any).video_url,

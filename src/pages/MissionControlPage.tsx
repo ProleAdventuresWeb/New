@@ -353,26 +353,37 @@ export const MissionControlPage: React.FC = () => {
   };
 
   useEffect(() => {
+    let isMounted = true;
     (async () => {
       try {
-        await AdventureService.initializeSampleData();
+        // Run sample init in background without blocking mission display
+        AdventureService.initializeSampleData().catch(() => {});
         const data = await AdventureService.getSecureAdventures();
-        setAdventures(data);
-        if (data.length > 0) setSelected(data[0]);
-      } catch {
-        try {
-          await MockAdventureService.initializeSampleData();
-          const data = await MockAdventureService.getSecureAdventures();
+        if (isMounted) {
           setAdventures(data);
           if (data.length > 0) setSelected(data[0]);
-          setIsDemo(true);
+        }
+      } catch {
+        try {
+          const data = await MockAdventureService.getSecureAdventures();
+          if (isMounted) {
+            setAdventures(data);
+            if (data.length > 0) setSelected(data[0]);
+            setIsDemo(true);
+          }
         } catch (err) {
           console.error('Failed to load missions:', err);
         }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     })();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const filters = [

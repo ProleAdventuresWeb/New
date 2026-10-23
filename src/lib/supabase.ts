@@ -27,10 +27,6 @@ export const supabase = (isValidSupabaseUrl && isValidSupabaseKey)
         persistSession: true,
         autoRefreshToken: true,
         detectSessionInUrl: true,
-        // Disable Navigator Lock API fallback to prevent "Lock was released because another request stole it" in React 18 strict mode / multiple tabs
-        lock: async (_name, _acquireTimeout, fn) => {
-          return await fn();
-        },
       }
     })
   : null;

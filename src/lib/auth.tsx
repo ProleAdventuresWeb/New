@@ -63,6 +63,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // Fetch profile whenever the authenticated user ID changes
+  useEffect(() => {
+    let isMounted = true;
+    const userId = state.user?.id;
+
+    if (!userId || !supabase) {
+      if (state.profile !== null) {
+        setState(prev => ({ ...prev, profile: null }));
+      }
+      return;
+    }
+
+    fetchProfile(userId).then(profile => {
+      if (isMounted) {
+        setState(prev => ({ ...prev, profile }));
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [state.user?.id]);
+
   // Initialize auth state
   useEffect(() => {
     if (!supabase) {
@@ -71,26 +94,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     // Get initial session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      const profile = session?.user ? await fetchProfile(session.user.id) : null;
-      setState({
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setState(prev => ({
+        ...prev,
         user: session?.user ?? null,
         session,
-        profile,
         loading: false,
         initialized: true,
-      });
+      }));
     });
 
     // Listen for auth changes
+    // IMPORTANT: Keep callback synchronous / non-blocking to prevent GoTrue internal deadlocks
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        const profile = session?.user ? await fetchProfile(session.user.id) : null;
+      (event, session) => {
         setState(prev => ({
           ...prev,
           user: session?.user ?? null,
           session,
-          profile,
           loading: false,
         }));
 
@@ -142,8 +163,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     if (!supabase) return;
-    await supabase.auth.signOut();
-    setState(prev => ({ ...prev, user: null, session: null, profile: null }));
+    try {
+      await supabase.auth.signOut();
+    } catch (err) {
+      console.warn('Sign out completed with notice:', err);
+    } finally {
+      setState(prev => ({ ...prev, user: null, session: null, profile: null }));
+    }
   };
 
   const resetPassword = async (email: string) => {

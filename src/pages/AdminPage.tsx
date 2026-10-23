@@ -1003,10 +1003,10 @@ export const AdminPage: React.FC = () => {
                         <p className="text-sm text-neutral-300 leading-relaxed">{templateData.textBlockC || 'Data_Point_C'}</p>
                       </div>
 
-                      {templateData.patreonCtaEnabled && (
+                      {(templateData.missionCalloutEnabled ?? templateData.patreonCtaEnabled) && (
                         <div className="bg-red-950/20 p-6 rounded-2xl border border-red-500/30 text-center">
-                          <p className="text-xs font-bold text-neutral-50 mb-4 tracking-tight">Support the Resistance on Patreon.</p>
-                          <div className="inline-block px-4 py-2 bg-red-600 text-white text-[10px] font-bold rounded uppercase">Secure_Patron_Link</div>
+                          <p className="text-xs font-bold text-neutral-50 mb-4 tracking-tight">Mission Funding Callout</p>
+                          <div className="inline-block px-4 py-2 bg-red-600 text-white text-[10px] font-bold rounded uppercase">Secure_Contribution_Callout</div>
                         </div>
                       )}
 
