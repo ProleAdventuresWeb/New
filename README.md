@@ -1,287 +1,195 @@
-# Prole Adventures Website
+# Prole Adventures
 
-**Exploring what's left of freedom through unfiltered perspective on ordinary life.**
+Prole Adventures is a content, mission-funding, and small-commerce web application for publishing field reports, audit-led stories, gear recommendations, community drops, and mission intelligence.
 
-A modern, responsive website for documenting authentic adventures, urban exploration, and real-world gear testing. Built with React, TypeScript, Tailwind CSS, and Supabase.
+## Stack
 
-## 🚀 Live Demo
+- **Frontend:** React 18, TypeScript, Vite, React Router DOM, React Helmet Async
+- **Styling:** Tailwind CSS with the project's dark/glass visual system
+- **Content:** React Markdown, JSON-LD, RSS generation
+- **Mapping:** Leaflet and React Leaflet
+- **Authentication and database:** Supabase Auth, Postgres, Storage, and Row Level Security
+- **Payments:** Stripe Checkout and verified Stripe webhooks
+- **Fulfilment:** Printful API and fulfilment webhooks
+- **Email:** Brevo transactional and newsletter delivery
+- **Analytics:** Umami client-side and server-side event tracking
+- **Hosting/runtime:** Cloudflare Pages with Pages Functions
 
-**Website URL:** [https://proleadventures.com
+## Repository layout
 
-## 📖 Project Overview
-
-Prole Adventures is a content-focused website that showcases:
-
-- **Authentic Documentation:** Unfiltered perspective on ordinary life
-- **Urban Exploration:** City-based adventures and hidden places
-- **Gear Testing:** Real-world equipment reviews and recommendations
-- **Community Building:** Connecting with like-minded explorers
-- **YouTube Integration:** Video content from [@ProleAdventures](https://www.youtube.com/@ProleAdventures)
-
-## 🏗️ Tech Stack
-
-- **Frontend:** React 18, TypeScript, Vite, React Markdown
-- **Styling:** Tailwind CSS, Custom Glassmorphism Design
-- **Backend:** Supabase (Database, Edge Functions)
-- **Maps:** Leaflet.js
-- **Routing:** React Router DOM
-- **Icons:** Lucide React
-- **Build Tool:** Vite
-
-## 📁 Project Structure
-
-```
-mysterious-adventure-travel/
-├── .github/workflows/
-│   └── ci.yml              # CI/CD configuration
-├── public/
-│   ├── images/              # Static images and assets
-│   └── data/               # JSON data files
-├── src/
-│   ├── components/         # Reusable React components
-│   │   ├── Navigation.tsx  # Main navigation
-│   │   └── Footer.tsx      # Site footer
-│   ├── pages/              # Page components
-│   │   ├── HomePage.tsx    # Landing page
-│   │   ├── AboutPage.tsx   # About page
-│   │   ├── ContactPage.tsx # Contact form
-│   │   ├── MapPage.tsx     # Interactive map
-│   │   ├── GearPage.tsx    # Gear listings
-│   │   ├── StoriesPage.tsx # Adventure stories
-│   │   ├── PrivacyPolicyPage.tsx
-│   │   └── TermsPage.tsx
-│   ├── lib/                # Utilities and configurations
-│   │   └── supabase.ts     # Supabase client setup
-│   ├── App.tsx             # Main app component
-│   ├── main.tsx           # Entry point
-│   └── index.css          # Global styles
-├── dist/                  # Built files (generated)
-├── .env.example          # Environment variables template
-├── package.json          # Dependencies
-├── tailwind.config.ts    # Tailwind configuration
-├── vite.config.ts        # Vite configuration
-└── README.md             # This file
+```text
+web-main/
+|- src/                    # React application
+|  |- components/          # Shared UI, guards, SEO, checkout, and admin UI
+|  |- lib/                 # Auth, Supabase, posts, analytics, and utilities
+|  |- pages/               # Route-level React pages
+|  |- services/            # Mission/adventure data services and fallbacks
+|  |- types/               # Shared frontend domain types
+|  `- App.tsx              # Route map and application shell
+|- functions/              # Cloudflare Pages Functions
+|  |- create-checkout-session.ts
+|  |- webhook.ts           # Stripe webhook: verified and idempotent
+|  |- printful-webhook.ts
+|  |- subscribe.ts
+|  `- notify-post.ts
+|- supabase/               # SQL schema, seed, security, and Edge Function files
+|- public/                 # Static assets, headers, robots, JSON data, RSS output
+|- scripts/generate-rss.ts # Build-time RSS feed generation
+`- .github/workflows/ci.yml
 ```
 
-## 🛠️ Setup Instructions
+## Application architecture
+
+### Client application
+
+`src/main.tsx` mounts React with `StrictMode`, `HelmetProvider`, and a global error boundary. `src/App.tsx` owns the route map, shared navigation/footer, cookie consent, lazy-loaded pages, and auth guards.
+
+Authentication is managed in `src/lib/auth.tsx` through a React context backed by Supabase Auth and the `profiles` table. Browser data access is primarily in `src/lib/supabase.ts` and `src/lib/posts.ts`; Supabase Row Level Security is the server-side authorization boundary.
+
+### Backend functions
+
+Cloudflare Pages Functions expose backend endpoints under `/api/*`:
+
+- `POST /api/create-checkout-session` creates Stripe Checkout sessions for shop products, mission contributions, and Prole Foods support.
+- `POST /api/webhook` validates Stripe signatures, records idempotency in `webhook_events`, records payments/contributions/orders, creates Printful orders, sends transactional messages, and updates analytics.
+- `POST /api/printful-webhook` processes fulfilment and shipping updates.
+- `POST /api/subscribe` records newsletter signups and triggers Brevo workflows.
+- `POST /api/notify-post` sends a published-dispatch notification to subscribers after verifying the administrator's Supabase JWT.
+
+Server-only credentials belong in Cloudflare environment secrets. Never expose service-role, Stripe secret, Printful, Brevo, or SMTP credentials to the browser.
+
+### Supabase
+
+The `supabase/` directory contains manually applied SQL scripts for application tables, RLS policies, commerce, posts/gating, drops, security hardening, and the audit/League data model. These scripts are not managed by an automated migration runner. Apply them deliberately in Supabase SQL Editor and record deployment order as the schema log evolves.
+
+## Route map
+
+### Public routes
+
+| Route | Purpose |
+|---|---|
+| `/` | Home |
+| `/watch` | Video/watch landing page |
+| `/prole-control` | Mission Control map, mission funding, and Prole Foods |
+| `/map` | Alias for Mission Control |
+| `/league` | Audit/League table |
+| `/gear` | Gear and affiliate recommendations |
+| `/stories` | Published story index |
+| `/stories/:slug` and `/read/:slug` | Individual story/dispatch |
+| `/community` | Community page |
+| `/drops` | Dead-drop and clue system |
+| `/shop` | Shop catalog |
+| `/shop/success`, `/shop/cancel` | Checkout outcomes |
+| `/about`, `/contact`, `/privacy-policy`, `/terms` | Informational/legal pages |
+
+### Authenticated routes
+
+| Route | Purpose |
+|---|---|
+| `/login`, `/signup` | Authentication |
+| `/forgot-password`, `/reset-password` | Password recovery |
+| `/account` | Account profile |
+| `/account/orders` | Order history |
+| `/account/orders/:orderId` | Order and fulfilment detail |
+
+### Administrator route
+
+| Route | Purpose |
+|---|---|
+| `/admin` | Post and audit administration; protected by `AdminGuard` |
+
+The current administrator check is intentionally email-based. Do not treat client-side guards as the sole authorization layer; retain Supabase RLS and function-side checks.
+
+## Local development
 
 ### Prerequisites
 
-- Node.js 18+ 
-- pnpm package manager
-- Supabase account
-
-### 1. Clone and Install
+- Node.js 22 (the CI runtime)
+- pnpm 11 (`packageManager` is pinned in `package.json`)
+- Supabase project credentials for database/auth-dependent flows
 
 ```bash
-# Clone the repository
-git clone <your-repo-url>
-cd mysterious-adventure-travel
-
-# Install dependencies
 pnpm install
+pnpm dev
 ```
 
-### 2. Supabase Setup
+Copy `.env.example` to an ignored local environment file and set only the values required for the flows being tested.
 
-1. **Create a new Supabase project** at [supabase.com](https://supabase.com)
-2. **Get your project credentials:**
-   - Go to Settings → API
-   - Copy your Project URL and anon/public key
-3. **Create database tables:**
+### Environment variables
 
-```sql
--- Contact messages table
-CREATE TABLE contact_messages (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
-  email VARCHAR(255) NOT NULL,
-  message TEXT NOT NULL,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
+Browser-exposed variables must use the `VITE_` prefix:
 
--- Newsletter subscriptions table  
-CREATE TABLE newsletter_signups (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  email VARCHAR(255) UNIQUE NOT NULL,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
+```dotenv
+VITE_SUPABASE_URL=
+VITE_SUPABASE_ANON_KEY=
+VITE_STRIPE_PUBLISHABLE_KEY=
 ```
 
-### 3. Environment Configuration
+Cloudflare server-side secrets include:
 
-1. **Copy environment template:**
-```bash
-cp .env.example .env
+```dotenv
+SUPABASE_URL=
+SUPABASE_SERVICE_ROLE_KEY=
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+PRINTFUL_API_KEY=
+BREVO_API_KEY=
+BREVO_SENDER_EMAIL=
+UMAMI_WEBSITE_ID=
+UMAMI_ENDPOINT=
+ZOHO_SMTP_USER=
+ZOHO_SMTP_PASS=
 ```
 
-2. **Update `.env` file:**
-```env
-VITE_SUPABASE_URL=your_supabase_url_here
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key_here
-```
-
-### 4. Development
+## Build, validation, and RSS
 
 ```bash
-# Start development server
-pnpm run dev
-
-# Build for production
-pnpm run build
-
-# Preview production build
-pnpm run preview
-
-### RSS Feed
-The website provides an RSS 2.0 feed of all published blog posts.
-- **URL:** `/rss.xml`
-- **Generation:** The feed is automatically generated from Supabase content during the `pnpm run build` process via `scripts/generate-rss.ts`.
-- **Configuration:** Set `RSS_SITE_URL` in your environment (e.g., Vercel) to define the canonical link base (defaults to `https://proleadventures.example`).
+pnpm exec tsc --noEmit --incremental false
+pnpm exec eslint .
+pnpm build:local
+pnpm build
 ```
 
-## 🚀 Deployment
+### `pnpm build:local`
 
-### Vercel (Recommended)
+Runs TypeScript and Vite only. Use this for local builds when Supabase variables are unavailable:
 
-1. **Connect to Vercel:**
-   - Push code to GitHub
-   - Connect repository to Vercel
-   - Import project settings
+```text
+pnpm install --prefer-offline && tsc -b && vite build
+```
 
-2. **Environment Variables:**
-   - Add `VITE_SUPABASE_URL`
-   - Add `VITE_SUPABASE_ANON_KEY`
-   - Set build command: `pnpm run build`
-   - Set output directory: `dist`
+### `pnpm build`
 
-3. **Deploy:**
-   - Vercel will automatically deploy on push to main branch
+Runs TypeScript, then `scripts/generate-rss.ts`, then Vite:
 
-### Alternative Deployment Options
+```text
+pnpm install --prefer-offline && tsc -b && pnpm run generate:rss && vite build
+```
 
-- **Netlify:** Drag and drop the `dist` folder or connect via Git
-- **GitHub Pages:** Configure GitHub Actions for automatic deployment
-- **Self-hosted:** Serve `dist` folder with any static web server
+RSS generation queries published Supabase posts and writes `public/rss.xml`. It requires valid `VITE_SUPABASE_URL` plus `VITE_SUPABASE_ANON_KEY` (or their server-side fallback names). Set `RSS_SITE_URL` to produce canonical feed links; otherwise the script falls back to a placeholder domain.
 
-## 📊 Database Schema
+Use `pnpm build:prod` for the production Vite mode that disables the source identifier plugin:
 
-### contact_messages
-- `id` (UUID, Primary Key)
-- `name` (VARCHAR, NOT NULL)
-- `email` (VARCHAR, NOT NULL)  
-- `message` (TEXT, NOT NULL)
-- `created_at` (TIMESTAMP, DEFAULT NOW())
+```bash
+pnpm build:prod
+```
 
-### newsletter_signups
-- `id` (UUID, Primary Key)
-- `email` (VARCHAR, UNIQUE, NOT NULL)
-- `created_at` (TIMESTAMP, DEFAULT NOW())
+## Deployment notes
 
-## 🔧 Configuration
+1. Apply required SQL changes in Supabase SQL Editor before deploying code that writes or reads new columns.
+2. Configure browser variables and server secrets in Cloudflare Pages separately.
+3. Register Stripe and Printful webhooks against the deployed `/api/webhook` and `/api/printful-webhook` endpoints.
+4. Confirm Stripe webhook signing, Printful event delivery, Brevo sender verification, and Supabase Auth redirect URLs in their respective dashboards.
+5. Run typecheck and lint before push. GitHub Actions also runs lint, typecheck, a Vite build, and a non-blocking high-severity dependency audit.
 
-### Tailwind CSS
+## Security notes
 
-The project uses custom glassmorphism classes defined in `src/index.css`:
+- Do not commit `.env` files, secret keys, or service-role credentials.
+- Stripe payment state is finalized by the verified webhook, not browser redirects.
+- `webhook_events` provides provider-event idempotency for Stripe and Printful processing.
+- Shop/account data protection relies on Supabase RLS; keep policies aligned with client queries and server-side service-role access.
+- `public/_headers` contains Cloudflare response headers and the Content Security Policy. Treat CSP changes as deployment-sensitive.
 
-- `.glass-base` - Base glass effect
-- `.glass-elevated` - Elevated glass effect  
-- `.glass-subtle` - Subtle glass effect
-- `.shadow-glass` - Glass shadow
-- `.shadow-investigation` - Investigation shadow
+## Ownership
 
-### Color Palette
-
-Primary colors:
-- **Green:** `green-400` (brand accent)
-- **Background:** `black` (main background)
-- **Text:** `neutral-50/100/200` (light text)
-- **Glass:** Semi-transparent with backdrop blur
-
-## 📱 Features
-
-### ✅ Implemented
-
-- **Responsive Design:** Mobile-first approach
-- **Glassmorphism UI:** Modern glass effects
-- **Interactive Map:** Leaflet.js integration
-- **Contact Form:** Supabase-backed form submission
-- **Newsletter Signup:** Email collection with validation
-- **YouTube Integration:** Channel link and video placeholders
-- **SEO Ready:** Meta tags and structured content
-- **Performance:** Optimized builds and lazy loading
-
-### 🔄 Future Hooks (Placeholders)
-
-- **AI Content Endpoint:** For automated content generation
-- **Affiliate Rotation:** Dynamic gear recommendation system
-- **Newsletter Automation:** Automated email campaigns
-- **Chatbot Integration:** User support automation
-- **TTS Integration:** Audio content generation
-- **Monetization Features:** Revenue optimization
-
-## 🛡️ Security
-
-- **Environment Variables:** All sensitive data in `.env`
-- **Input Validation:** Form validation on frontend and backend
-- **HTTPS:** SSL encryption for all traffic
-- **CORS:** Properly configured for production
-
-## 📈 Performance
-
-- **Bundle Size:** ~845KB (optimized)
-- **Load Time:** <3 seconds on 3G
-- **Lighthouse Score:** 90+ (target)
-- **Core Web Vitals:** Optimized for all metrics
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-1. **Build Failures:**
-   ```bash
-   # Clear cache and reinstall
-   pnpm run clean
-   pnpm install
-   ```
-
-2. **Supabase Connection:**
-   - Verify environment variables
-   - Check Supabase project status
-   - Ensure RLS policies allow public access
-
-3. **Map Not Loading:**
-   - Check Leaflet.js initialization
-   - Verify CSS imports
-   - Test in incognito mode
-
-## 📄 License
-
-This project is proprietary to Prole Adventures. All rights reserved.
-
-## 🤝 Contributing
-
-This is a private project. For collaboration requests, please contact through the website's contact form.
-
-## 📞 Support
-
-- **Email:** contact@proleadventures.com
-- **YouTube:** [@ProleAdventures](https://www.youtube.com/@ProleAdventures)
-- **Website:** [https://proleadventures.com](https://proleadventures.com)
-
-## 🔄 Next Steps Checklist
-
-- [ ] Set up real YouTube API integration
-- [ ] Implement AI content generation endpoints
-- [ ] Add affiliate link rotation system
-- [ ] Set up newsletter automation
-- [ ] Integrate chatbot for user support
-- [ ] Add TTS for audio content
-- [ ] Implement monetization features
-- [ ] Set up analytics and tracking
-- [ ] Add content management system
-- [ ] Implement social media sharing
-
----
-
-**Made with respect for authentic adventure** 🌍
+This repository is proprietary to Prole Adventures. All rights reserved.

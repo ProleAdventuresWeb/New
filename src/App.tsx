@@ -6,7 +6,7 @@ import { Footer } from './components/Footer';
 import { SkipLink } from './components/SkipLink';
 import { CookieConsent } from './components/CookieConsent';
 import { AuthGuard } from './components/AuthGuard';
-import { Loader2 } from 'lucide-react';
+import { AdminGuard } from './components/AdminGuard';
 import './index.css';
 
 import { HomePage } from './pages/HomePage';
@@ -26,6 +26,7 @@ const ShopPage = lazy(() => import('./pages/ShopPage').then(module => ({ default
 const ShopSuccessPage = lazy(() => import('./pages/ShopSuccessPage').then(module => ({ default: module.ShopSuccessPage })));
 const ShopCancelPage = lazy(() => import('./pages/ShopCancelPage').then(module => ({ default: module.ShopCancelPage })));
 const PostPage = lazy(() => import('./pages/PostPage').then(module => ({ default: module.PostPage })));
+const LeaguePage = lazy(() => import('./pages/LeaguePage').then(module => ({ default: module.LeaguePage })));
 const AdminPage = lazy(() => import('./pages/AdminPage').then(module => ({ default: module.AdminPage })));
 
 // Auth pages
@@ -53,10 +54,13 @@ function App() {
                 <Routes>
                   {/* Public routes */}
                   <Route path="/" element={<HomePage />} />
+                  <Route path="/league" element={<LeaguePage />} />
                   <Route path="/watch" element={<WatchPage />} />
                   <Route path="/prole-control" element={<MissionControlPage />} />
+                  <Route path="/map" element={<MissionControlPage />} />
                   <Route path="/gear" element={<GearPage />} />
                   <Route path="/stories" element={<StoriesPage />} />
+                  <Route path="/stories/:slug" element={<PostPage />} />
                   <Route path="/community" element={<CommunityPage />} />
                   <Route path="/about" element={<AboutPage />} />
                   <Route path="/contact" element={<ContactPage />} />
@@ -67,7 +71,7 @@ function App() {
                   <Route path="/shop/success" element={<ShopSuccessPage />} />
                   <Route path="/shop/cancel" element={<ShopCancelPage />} />
                   <Route path="/read/:slug" element={<PostPage />} />
-                  <Route path="/admin" element={<AuthGuard><AdminPage /></AuthGuard>} />
+                  <Route path="/admin" element={<AdminGuard><AdminPage /></AdminGuard>} />
 
                   {/* Auth routes */}
                   <Route path="/login" element={<LoginPage />} />
