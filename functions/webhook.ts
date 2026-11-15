@@ -366,7 +366,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
               reward_url: adv.reward_url,
               amount: `£${contributionData.amount.toFixed(2)}`
             });
-            
+
             await supabase
               .from('mission_contributions')
               .update({ reward_delivered: true })
@@ -422,7 +422,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
             mission_uuid: session.metadata.mission_id,
             amount_to_add: contributionData.amount
           });
-          
+
           if (updateError) {
             // Fallback if RPC doesn't exist
             console.warn('RPC increment_mission_bounty failed, falling back to manual update:', updateError);
@@ -431,7 +431,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
               .select('bounty_current')
               .eq('id', session.metadata.mission_id)
               .single();
-              
+
             if (adv) {
               await supabase
                 .from('adventures')
@@ -440,6 +440,91 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
             }
           }
         }
+
+      } else if (type === 'prole_foods') {
+        // ── Prole Foods: one-shot per mission ──────────────────────────────
+        const missionId = session.metadata?.mission_id || '';
+        const missionName = session.metadata?.mission_name || 'Unknown Mission';
+        const foodTier = session.metadata?.food_tier || 'snack';
+        const amountGBP = session.amount_total ? session.amount_total / 100 : 0;
+        const customerEmail = session.customer_details?.email || 'unknown';
+
+        // Extract custom_fields from session (Stripe returns them as an array)
+        type CustomField = { key: string; text?: { value?: string } };
+        const fields: CustomField[] = (session as any).custom_fields || [];
+        const getField = (key: string) =>
+          fields.find((f) => f.key === key)?.text?.value?.trim() || '';
+
+        const donorName = getField('contributor_name') || customerEmail;
+        const donorTown = getField('town');
+        const instruction = getField('instruction');
+
+        // 1. Update adventures row — claim the slot
+        if (missionId) {
+          const { data: currentAdv } = await supabase
+            .from('adventures')
+            .select('bounty_current, prole_foods_claimed')
+            .eq('id', missionId)
+            .single();
+
+          if (currentAdv?.prole_foods_claimed) {
+            // Slot already claimed — log and skip to avoid double-write
+            console.warn('Prole Foods slot already claimed for mission:', missionId);
+          } else {
+            const { error: claimError } = await supabase
+              .from('adventures')
+              .update({
+                prole_foods_claimed: true,
+                prole_foods_donor_name: donorName,
+                prole_foods_town: donorTown || null,
+                prole_foods_instruction: instruction || null,
+                prole_foods_amount: amountGBP,
+                // Also bump the bounty
+                bounty_current: (currentAdv?.bounty_current || 0) + amountGBP,
+                updated_at: new Date().toISOString(),
+              })
+              .eq('id', missionId);
+
+            if (claimError) {
+              console.error('Error claiming Prole Foods slot:', claimError);
+              throw claimError;
+            }
+          }
+
+          // 2. Record in mission_contributions for audit trail
+          await supabase.from('mission_contributions').insert([{
+            mission_id: missionId,
+            mission_name: missionName,
+            amount: amountGBP,
+            currency: session.currency || 'gbp',
+            customer_email: customerEmail,
+            stripe_session_id: session.id,
+            status: 'paid',
+          }]).select();
+        }
+
+        // 3. Operational alert — the creator sees this on mobile before filming
+        const tierLabel = foodTier === 'dinner' ? '🍲 Dinner £10' : '🥪 Snack £5';
+        await sendOperationalAlert(
+          env,
+          `SIGNAL: Prole Foods Claimed — ${tierLabel} (£${amountGBP.toFixed(2)})`,
+          `A Prole Foods slot has been claimed.\n\n` +
+          `Mission: ${missionName}\n` +
+          `Tier: ${tierLabel}\n` +
+          `Amount: £${amountGBP.toFixed(2)}\n` +
+          `Donor Name: ${donorName}\n` +
+          `Town: ${donorTown || '(not provided)'}\n` +
+          `Instruction: ${instruction || '(none left)'}\n` +
+          `Stripe Session: ${session.id}\n` +
+          `\n— This is your pre-filming briefing. Good luck.`
+        );
+
+        await trackUmamiEvent(env, 'prole_foods_claimed', '/prole-control', {
+          mission: missionName,
+          tier: foodTier,
+          amount: amountGBP,
+        });
+
       } else {
         const customerEmail = session.customer_details?.email || 'unknown';
         const profileId = session.metadata?.profile_id || null;
@@ -485,8 +570,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
           });
           for (const item of lineItems.data) {
             const productMetadata = (item.price?.product as Stripe.Product)?.metadata || {};
-            const variantId = productMetadata.variantId && productMetadata.variantId !== 'none' 
-              ? productMetadata.variantId 
+            const variantId = productMetadata.variantId && productMetadata.variantId !== 'none'
+              ? productMetadata.variantId
               : null;
 
             await supabase.from('order_items').insert({

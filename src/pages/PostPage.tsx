@@ -2,12 +2,138 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useSearchParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import ReactMarkdown from 'react-markdown';
-import { Calendar, Clock, ArrowLeft, ArrowRight, Share2, Twitter, Copy, Check, Youtube, Heart, Lock, Key, ShieldCheck, Unlock, AlertTriangle, Shield, Target, Sparkles } from 'lucide-react';
+import { Calendar, Clock, ArrowLeft, ArrowRight, Share2, Twitter, Copy, Check, Youtube, Heart, Lock, Key, ShieldCheck, Unlock, AlertTriangle, Shield, Target, Sparkles, MapPin, Trophy } from 'lucide-react';
 import { getPostBySlug, getPostsByCategory, getAdjacentPosts } from '../lib/posts';
-import { getAdventures, type SecureAdventure } from '../lib/supabase';
+import { getAdventures, getAuditByStorySlug, type SecureAdventure } from '../lib/supabase';
+import { AdventureService } from '../services/adventureService';
+import { YouTubeFacade } from '../components/YouTubeFacade';
 import { useAuth } from '../lib/auth';
 import type { Post, PostPreview, TemplateData } from '../types/post';
 import { Head } from '../components/Head';
+
+// ─── Audit Dossier Header (Spine §15–16) ────────────────────────────────────
+const AuditDossierHeader: React.FC<{ audit: SecureAdventure }> = ({ audit }) => {
+  const formattedDate = audit.audit_date
+    ? new Date(audit.audit_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+    : audit.created_at
+      ? new Date(audit.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+      : '';
+
+  return (
+    <section className="mb-12 bg-gradient-to-b from-neutral-900/90 via-neutral-950 to-black rounded-3xl border border-red-500/30 p-6 md:p-10 shadow-2xl relative overflow-hidden">
+      <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
+        <Trophy className="w-48 h-48 text-red-500" />
+      </div>
+
+      <div className="relative z-10 space-y-6">
+        {/* Top Badges */}
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-950/80 border border-red-500/40 rounded-full text-red-400 text-xs font-mono uppercase tracking-widest">
+            <span>🍅</span> Spine Audit Dossier {audit.episode_number ? `#${audit.episode_number}` : ''}
+          </div>
+
+          <Link
+            to={`/prole-control?pin=${audit.id}`}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 hover:border-red-500/50 text-neutral-300 hover:text-white font-mono text-xs transition-colors"
+          >
+            <MapPin className="w-3.5 h-3.5 text-red-400" />
+            View Map Pin ({audit.display_lat.toFixed(3)}°N, {audit.display_lng.toFixed(3)}°E)
+          </Link>
+        </div>
+
+        {/* Place & Score */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-neutral-800">
+          <div>
+            <h1 className="text-3xl md:text-5xl font-display font-black text-neutral-50 tracking-tight">
+              {audit.display_title || audit.codename}
+            </h1>
+            {audit.verdict_line && (
+              <p className="text-lg md:text-xl text-red-400 font-medium italic mt-2">
+                &ldquo;{audit.verdict_line}&rdquo;
+              </p>
+            )}
+            <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-neutral-400 mt-3">
+              {formattedDate && <span>AUDIT DATE: {formattedDate}</span>}
+              {audit.conditions_line && (
+                <>
+                  <span>•</span>
+                  <span>CONDITIONS: {audit.conditions_line}</span>
+                </>
+              )}
+            </div>
+          </div>
+
+          {audit.score !== null && audit.score !== undefined && (
+            <div className="flex flex-col items-center justify-center p-4 rounded-2xl bg-black/60 border border-neutral-800 shrink-0 min-w-[110px]">
+              <span className="text-[11px] font-mono text-neutral-500 uppercase tracking-widest mb-1">Audit Score</span>
+              <span className={`text-4xl md:text-5xl font-black font-display ${
+                audit.score >= 80 ? 'text-emerald-400 drop-shadow-[0_0_12px_rgba(16,185,129,0.4)]' :
+                audit.score >= 60 ? 'text-amber-400 drop-shadow-[0_0_12px_rgba(245,158,11,0.4)]' :
+                'text-red-400 drop-shadow-[0_0_12px_rgba(239,68,68,0.4)]'
+              }`}>
+                {audit.score}
+              </span>
+              <span className="text-[10px] font-mono text-neutral-500 mt-1">/ 100</span>
+            </div>
+          )}
+        </div>
+
+        {/* Evidence Stats Grid (Spine §16 five pressures) */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 pt-2">
+          <div className="p-3.5 rounded-xl bg-neutral-900/60 border border-neutral-800/80">
+            <span className="text-[10px] font-mono uppercase text-neutral-500 block mb-1">Actual Spend</span>
+            <span className="text-base font-bold font-mono text-neutral-200">
+              {audit.actual_spend_gbp !== null && audit.actual_spend_gbp !== undefined ? `£${Number(audit.actual_spend_gbp).toFixed(2)}` : '--'}
+            </span>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-neutral-900/60 border border-neutral-800/80">
+            <span className="text-[10px] font-mono uppercase text-neutral-500 block mb-1">Kebab Index</span>
+            <span className="text-base font-bold font-mono text-neutral-200">
+              {audit.kebab_index_gbp !== null && audit.kebab_index_gbp !== undefined ? `£${Number(audit.kebab_index_gbp).toFixed(2)}` : '--'}
+            </span>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-neutral-900/60 border border-neutral-800/80">
+            <span className="text-[10px] font-mono uppercase text-neutral-500 block mb-1">Tomato Index</span>
+            <span className="text-base font-bold font-mono text-neutral-200">
+              {audit.tomato_index_gbp !== null && audit.tomato_index_gbp !== undefined ? `£${Number(audit.tomato_index_gbp).toFixed(2)}` : '--'}
+            </span>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-neutral-900/60 border border-neutral-800/80">
+            <span className="text-[10px] font-mono uppercase text-neutral-500 block mb-1">Exchanges</span>
+            <span className="text-base font-bold font-mono text-neutral-200">
+              {audit.exchanges_count ?? '--'}
+            </span>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-neutral-900/60 border border-neutral-800/80">
+            <span className="text-[10px] font-mono uppercase text-neutral-500 block mb-1">Free Finds</span>
+            <span className="text-base font-bold font-mono text-emerald-400">
+              {audit.free_pins_found_count ?? '--'}
+            </span>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-neutral-900/60 border border-neutral-800/80">
+            <span className="text-[10px] font-mono uppercase text-neutral-500 block mb-1">Hassle Log</span>
+            <div className="flex flex-wrap gap-1 mt-0.5">
+              {audit.hassle_log && audit.hassle_log.length > 0 ? (
+                audit.hassle_log.map((h, i) => (
+                  <span key={i} className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-red-950/80 text-red-300 border border-red-500/30">
+                    {h.type}
+                  </span>
+                ))
+              ) : (
+                <span className="text-xs font-mono text-neutral-500">None</span>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
 
 const MissionFundingCallout: React.FC<{ missionId?: string | null }> = ({ missionId }) => {
   const [mission, setMission] = useState<SecureAdventure | null>(null);
@@ -82,7 +208,7 @@ const MissionFundingCallout: React.FC<{ missionId?: string | null }> = ({ missio
             <span className="text-red-400 font-bold">£{current.toFixed(2)} / £{target.toFixed(2)} ({percentage}%)</span>
           </div>
           <div className="w-full h-3 bg-neutral-900 rounded-full overflow-hidden border border-neutral-800">
-            <div 
+            <div
               className="h-full bg-gradient-to-r from-red-600 to-amber-500 rounded-full transition-all duration-1000 shadow-[0_0_12px_rgba(239,68,68,0.5)]"
               style={{ width: `${percentage}%` }}
             />
@@ -126,9 +252,9 @@ const TemplateLayout: React.FC<{ data: TemplateData; title: string }> = ({ data,
 
       {/* 2. Affiliate banner */}
         <section className="animate-in fade-in duration-1000 delay-300">
-          <a 
-            href={data.affiliateUrl || '#'} 
-            target="_blank" 
+          <a
+            href={data.affiliateUrl || '#'}
+            target="_blank"
             rel="noopener noreferrer"
             data-umami-event="affiliate_click"
             className="block glass-elevated rounded-2xl overflow-hidden border border-red-500/20 shadow-lg shadow-red-950/10 group cursor-pointer"
@@ -152,10 +278,10 @@ const TemplateLayout: React.FC<{ data: TemplateData; title: string }> = ({ data,
                 <span className="font-bold uppercase tracking-widest text-xs">Live_Intelligence</span>
               </div>
               <p className="text-sm text-neutral-400 mb-6 leading-relaxed">External data point archived in the public square. View the full investigation thread below.</p>
-              <a 
-                href={data.tweetUrl} 
-                target="_blank" 
-                rel="noopener noreferrer" 
+              <a
+                href={data.tweetUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 data-umami-event="outbound_click"
                 data-umami-event-type="tweet"
                 className="inline-block w-full py-3 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 text-center rounded-xl font-bold text-xs uppercase tracking-widest border border-sky-500/20 transition-all duration-300"
@@ -221,6 +347,7 @@ export const PostPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const [post, setPost] = useState<Post | null>(null);
+  const [audit, setAudit] = useState<SecureAdventure | null>(null);
   const [relatedPosts, setRelatedPosts] = useState<PostPreview[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
@@ -233,10 +360,10 @@ export const PostPage: React.FC = () => {
   const [unlockError, setUnlockError] = useState<string | null>(null);
 
   const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
-  const absoluteImageUrl = post?.cover_image_url.startsWith('http') 
-    ? post.cover_image_url 
-    : typeof window !== 'undefined' 
-      ? window.location.origin + post?.cover_image_url 
+  const absoluteImageUrl = post?.cover_image_url.startsWith('http')
+    ? post.cover_image_url
+    : typeof window !== 'undefined'
+      ? window.location.origin + post?.cover_image_url
       : post?.cover_image_url;
 
   const handleShareCopy = () => {
@@ -291,6 +418,24 @@ export const PostPage: React.FC = () => {
 
         setPost(result);
 
+        // Check for attached audit record (Spine §15–16)
+        try {
+          const auditData = await getAuditByStorySlug(slug).catch(() => null);
+          if (auditData) {
+            setAudit(auditData);
+          } else {
+            const allAdventures = await AdventureService.getSecureAdventures().catch(() => []);
+            const found = allAdventures.find(a =>
+              a.story_slug === slug ||
+              (a.codename && a.codename.toLowerCase().replace(/\s+/g, '-') === slug) ||
+              (a.display_title && a.display_title.toLowerCase().replace(/\s+/g, '-') === slug)
+            );
+            if (found) setAudit(found);
+          }
+        } catch {
+          // Non-critical
+        }
+
         // Check unlock status
         if (!result.is_gated) {
           setIsUnlocked(true);
@@ -302,7 +447,7 @@ export const PostPage: React.FC = () => {
             // Check query param (?code=...)
             const urlCode = searchParams.get('code');
             const storedCode = typeof window !== 'undefined' ? localStorage.getItem(`prole_access_${slug}`) : null;
-            
+
             if (urlCode && verifyAndUnlock(urlCode, result.access_code)) {
               // URL code unlocked it
             } else if (storedCode && verifyAndUnlock(storedCode, result.access_code)) {
@@ -353,8 +498,8 @@ export const PostPage: React.FC = () => {
           <p className="text-neutral-400 mb-8 leading-relaxed">
             The story you are looking for might have been removed, its URL changed, or it is not yet published to the archives.
           </p>
-          <Link 
-            to="/stories" 
+          <Link
+            to="/stories"
             className="inline-flex items-center px-8 py-3 glass-subtle hover:glass-base text-neutral-100 hover:text-neutral-50 rounded-xl font-medium transition-all duration-300 shadow-glass"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />
@@ -397,14 +542,14 @@ export const PostPage: React.FC = () => {
       <div className="max-w-5xl mx-auto px-4">
         {/* Navigation */}
         <div className="mb-12 flex justify-between items-center">
-          <Link 
-            to="/stories" 
+          <Link
+            to="/stories"
             className="inline-flex items-center px-6 py-3 glass-subtle hover:glass-base text-neutral-300 hover:text-white rounded-full text-sm font-medium transition-all duration-300 border border-neutral-800 shadow-glass group"
           >
             <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
             Archive Catalog
           </Link>
-          
+
           <div className="flex items-center gap-4 text-xs font-mono text-neutral-500 uppercase tracking-widest">
              <span className="w-2 h-2 bg-red-500 rounded-full"></span>
              Direct_Intelligence_Feed
@@ -437,14 +582,184 @@ export const PostPage: React.FC = () => {
           </div>
         )}
 
-        {/* Content Render: If gated and not unlocked, render SEO Teaser & Unlock Gate */}
-        {post.is_gated && !isUnlocked ? (
+        {/* ─── Case 1: Audit Dispatch (Spine §15–16) ─────────────────────────── */}
+        {audit ? (
+          <div className="space-y-12 mb-20 animate-in fade-in duration-500">
+            {/* 1. Header auto-rendered from the audit record */}
+            <AuditDossierHeader audit={audit} />
+
+            {/* 2. Free Body: Outline/Summary + Embedded Main Video (Facade, click-to-play) */}
+            <section className="glass-elevated rounded-3xl overflow-hidden shadow-glass border border-neutral-800/50 p-6 md:p-12 space-y-8">
+              <div className="flex items-center gap-3">
+                <span className="w-8 h-px bg-red-500"></span>
+                <span className="text-red-500 font-mono text-xs uppercase tracking-widest font-bold">Field Overview & Audio-Visual Transmission</span>
+              </div>
+
+              {/* YouTube Facade (No autoplay, click-to-play) */}
+              <div className="max-w-4xl mx-auto">
+                <YouTubeFacade
+                  videoId={audit.youtube_id}
+                  videoUrl={audit.video_url || post.template_data?.youtubeUrl}
+                  thumbnailUrl={post.cover_image_url}
+                  title={post.title}
+                />
+              </div>
+
+              {/* Free narrative summary (Does NOT duplicate ledger numbers) */}
+              <div className="prose-custom max-w-none text-neutral-300 text-lg leading-relaxed pt-2">
+                <p className="font-medium text-neutral-100 italic text-xl border-l-2 border-red-500 pl-4">
+                  {post.excerpt}
+                </p>
+                {post.template_data?.summary && (
+                  <p className="text-neutral-300 mt-4 leading-relaxed">
+                    {post.template_data.summary}
+                  </p>
+                )}
+              </div>
+            </section>
+
+            {/* 3. Paid Section: The Long Read / Deep Analysis */}
+            {post.is_gated && !isUnlocked ? (
+              <section className="glass-elevated p-8 md:p-12 rounded-3xl border border-red-500/30 bg-gradient-to-b from-red-950/20 via-neutral-900/60 to-black shadow-2xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+                  <Lock className="w-32 h-32 text-red-500" />
+                </div>
+
+                <div className="max-w-xl mx-auto text-center space-y-6 relative z-10">
+                  <div className="w-14 h-14 bg-red-950/60 border border-red-500/40 rounded-2xl flex items-center justify-center mx-auto text-red-400 shadow-lg shadow-red-900/30">
+                    <Key className="w-7 h-7 animate-pulse" />
+                  </div>
+
+                  <div>
+                    <h2 className="text-2xl md:text-3xl font-display font-bold text-neutral-50 mb-2">
+                      Unlock Field Analysis & Long Read
+                    </h2>
+                    <p className="text-neutral-400 text-sm leading-relaxed">
+                      The deep forensic analysis and operational notes for this location are restricted to verified contributors.
+                    </p>
+                  </div>
+
+                  <form onSubmit={handleManualUnlock} className="space-y-4 pt-2">
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <input
+                        type="text"
+                        value={enteredCode}
+                        onChange={(e) => setEnteredCode(e.target.value.toUpperCase())}
+                        placeholder="ENTER ACCESS CODE (E.G. PROLE-XXXX)"
+                        className="flex-1 bg-neutral-950 border border-neutral-800 focus:border-red-500/70 rounded-xl p-4 text-center font-mono text-base font-bold text-red-400 uppercase tracking-widest placeholder:text-neutral-600 outline-none transition-colors"
+                      />
+                      <button
+                        type="submit"
+                        className="px-8 py-4 bg-red-600 hover:bg-red-500 text-white rounded-xl font-bold transition-all duration-300 shadow-lg shadow-red-900/40 text-sm uppercase tracking-wider flex items-center justify-center gap-2"
+                      >
+                        <Unlock className="w-4 h-4" />
+                        Unlock
+                      </button>
+                    </div>
+
+                    {unlockError && (
+                      <div className="flex items-center justify-center gap-2 text-xs text-red-400 bg-red-950/40 p-3 rounded-xl border border-red-500/30 animate-in fade-in">
+                        <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+                        <span>{unlockError}</span>
+                      </div>
+                    )}
+                  </form>
+
+                  <div className="pt-6 border-t border-neutral-800/80 flex flex-col sm:flex-row items-center justify-center gap-4 text-xs text-neutral-500">
+                    <span>Need clearance?</span>
+                    <div className="flex items-center gap-3">
+                      <Link to="/prole-control" className="text-red-400 hover:text-red-300 font-bold underline transition-colors">
+                        Fund an Operation
+                      </Link>
+                      <span>•</span>
+                      <Link to="/gear" className="text-red-400 hover:text-red-300 font-bold underline transition-colors">
+                        Get Gear
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            ) : (
+              <section className="space-y-8">
+                <div className="flex items-center gap-3">
+                  <span className="w-8 h-px bg-red-500"></span>
+                  <span className="text-red-500 font-mono text-xs uppercase tracking-widest font-bold">Field Dossier • Unabridged Long Read</span>
+                </div>
+
+                {isTemplate && post.template_data ? (
+                  <TemplateLayout data={post.template_data} title={post.title} />
+                ) : (
+                  <article className="glass-elevated rounded-3xl overflow-hidden p-8 md:p-16 shadow-glass border border-neutral-800/50">
+                    <div className="prose-custom max-w-none text-neutral-300 leading-relaxed text-xl post-content">
+                      <ReactMarkdown
+                        components={{
+                          h1: ({node, ...props}) => <h2 className="text-3xl font-bold text-neutral-50 mt-16 mb-8 border-l-4 border-red-600 pl-6" {...props} />,
+                          h2: ({node, ...props}) => <h2 className="text-2xl font-bold text-neutral-50 mt-12 mb-6 pb-2 border-b border-neutral-800" {...props} />,
+                          h3: ({node, ...props}) => <h3 className="text-xl font-bold text-neutral-50 mt-10 mb-4" {...props} />,
+                          p: ({node, ...props}) => <p className="mb-8" {...props} />,
+                          ul: ({node, ...props}) => <ul className="list-disc pl-8 mb-8 space-y-3" {...props} />,
+                          ol: ({node, ...props}) => <ol className="list-decimal pl-8 mb-8 space-y-3" {...props} />,
+                          li: ({node, ...props}) => <li className="pl-2" {...props} />,
+                          blockquote: ({node, ...props}) => (
+                            <blockquote className="border-l-4 border-red-500 bg-neutral-950/80 p-8 italic mb-10 rounded-r-2xl shadow-inner text-neutral-400" {...props} />
+                          ),
+                          code: ({node, inline, ...props}: any) => (
+                            inline
+                              ? <code className="bg-neutral-800 text-red-400 px-2 py-1 rounded font-mono text-base" {...props} />
+                              : <pre className="bg-neutral-950 p-6 rounded-2xl border border-neutral-800 overflow-x-auto mb-10 shadow-glass"><code className="text-neutral-300 font-mono text-sm leading-relaxed" {...props} /></pre>
+                          ),
+                          a: ({node, ...props}) => {
+                            const isAffiliate = props.href?.includes('amazon') || props.href?.includes('amzn.to');
+                            return (
+                              <a
+                                className="text-red-400 hover:text-red-300 underline decoration-red-500/40 underline-offset-8 transition-all duration-300 font-medium"
+                                data-umami-event={isAffiliate ? 'affiliate_click' : 'outbound_click'}
+                                data-umami-event-url={props.href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                {...props}
+                              />
+                            );
+                          },
+                          img: ({node, ...props}) => <img className="rounded-3xl border border-neutral-800 shadow-2xl my-16 w-full hover:scale-[1.01] transition-transform duration-700" {...props} />
+                        }}
+                      >
+                        {post.content}
+                      </ReactMarkdown>
+                    </div>
+                  </article>
+                )}
+              </section>
+            )}
+
+            {/* 4. Footer: Commissioned vs Self-Funded */}
+            {audit.commissioned ? (
+              <section className="p-8 rounded-3xl bg-neutral-900/60 border border-neutral-800 text-center space-y-3">
+                <div className="inline-block px-3.5 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-400 rounded-full font-mono text-xs uppercase tracking-wider">
+                  Commissioned Field Audit
+                </div>
+                <p className="text-neutral-200 font-display text-xl font-bold">
+                  Commissioned by <span className="text-white">{audit.funder_credit || 'Operative'}</span>
+                </p>
+                {audit.commissioning_question && (
+                  <p className="text-neutral-400 text-sm max-w-xl mx-auto italic">
+                    Framing Inquiry: &ldquo;{audit.commissioning_question}&rdquo;
+                  </p>
+                )}
+              </section>
+            ) : (
+              <MissionFundingCallout missionId={audit.id} />
+            )}
+          </div>
+        ) : (
+          /* ─── Case 2: Standard Post (Non-Audit) ─────────────────────────── */
+          post.is_gated && !isUnlocked ? (
           <div className="space-y-12 animate-in fade-in duration-500">
             {/* SEO & Public Hook Section */}
             <section className="glass-elevated rounded-3xl overflow-hidden shadow-glass border border-neutral-800/50">
               <div className="aspect-video w-full overflow-hidden relative">
-                <img 
-                  src={post.cover_image_url} 
+                <img
+                  src={post.cover_image_url}
                   alt={post.title}
                   className="w-full h-full object-cover"
                 />
@@ -463,7 +778,7 @@ export const PostPage: React.FC = () => {
                 <div className="flex flex-wrap items-center gap-6 text-sm text-neutral-400 font-mono pb-6 border-b border-neutral-800">
                   <div className="flex items-center">
                     <Calendar className="w-4 h-4 mr-2 text-neutral-500" />
-                    {post.published_at 
+                    {post.published_at
                       ? new Date(post.published_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
                       : 'Live Dispatch'}
                   </div>
@@ -554,8 +869,8 @@ export const PostPage: React.FC = () => {
           /* Existing Markdown Hero Card */
           <article className="glass-elevated rounded-3xl overflow-hidden mb-20 shadow-glass border border-neutral-800/50">
             <div className="aspect-video w-full overflow-hidden relative">
-              <img 
-                src={post.cover_image_url} 
+              <img
+                src={post.cover_image_url}
                 alt={post.title}
                 className="w-full h-full object-cover"
               />
@@ -569,7 +884,7 @@ export const PostPage: React.FC = () => {
                 </span>
                 <div className="flex items-center text-neutral-400 font-medium">
                   <Calendar className="w-4 h-4 mr-2 text-neutral-500" />
-                  {post.published_at 
+                  {post.published_at
                     ? new Date(post.published_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
                     : 'Unspecified Time'}
                 </div>
@@ -598,20 +913,20 @@ export const PostPage: React.FC = () => {
                       <blockquote className="border-l-4 border-red-500 bg-neutral-950/80 p-8 italic mb-10 rounded-r-2xl shadow-inner text-neutral-400" {...props} />
                     ),
                     code: ({node, inline, ...props}: any) => (
-                      inline 
+                      inline
                         ? <code className="bg-neutral-800 text-red-400 px-2 py-1 rounded font-mono text-base" {...props} />
                         : <pre className="bg-neutral-950 p-6 rounded-2xl border border-neutral-800 overflow-x-auto mb-10 shadow-glass"><code className="text-neutral-300 font-mono text-sm leading-relaxed" {...props} /></pre>
                     ),
                     a: ({node, ...props}) => {
                       const isAffiliate = props.href?.includes('amazon') || props.href?.includes('amzn.to');
                       return (
-                        <a 
-                          className="text-red-400 hover:text-red-300 underline decoration-red-500/40 underline-offset-8 transition-all duration-300 font-medium" 
+                        <a
+                          className="text-red-400 hover:text-red-300 underline decoration-red-500/40 underline-offset-8 transition-all duration-300 font-medium"
                           data-umami-event={isAffiliate ? 'affiliate_click' : 'outbound_click'}
                           data-umami-event-url={props.href}
                           target="_blank"
                           rel="noopener noreferrer"
-                          {...props} 
+                          {...props}
                         />
                       );
                     },
@@ -623,12 +938,13 @@ export const PostPage: React.FC = () => {
               </div>
             </div>
           </article>
-        )}
+        )
+      )}
 
         {/* Adjacent Navigation */}
         <section className="mb-24 grid grid-cols-1 md:grid-cols-2 gap-6">
           {adjacent.prev ? (
-            <Link 
+            <Link
               to={`/read/${adjacent.prev.slug}`}
               className="glass-elevated p-8 rounded-3xl border border-neutral-800/50 hover:border-red-500/30 transition-all duration-300 group flex items-center gap-6 text-left"
             >
@@ -643,7 +959,7 @@ export const PostPage: React.FC = () => {
           ) : <div />}
 
           {adjacent.next && (
-            <Link 
+            <Link
               to={`/read/${adjacent.next.slug}`}
               className="glass-elevated p-8 rounded-3xl border border-neutral-800/50 hover:border-red-500/30 transition-all duration-300 group flex items-center gap-6 text-right"
             >
@@ -671,7 +987,7 @@ export const PostPage: React.FC = () => {
                 <p className="text-neutral-500 text-sm font-mono tracking-tight text-neutral-100">Synchronize data across the open net.</p>
               </div>
             </div>
-            
+
             <div className="flex flex-wrap gap-4">
               <button
                 onClick={handleShareCopy}
@@ -714,7 +1030,7 @@ export const PostPage: React.FC = () => {
                 Scan_Full_Archive <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" />
               </Link>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
               {relatedPosts.map(rp => (
                 <Link
@@ -723,8 +1039,8 @@ export const PostPage: React.FC = () => {
                   className="group glass-base rounded-3xl overflow-hidden hover:glass-elevated transition-all duration-500 shadow-glass border border-neutral-800/40 transform hover:-translate-y-2"
                 >
                   <div className="aspect-[4/3] overflow-hidden relative">
-                    <img 
-                      src={rp.cover_image_url} 
+                    <img
+                      src={rp.cover_image_url}
                       alt={rp.title}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />

@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { 
-  Plus, 
-  Edit2, 
-  Trash2, 
-  Save, 
-  X, 
-  CheckCircle, 
-  AlertCircle, 
+import {
+  Plus,
+  Edit2,
+  Trash2,
+  Save,
+  X,
+  CheckCircle,
+  AlertCircle,
   Loader2,
   ExternalLink,
   Eye,
@@ -23,14 +23,16 @@ import {
   Send,
   RefreshCw,
   Shield,
-  Target
+  Target,
+  Trophy
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-import { 
-  getAllPostsAdmin, 
-  createPost, 
-  updatePost, 
-  deletePost 
+import { AuditManager } from '../components/admin/AuditManager';
+import {
+  getAllPostsAdmin,
+  createPost,
+  updatePost,
+  deletePost
 } from '../lib/posts';
 import { getAdventures, type SecureAdventure } from '../lib/supabase';
 import { useAuth } from '../lib/auth';
@@ -60,14 +62,15 @@ export const AdminPage: React.FC = () => {
   const [missions, setMissions] = useState<SecureAdventure[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  
+
   // UI state
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [readTimeManuallyEdited, setReadTimeManuallyEdited] = useState(false);
-  
+  const [adminTab, setAdminTab] = useState<'posts' | 'audits'>('posts');
+
   // Auth state
   const [authLoading, setAuthLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -224,7 +227,7 @@ export const AdminPage: React.FC = () => {
     try {
       const { data: sessionData } = await (await import('../lib/supabase')).supabase.auth.getSession();
       const token = sessionData?.session?.access_token;
-      
+
       const res = await fetch('/notify-post', {
         method: 'POST',
         headers: {
@@ -312,7 +315,7 @@ export const AdminPage: React.FC = () => {
       if (savedPost && andNotify) {
         await handleNotifySubscribers(savedPost);
       }
-      
+
       if (savedPost) {
         setIsSidebarOpen(false);
       }
@@ -365,7 +368,7 @@ export const AdminPage: React.FC = () => {
           <p className="text-neutral-400 mb-10 leading-relaxed">
             Archive modifications require authorization. Please sign in to access Adventure Control.
           </p>
-          <button 
+          <button
             onClick={() => window.location.href = 'https://proleadventures.com/login'}
             className="w-full py-4 bg-red-600 hover:bg-red-500 text-white rounded-xl font-bold transition-all duration-300 shadow-lg shadow-red-900/20"
           >
@@ -413,7 +416,51 @@ export const AdminPage: React.FC = () => {
           )}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Module Switcher Tabs */}
+        <div className="flex border-b border-neutral-800 mb-8 gap-4 font-mono text-sm">
+          <button
+            type="button"
+            onClick={() => setAdminTab('posts')}
+            className={`pb-4 px-2 flex items-center gap-2 border-b-2 font-bold transition-all cursor-pointer ${
+              adminTab === 'posts'
+                ? 'border-red-500 text-white'
+                : 'border-transparent text-neutral-400 hover:text-neutral-200'
+            }`}
+          >
+            <BookOpen className="w-4 h-4 text-red-500" />
+            <span>Stories & Dispatches</span>
+            <span className="text-xs bg-neutral-800 text-neutral-400 px-2 py-0.5 rounded-full font-mono">
+              {posts.length}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setAdminTab('audits')}
+            className={`pb-4 px-2 flex items-center gap-2 border-b-2 font-bold transition-all cursor-pointer ${
+              adminTab === 'audits'
+                ? 'border-red-500 text-white'
+                : 'border-transparent text-neutral-400 hover:text-neutral-200'
+            }`}
+          >
+            <Trophy className="w-4 h-4 text-amber-400" />
+            <span>Missions & Place Audits</span>
+            <span className="text-xs bg-neutral-800 text-neutral-400 px-2 py-0.5 rounded-full font-mono">
+              {missions.length}
+            </span>
+          </button>
+        </div>
+
+        {adminTab === 'audits' ? (
+          <AuditManager
+            missions={missions}
+            posts={posts}
+            onRefresh={fetchPosts}
+            setError={setError}
+            setSuccess={setSuccess}
+          />
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Posts List */}
           <div className="lg:col-span-2 space-y-4">
             <div className="glass-elevated rounded-2xl border border-neutral-800 p-6 shadow-glass overflow-hidden">
@@ -436,20 +483,20 @@ export const AdminPage: React.FC = () => {
               ) : (
                 <div className="space-y-3">
                   {posts.map((post) => (
-                    <div 
+                    <div
                       key={post.id}
                       className={`group flex items-center justify-between p-4 rounded-xl border transition-all duration-300 cursor-pointer ${
-                        selectedPost?.id === post.id 
-                          ? 'bg-neutral-900 border-red-500/50 shadow-lg shadow-red-950/20' 
+                        selectedPost?.id === post.id
+                          ? 'bg-neutral-900 border-red-500/50 shadow-lg shadow-red-950/20'
                           : 'bg-neutral-900/40 border-neutral-800 hover:border-neutral-700'
                       }`}
                       onClick={() => handleEdit(post)}
                     >
                       <div className="flex items-center gap-4 min-w-0">
                         <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-neutral-800 border border-neutral-700">
-                          <img 
-                            src={post.cover_image_url} 
-                            alt="" 
+                          <img
+                            src={post.cover_image_url}
+                            alt=""
                             className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
                             onError={(e) => (e.currentTarget.src = 'https://via.placeholder.com/100')}
                           />
@@ -460,8 +507,8 @@ export const AdminPage: React.FC = () => {
                               {post.title}
                             </h3>
                             <span className={`text-[9px] px-1.5 py-0.5 rounded border uppercase font-bold tracking-tighter ${
-                              post.layout === 'markdown' 
-                                ? 'bg-neutral-800 text-neutral-400 border-neutral-700' 
+                              post.layout === 'markdown'
+                                ? 'bg-neutral-800 text-neutral-400 border-neutral-700'
                                 : 'bg-red-950/30 text-red-400 border-red-500/30'
                             }`}>
                               {post.layout || 'Template'}
@@ -523,7 +570,7 @@ export const AdminPage: React.FC = () => {
           <div className={`lg:col-span-3 ${isSidebarOpen ? 'block' : 'hidden'}`}>
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-start">
               {/* Form Pane */}
-              <form 
+              <form
                 onSubmit={handleSave}
                 className="glass-elevated rounded-2xl border border-neutral-800 p-6 shadow-glass sticky top-28"
               >
@@ -532,7 +579,7 @@ export const AdminPage: React.FC = () => {
                     {selectedPost ? <Edit2 className="w-5 h-5 text-red-500" /> : <Plus className="w-5 h-5 text-red-500" />}
                     {selectedPost ? 'Modify Chronicle' : 'New Archive Entry'}
                   </h2>
-                  <button 
+                  <button
                     type="button"
                     onClick={() => setIsSidebarOpen(false)}
                     className="p-2 text-neutral-500 hover:text-white"
@@ -547,8 +594,8 @@ export const AdminPage: React.FC = () => {
                     type="button"
                     onClick={() => setLayoutMode('template')}
                     className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 ${
-                      layoutMode === 'template' 
-                        ? 'bg-neutral-800 text-neutral-50 shadow-sm' 
+                      layoutMode === 'template'
+                        ? 'bg-neutral-800 text-neutral-50 shadow-sm'
                         : 'text-neutral-500 hover:text-neutral-300'
                     }`}
                   >
@@ -559,8 +606,8 @@ export const AdminPage: React.FC = () => {
                     type="button"
                     onClick={() => setLayoutMode('markdown')}
                     className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 ${
-                      layoutMode === 'markdown' 
-                        ? 'bg-neutral-800 text-neutral-50 shadow-sm' 
+                      layoutMode === 'markdown'
+                        ? 'bg-neutral-800 text-neutral-50 shadow-sm'
                         : 'text-neutral-500 hover:text-neutral-300'
                     }`}
                   >
@@ -626,9 +673,9 @@ export const AdminPage: React.FC = () => {
                       <div className="flex items-center justify-between h-[50px] px-4 bg-neutral-900 border border-neutral-800 rounded-xl">
                         <span className="text-xs text-neutral-400 font-mono">{formValues.published ? 'LIVE' : 'DRAFT'}</span>
                         <label className="relative inline-flex items-center cursor-pointer">
-                          <input 
-                            type="checkbox" 
-                            className="sr-only peer" 
+                          <input
+                            type="checkbox"
+                            className="sr-only peer"
                             checked={formValues.published}
                             onChange={(e) => setFormValues({...formValues, published: e.target.checked})}
                           />
@@ -649,9 +696,9 @@ export const AdminPage: React.FC = () => {
                         </div>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">
-                        <input 
-                          type="checkbox" 
-                          className="sr-only peer" 
+                        <input
+                          type="checkbox"
+                          className="sr-only peer"
                           checked={formValues.is_gated}
                           onChange={(e) => setFormValues({...formValues, is_gated: e.target.checked})}
                         />
@@ -763,9 +810,9 @@ export const AdminPage: React.FC = () => {
                               <ImageIcon className="w-3 h-3" /> Affiliate Gear
                             </span>
                             <label className="relative inline-flex items-center cursor-pointer">
-                              <input 
-                                type="checkbox" 
-                                className="sr-only peer" 
+                              <input
+                                type="checkbox"
+                                className="sr-only peer"
                                 checked={templateData.affiliateEnabled}
                                 onChange={(e) => setTemplateData({...templateData, affiliateEnabled: e.target.checked})}
                               />
@@ -836,9 +883,9 @@ export const AdminPage: React.FC = () => {
                               <span className="text-[11px] text-neutral-500">Promotes an active operation with live progress bar to readers</span>
                             </div>
                             <label className="relative inline-flex items-center cursor-pointer">
-                              <input 
-                                type="checkbox" 
-                                className="sr-only peer" 
+                              <input
+                                type="checkbox"
+                                className="sr-only peer"
                                 checked={templateData.missionCalloutEnabled ?? true}
                                 onChange={(e) => setTemplateData({...templateData, missionCalloutEnabled: e.target.checked})}
                               />
@@ -980,7 +1027,7 @@ export const AdminPage: React.FC = () => {
                       ) : (
                         <div className="aspect-video bg-neutral-900 rounded-xl border-2 border-dashed border-neutral-800 flex items-center justify-center text-neutral-700 uppercase font-bold text-xs tracking-widest"> Hero_Visual_Not_Set </div>
                       )}
-                      
+
                       <div className="text-center">
                         <h1 className="text-2xl font-bold text-neutral-50 mb-3">{formValues.title || 'Draft_Codename'}</h1>
                         <p className="text-sm text-neutral-400 italic px-6">{templateData.summary || 'Summary_Null'}</p>
@@ -994,7 +1041,7 @@ export const AdminPage: React.FC = () => {
 
                       <div className="space-y-4">
                         <p className="text-sm text-neutral-300 leading-relaxed">{templateData.textBlockA || 'Data_Point_A'}</p>
-                        
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
                            <div className="p-4 bg-neutral-950 border border-neutral-800 rounded-xl text-[10px] text-sky-400 font-mono"> {templateData.tweetUrl ? `Twitter_Embed: ${templateData.tweetUrl.split('/').pop()}` : 'Tweet_Gap'} </div>
                            <p className="text-sm text-neutral-300 leading-relaxed">{templateData.textBlockB || 'Data_Point_B'}</p>
@@ -1026,7 +1073,8 @@ export const AdminPage: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
-  );
+  </div>
+);
 };

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Shield, Camera, MapPin, Home, X, ShoppingBag, User } from 'lucide-react';
+import { Shield, Camera, MapPin, Home, X, ShoppingBag, User, Trophy } from 'lucide-react';
 import { useAuth } from '../lib/auth';
 
 export const Navigation: React.FC = () => {
@@ -10,6 +10,7 @@ export const Navigation: React.FC = () => {
 
   const navItems = [
     { path: '/', label: 'Home', icon: Home },
+    { path: '/league', label: 'League', icon: Trophy },
     { path: '/prole-control', label: 'Prole Control', icon: Shield },
     // { path: '/drops', label: 'Cache', icon: MapPin }, // Temporarily hidden
     { path: '/watch', label: 'Watch', icon: MapPin },
@@ -20,9 +21,9 @@ export const Navigation: React.FC = () => {
   ];
 
   return (
-    <nav 
-      className="fixed top-0 w-full z-50" 
-      role="navigation" 
+    <nav
+      className="fixed top-0 w-full z-50"
+      role="navigation"
       aria-label="Main navigation"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -50,7 +51,7 @@ export const Navigation: React.FC = () => {
 
           {/* Mobile menu button */}
           <div className="md:hidden absolute right-4">
-            <button 
+            <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="p-2 rounded-lg text-neutral-50 hover:text-primary-300 transition-colors"
               aria-label="Toggle mobile menu"
@@ -67,7 +68,7 @@ export const Navigation: React.FC = () => {
             </button>
           </div>
         </div>
-        
+
         {/* Mobile Navigation Menu */}
         {isMobileMenuOpen && (
           <div className="md:hidden absolute top-16 left-0 right-0 bg-black/95 backdrop-blur-xl border-b border-gray-700/50">

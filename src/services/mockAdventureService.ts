@@ -8,15 +8,28 @@ export const mockAdventures: SecureAdventure[] = [
     codename: 'Escape The Midlands Matrix',
     status: 'complete',
     display_description: "No cash, no cares, it's time for this Prole to escape and explore what's left of Freedom in 2026",
-
     display_lat: 53.018028,
     display_lng: -1.308472,
     lat: 53.018028,
     lng: -1.308472,
     bounty_target: 50.00,
     bounty_current: 50.00,
-    video_url: 'https://www.youtube.com/@ProleAdventures',
+    video_url: 'https://www.youtube.com/watch?v=b-tJOvF5w-k',
     thumbnail_url: 'https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=400&h=225&fit=crop',
+    episode_number: 1,
+    audit_date: '2026-03-12',
+    youtube_id: 'b-tJOvF5w-k',
+    story_slug: 'escape-the-midlands-matrix',
+    score: 84,
+    verdict_line: '£11 bought a full day',
+    actual_spend_gbp: 11.20,
+    kebab_index_gbp: 6.50,
+    tomato_index_gbp: 0.85,
+    exchanges_count: 5,
+    free_pins_found_count: 3,
+    hassle_log: [{ type: 'scoped', note: 'Council CCTV operator watched for 10 mins' }],
+    conditions_line: 'Overcast, 9°C, Tuesday morning lull',
+    commissioned: false,
     created_at: '2024-01-15T10:00:00Z',
     updated_at: '2024-01-15T10:00:00Z'
   },
@@ -32,8 +45,27 @@ export const mockAdventures: SecureAdventure[] = [
     lng: -1.327778,
     bounty_target: 0.00,
     bounty_current: 0.00,
-    video_url: 'https://www.youtube.com/@ProleAdventures',
+    video_url: 'https://www.youtube.com/watch?v=K2H9w-qfbMw',
     thumbnail_url: '/images/Missions/The_Land_That_time_Begot.jpg',
+    episode_number: 2,
+    audit_date: '2026-04-05',
+    youtube_id: 'K2H9w-qfbMw',
+    story_slug: 'the-land-that-time-begot',
+    score: 68,
+    verdict_line: 'Public mat heavily degraded; disguise density high',
+    actual_spend_gbp: 18.50,
+    kebab_index_gbp: 7.95,
+    tomato_index_gbp: 1.10,
+    exchanges_count: 3,
+    free_pins_found_count: 1,
+    hassle_log: [
+      { type: 'stopped', note: 'Private security near decommissioned pithead' },
+      { type: 'cash_refused', note: 'Town center kiosk cashless only' }
+    ],
+    conditions_line: 'High wind, drizzle, heavy surveillance grid',
+    commissioned: true,
+    funder_credit: 'Operative @NorthGrit',
+    commissioning_question: 'Is there any public commons left around the old coal artery?',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString()
   }
@@ -111,6 +143,50 @@ export class MockAdventureService {
     };
 
     return adventure;
+  }
+
+  // Mock implementation of updateAdventure
+  static async updateAdventure(id: string, updates: Partial<Adventure>): Promise<Adventure> {
+    await new Promise(resolve => setTimeout(resolve, 200));
+
+    const index = this.adventures.findIndex(adv => adv.id === id);
+    if (index === -1) {
+      throw new Error('Adventure not found');
+    }
+
+    const current = this.adventures[index];
+    const updated: SecureAdventure = {
+      ...current,
+      ...updates,
+      display_title: updates.codename || updates.title || current.display_title,
+      display_description: updates.description ?? current.display_description,
+      display_lat: updates.lat ?? current.display_lat,
+      display_lng: updates.lng ?? current.display_lng,
+      updated_at: new Date().toISOString()
+    };
+
+    this.adventures[index] = updated;
+
+    return {
+      id: updated.id,
+      title: updated.display_title,
+      codename: updated.codename,
+      status: updated.status,
+      lat: updated.lat,
+      lng: updated.lng,
+      bounty_target: updated.bounty_target,
+      bounty_current: updated.bounty_current,
+      created_at: updated.created_at,
+      updated_at: updated.updated_at,
+      ...updates
+    };
+  }
+
+  // Mock implementation of deleteAdventure
+  static async deleteAdventure(id: string): Promise<boolean> {
+    await new Promise(resolve => setTimeout(resolve, 200));
+    this.adventures = this.adventures.filter(adv => adv.id !== id);
+    return true;
   }
 
   // Check if running in mock mode

@@ -1,12 +1,14 @@
 import { createClient } from '@supabase/supabase-js';
+import type { HassleIncident } from '../types/audit';
+export * from '../types/audit';
 
 // Only create Supabase client if environment variables are properly set
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 // Strict validation - must be a non-empty, valid Supabase URL
-const isValidSupabaseUrl = 
-  supabaseUrl && 
+const isValidSupabaseUrl =
+  supabaseUrl &&
   typeof supabaseUrl === 'string' &&
   supabaseUrl.trim().length > 0 &&
   supabaseUrl.startsWith('http') &&
@@ -14,14 +16,14 @@ const isValidSupabaseUrl =
   !supabaseUrl.includes('your-project') &&
   !supabaseUrl.includes('placeholder');
 
-const isValidSupabaseKey = 
-  supabaseAnonKey && 
+const isValidSupabaseKey =
+  supabaseAnonKey &&
   typeof supabaseAnonKey === 'string' &&
   supabaseAnonKey.trim().length > 0 &&
   !supabaseAnonKey.includes('your-anon-key');
 
 // Create client only if config is strictly valid, otherwise set to null
-export const supabase = (isValidSupabaseUrl && isValidSupabaseKey) 
+export const supabase = (isValidSupabaseUrl && isValidSupabaseKey)
   ? createClient(supabaseUrl, supabaseAnonKey, {
       auth: {
         persistSession: true,
@@ -41,35 +43,35 @@ if (!supabase && import.meta.env.DEV) {
 // Helper functions for database operations
 export const saveContactMessage = async (name: string, email: string, message: string) => {
   if (!supabase) throw new Error('Supabase not configured');
-  
+
   const { data, error } = await supabase
     .from('contact_messages')
     .insert([
       { name, email, message }
     ]);
-  
+
   if (error) {
     console.error('Error saving contact message:', error);
     throw error;
   }
-  
+
   return data;
 };
 
 export const saveNewsletterEmail = async (email: string) => {
   if (!supabase) throw new Error('Supabase not configured');
-  
+
   const { data, error } = await supabase
     .from('subscribers')
     .insert([
       { email }
     ]);
-  
+
   if (error) {
     console.error('Error saving newsletter email:', error);
     throw error;
   }
-  
+
   return data;
 };
 
@@ -92,6 +94,29 @@ export interface Adventure {
   reward_delivery_mode?: string;
   reward_url?: string;
   is_reward_active?: boolean;
+  // Audit fields
+  episode_number?: number | null;
+  audit_date?: string | null;
+  youtube_id?: string | null;
+  story_slug?: string | null;
+  score?: number | null;
+  verdict_line?: string | null;
+  actual_spend_gbp?: number | null;
+  kebab_index_gbp?: number | null;
+  tomato_index_gbp?: number | null;
+  exchanges_count?: number | null;
+  free_pins_found_count?: number | null;
+  hassle_log?: HassleIncident[] | null;
+  conditions_line?: string | null;
+  commissioned?: boolean;
+  funder_credit?: string | null;
+  commissioning_question?: string | null;
+  // Prole Foods fields
+  prole_foods_claimed?: boolean;
+  prole_foods_donor_name?: string | null;
+  prole_foods_town?: string | null;
+  prole_foods_instruction?: string | null;
+  prole_foods_amount?: number | null;
   created_at: string;
   updated_at: string;
 }
@@ -117,6 +142,29 @@ export interface SecureAdventure {
   reward_delivery_mode?: string;
   reward_url?: string;
   is_reward_active?: boolean;
+  // Audit fields
+  episode_number?: number | null;
+  audit_date?: string | null;
+  youtube_id?: string | null;
+  story_slug?: string | null;
+  score?: number | null;
+  verdict_line?: string | null;
+  actual_spend_gbp?: number | null;
+  kebab_index_gbp?: number | null;
+  tomato_index_gbp?: number | null;
+  exchanges_count?: number | null;
+  free_pins_found_count?: number | null;
+  hassle_log?: HassleIncident[] | null;
+  conditions_line?: string | null;
+  commissioned?: boolean;
+  funder_credit?: string | null;
+  commissioning_question?: string | null;
+  // Prole Foods fields
+  prole_foods_claimed?: boolean;
+  prole_foods_donor_name?: string | null;
+  prole_foods_town?: string | null;
+  prole_foods_instruction?: string | null;
+  prole_foods_amount?: number | null;
   created_at: string;
   updated_at: string;
 }
@@ -124,40 +172,40 @@ export interface SecureAdventure {
 // Adventure operations
 export const getAdventures = async (): Promise<SecureAdventure[]> => {
   if (!supabase) throw new Error('Supabase not configured');
-  
+
   const { data, error } = await supabase
     .from('adventures')
     .select('*')
     .order('created_at', { ascending: false });
-  
+
   if (error) {
     console.error('Error fetching adventures:', error);
     throw error;
   }
-  
+
   return data || [];
 };
 
 export const getAdventureById = async (id: string): Promise<Adventure | null> => {
   if (!supabase) throw new Error('Supabase not configured');
-  
+
   const { data, error } = await supabase
     .from('adventures')
     .select('*')
     .eq('id', id)
     .single();
-  
+
   if (error) {
     console.error('Error fetching adventure:', error);
     throw error;
   }
-  
+
   return data;
 };
 
 export const createAdventure = async (adventure: Omit<Adventure, 'id' | 'created_at' | 'updated_at'>): Promise<Adventure> => {
   if (!supabase) throw new Error('Supabase not configured');
-  
+
   const { data, error } = await supabase
     .from('adventures')
     .insert([{
@@ -167,33 +215,106 @@ export const createAdventure = async (adventure: Omit<Adventure, 'id' | 'created
     }])
     .select()
     .single();
-  
+
   if (error) {
     console.error('Error creating adventure:', error);
     throw error;
   }
-  
+
   return data;
 };
 
 export const updateAdventureBounty = async (id: string, amount: number): Promise<Adventure> => {
   if (!supabase) throw new Error('Supabase not configured');
-  
+
   const { data, error } = await supabase
     .from('adventures')
-    .update({ 
+    .update({
       bounty_current: amount,
       updated_at: new Date().toISOString()
     })
     .eq('id', id)
     .select()
     .single();
-  
+
   if (error) {
     console.error('Error updating adventure bounty:', error);
     throw error;
   }
-  
+
+  return data;
+};
+
+export const updateAdventure = async (id: string, updates: Partial<Adventure>): Promise<Adventure> => {
+  if (!supabase) throw new Error('Supabase not configured');
+
+  const { data, error } = await supabase
+    .from('adventures')
+    .update({
+      ...updates,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating adventure:', error);
+    throw error;
+  }
+
+  return data;
+};
+
+export const deleteAdventure = async (id: string): Promise<boolean> => {
+  if (!supabase) throw new Error('Supabase not configured');
+
+  const { error } = await supabase
+    .from('adventures')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error deleting adventure:', error);
+    throw error;
+  }
+
+  return true;
+};
+
+export const getCompletedAudits = async (): Promise<SecureAdventure[]> => {
+  if (!supabase) throw new Error('Supabase not configured');
+
+  const { data, error } = await supabase
+    .from('adventures')
+    .select('*')
+    .eq('status', 'complete')
+    .not('score', 'is', null)
+    .order('score', { ascending: false })
+    .order('audit_date', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching completed audits:', error);
+    throw error;
+  }
+
+  return data || [];
+};
+
+export const getAuditByStorySlug = async (slug: string): Promise<SecureAdventure | null> => {
+  if (!supabase) throw new Error('Supabase not configured');
+
+  const { data, error } = await supabase
+    .from('adventures')
+    .select('*')
+    .eq('story_slug', slug)
+    .maybeSingle();
+
+  if (error) {
+    console.error('Error fetching audit by story slug:', error);
+    return null;
+  }
+
   return data;
 };
 
@@ -201,7 +322,7 @@ export const updateAdventureBounty = async (id: string, amount: number): Promise
 export const applyCoordinateJitter = (lat: number, lng: number, jitterAmount: number = 0.02): { lat: number; lng: number } => {
   const displayLat = lat + (Math.random() - 0.5) * jitterAmount;
   const displayLng = lng + (Math.random() - 0.5) * jitterAmount;
-  
+
   return { lat: displayLat, lng: displayLng };
 };
 

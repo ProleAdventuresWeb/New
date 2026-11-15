@@ -21,11 +21,21 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     });
   }
 
-  const { name, price, quantity, productId, variantId, sku, mode, 
-          missionId, missionName, missionSlug, rewardType, rewardTitle, profileId } = body as Record<string, string | number>;
+  const { name, price, quantity, productId, variantId, sku, mode,
+          missionId, missionName, missionSlug, rewardType, rewardTitle, profileId,
+          foodTier } = body as Record<string, string | number>;
 
-  if (!name || !price || !quantity) {
+  const isProleFoods = mode === 'prole_foods';
+
+  if (!isProleFoods && (!name || !price || !quantity)) {
     return new Response(JSON.stringify({ error: 'Missing required fields' }), {
+      status: 400,
+      headers: corsHeaders,
+    });
+  }
+
+  if (isProleFoods && !missionId) {
+    return new Response(JSON.stringify({ error: 'missionId required for prole_foods' }), {
       status: 400,
       headers: corsHeaders,
     });
@@ -34,6 +44,80 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const isContribution = mode === 'contribution';
   const origin = request.headers.get('origin') || '';
 
+  // ── Prole Foods checkout ─────────────────────────────────────────────────
+  if (isProleFoods) {
+    const tier = String(foodTier || 'snack');
+    const tierAmount = tier === 'dinner' ? 1000 : 500; // pence
+    const tierLabel = tier === 'dinner' ? '🍲 Dinner (£10)' : '🥪 Snack (£5)';
+    const lineName = `Prole Foods Shout-Out — ${missionName || 'Mission'} · ${tierLabel}`;
+
+    try {
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price_data: {
+              currency: 'gbp',
+              product_data: { name: lineName },
+              unit_amount: tierAmount,
+            },
+            quantity: 1,
+          },
+        ],
+        mode: 'payment',
+        custom_fields: [
+          {
+            key: 'contributor_name',
+            label: { type: 'custom', custom: 'Your Name / Handle' },
+            type: 'text',
+            optional: false,
+          },
+          {
+            key: 'town',
+            label: { type: 'custom', custom: 'Your Town / City' },
+            type: 'text',
+            optional: true,
+          },
+          {
+            key: 'instruction',
+            label: { type: 'custom', custom: 'Food Request / Mission Shout-Out' },
+            type: 'text',
+            optional: false,
+          },
+        ],
+        metadata: {
+          type: 'prole_foods',
+          mission_id: String(missionId),
+          mission_name: String(missionName || 'none'),
+          food_tier: tier,
+        },
+        payment_intent_data: {
+          metadata: {
+            type: 'prole_foods',
+            mission_id: String(missionId),
+            mission_name: String(missionName || 'none'),
+            food_tier: tier,
+          },
+        },
+        success_url: `${origin}/prole-control?success=true&mission_id=${missionId}&prole_foods=claimed&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${origin}/prole-control`,
+      });
+
+      return new Response(JSON.stringify({ url: session.url }), {
+        status: 200,
+        headers: corsHeaders,
+      });
+    } catch (error: unknown) {
+      console.error('Stripe Prole Foods error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown Stripe error';
+      return new Response(JSON.stringify({ error: errorMessage }), {
+        status: 500,
+        headers: corsHeaders,
+      });
+    }
+  }
+
+  // ── Standard checkout (contribution / product) ───────────────────────────
   try {
     const sessionOptions: Stripe.Checkout.SessionCreateParams = {
       payment_method_types: ['card'],
