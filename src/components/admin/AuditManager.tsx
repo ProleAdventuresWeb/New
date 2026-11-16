@@ -254,6 +254,11 @@ export const AuditManager: React.FC<AuditManagerProps> = ({
               ) : (
                 filteredMissions.map(m => {
                   const isDone = m.status === 'complete';
+                  const latitude = Number(m.display_lat ?? m.lat);
+                  const longitude = Number(m.display_lng ?? m.lng);
+                  const coordinates = Number.isFinite(latitude) && Number.isFinite(longitude)
+                    ? `${latitude.toFixed(2)}°, ${longitude.toFixed(2)}°`
+                    : 'Coordinates unavailable';
                   return (
                     <div
                       key={m.id}
@@ -299,7 +304,7 @@ export const AuditManager: React.FC<AuditManagerProps> = ({
                         <div className="flex items-center gap-3 text-[11px] font-mono text-neutral-500 mt-1">
                           <span className="flex items-center gap-1">
                             <MapPin className="w-3 h-3 text-red-500" />
-                            {m.display_lat.toFixed(2)}°, {m.display_lng.toFixed(2)}°
+                            {coordinates}
                           </span>
                           {m.story_slug && (
                             <span className="flex items-center gap-1 text-neutral-400">
