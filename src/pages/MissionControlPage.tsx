@@ -648,9 +648,9 @@ export const MissionControlPage: React.FC = () => {
     ? adventures
     : adventures.filter(a => a.status === statusFilter);
 
-  const mapCenter: [number, number] = adventures.length > 0
-    ? [adventures[0].display_lat, adventures[0].display_lng]
-    : [51.505, -0.09];
+  // Start wide enough to show the UK and every mission pin. Selecting a card or
+  // marker still invokes MapUpdater, which performs the close-up fly-to.
+  const mapCenter: [number, number] = [55.4, -3.4];
 
   const scrollToCard = (adventure: SecureAdventure) => {
     setSelected(adventure);
@@ -718,7 +718,7 @@ export const MissionControlPage: React.FC = () => {
           >
             <MapContainer
               center={mapCenter}
-              zoom={7}
+                zoom={5}
               style={{ height: '800px', width: '100%' }}
             >
               <TileLayer
