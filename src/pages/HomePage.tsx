@@ -62,8 +62,8 @@ export const HomePage: React.FC = () => {
       <section className="py-20 px-4 bg-black">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="font-display text-5xl md:text-5xl lg:text-6xl font-bold text-neutral-50 mb-6">
-              AdVeNTureS
+            <h2 className="font-display text-5xl md:text-7xl font-bold text-neutral-50 mb-6 uppercase tracking-tight">
+              ADVENTURES
             </h2>
           </div>
 
@@ -133,9 +133,9 @@ export const HomePage: React.FC = () => {
           <div className="text-center mt-12">
             <Link
               to="/stories"
-              className="inline-flex items-center px-8 py-4 glass-subtle hover:glass-base text-neutral-100 hover:text-neutral-50 rounded-xl font-medium transition-all duration-300 shadow-glass shadow-investigation"
+              className="inline-flex items-center px-8 py-4 glass-subtle hover:glass-base text-neutral-100 hover:text-neutral-50 rounded-xl font-medium uppercase transition-all duration-300 shadow-glass shadow-investigation"
             >
-              Explore All Chronicles
+              EXPLORE
               <ArrowRight className="w-5 h-5 ml-2" />
             </Link>
           </div>
@@ -147,8 +147,8 @@ export const HomePage: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           <div className="">
             <div className="text-center mb-12">
-              <h2 className="font-display text-4xl md:text-5xl font-bold text-neutral-50 mb-6">
-                LatEst ViDeoS
+              <h2 className="font-display text-5xl md:text-7xl font-bold text-neutral-50 mb-6 uppercase tracking-tight">
+                LATEST VIDEOS
               </h2>
 
             </div>

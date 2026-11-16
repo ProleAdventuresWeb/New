@@ -62,7 +62,7 @@ export const StoriesPage: React.FC = () => {
   };
 
   const categoriesList = [
-    { id: 'all', name: 'All Stories', count: allPostsForCounts.length, icon: '🌍' },
+    { id: 'all', name: 'All Stories', count: allPostsForCounts.length, icon: 'ðŸŒ' },
     ...BLOG_CATEGORIES.map(cat => ({
       id: cat.id,
       name: cat.name,
@@ -97,12 +97,12 @@ export const StoriesPage: React.FC = () => {
       <section className="py-12 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h1 className="font-display text-5xl md:text-5xl lg:text-6xl font-bold text-neutral-50 mb-6 uppercase tracking-tight">
+            <h1 className="font-display text-5xl md:text-7xl font-bold text-neutral-50 mb-6 uppercase tracking-tight">
               {selectedCategory === 'all' ? 'PROLE JOURNAL' : BLOG_CATEGORIES.find(c => c.id === selectedCategory)?.name}
             </h1>
             <p className="text-xl text-neutral-100 max-w-3xl mx-auto leading-relaxed">
               {selectedCategory === 'all' 
-                ? 'Archive Chronicles' 
+                ? 'Archive'
                 : BLOG_CATEGORIES.find(c => c.id === selectedCategory)?.description}
             </p>
           </div>

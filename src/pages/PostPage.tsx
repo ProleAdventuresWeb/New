@@ -78,56 +78,41 @@ const AuditDossierHeader: React.FC<{ audit: SecureAdventure }> = ({ audit }) => 
           )}
         </div>
 
-        {/* Evidence Stats Grid (Spine §16 five pressures) */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 pt-2">
+        {/* Current location audit summary */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 pt-2">
           <div className="p-3.5 rounded-xl bg-neutral-900/60 border border-neutral-800/80">
-            <span className="text-[10px] font-mono uppercase text-neutral-500 block mb-1">Actual Spend</span>
+            <span className="text-[10px] font-mono uppercase text-neutral-500 block mb-1">Rent / Mo</span>
             <span className="text-base font-bold font-mono text-neutral-200">
-              {audit.actual_spend_gbp !== null && audit.actual_spend_gbp !== undefined ? `£${Number(audit.actual_spend_gbp).toFixed(2)}` : '--'}
+              {audit.rent_mo || '--'}
             </span>
           </div>
 
           <div className="p-3.5 rounded-xl bg-neutral-900/60 border border-neutral-800/80">
-            <span className="text-[10px] font-mono uppercase text-neutral-500 block mb-1">Kebab Index</span>
+            <span className="text-[10px] font-mono uppercase text-neutral-500 block mb-1">Basket</span>
             <span className="text-base font-bold font-mono text-neutral-200">
-              {audit.kebab_index_gbp !== null && audit.kebab_index_gbp !== undefined ? `£${Number(audit.kebab_index_gbp).toFixed(2)}` : '--'}
+              {audit.basket || '--'}
             </span>
           </div>
 
           <div className="p-3.5 rounded-xl bg-neutral-900/60 border border-neutral-800/80">
-            <span className="text-[10px] font-mono uppercase text-neutral-500 block mb-1">Tomato Index</span>
+            <span className="text-[10px] font-mono uppercase text-neutral-500 block mb-1">Safety</span>
             <span className="text-base font-bold font-mono text-neutral-200">
-              {audit.tomato_index_gbp !== null && audit.tomato_index_gbp !== undefined ? `£${Number(audit.tomato_index_gbp).toFixed(2)}` : '--'}
+              {audit.safety || '--'}
             </span>
           </div>
 
           <div className="p-3.5 rounded-xl bg-neutral-900/60 border border-neutral-800/80">
-            <span className="text-[10px] font-mono uppercase text-neutral-500 block mb-1">Exchanges</span>
+            <span className="text-[10px] font-mono uppercase text-neutral-500 block mb-1">Access</span>
             <span className="text-base font-bold font-mono text-neutral-200">
-              {audit.exchanges_count ?? '--'}
+              {audit.access || '--'}
             </span>
           </div>
 
           <div className="p-3.5 rounded-xl bg-neutral-900/60 border border-neutral-800/80">
-            <span className="text-[10px] font-mono uppercase text-neutral-500 block mb-1">Free Finds</span>
-            <span className="text-base font-bold font-mono text-emerald-400">
-              {audit.free_pins_found_count ?? '--'}
+            <span className="text-[10px] font-mono uppercase text-neutral-500 block mb-1">🍅 Tomato Score</span>
+            <span className="text-base font-bold font-mono text-red-400">
+              {audit.tomato_score ? `${audit.tomato_score}/10` : '--'}
             </span>
-          </div>
-
-          <div className="p-3.5 rounded-xl bg-neutral-900/60 border border-neutral-800/80">
-            <span className="text-[10px] font-mono uppercase text-neutral-500 block mb-1">Hassle Log</span>
-            <div className="flex flex-wrap gap-1 mt-0.5">
-              {audit.hassle_log && audit.hassle_log.length > 0 ? (
-                audit.hassle_log.map((h, i) => (
-                  <span key={i} className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-red-950/80 text-red-300 border border-red-500/30">
-                    {h.type}
-                  </span>
-                ))
-              ) : (
-                <span className="text-xs font-mono text-neutral-500">None</span>
-              )}
-            </div>
           </div>
         </div>
       </div>

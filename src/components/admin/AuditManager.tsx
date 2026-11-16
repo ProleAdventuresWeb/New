@@ -5,17 +5,10 @@ import {
   Trash2,
   Save,
   X,
-  CheckCircle,
-  AlertCircle,
   Loader2,
   MapPin,
   Trophy,
-  Youtube,
   BookOpen,
-  DollarSign,
-  Shield,
-  Calendar,
-  AlertTriangle
 } from 'lucide-react';
 import {
   createAdventure,
@@ -26,11 +19,6 @@ import {
 } from '../../lib/supabase';
 import { MockAdventureService } from '../../services/mockAdventureService';
 import { extractYouTubeId } from '../YouTubeFacade';
-import {
-  type HassleIncident,
-  type HassleIncidentType,
-  HASSLE_LABELS
-} from '../../types/audit';
 import type { Post } from '../../types/post';
 
 interface AuditManagerProps {
@@ -60,12 +48,11 @@ const EMPTY_AUDIT_FORM = {
   story_slug: '',
   score: '' as number | '',
   verdict_line: '',
-  actual_spend_gbp: '' as number | '',
-  kebab_index_gbp: '' as number | '',
-  tomato_index_gbp: '' as number | '',
-  exchanges_count: '' as number | '',
-  free_pins_found_count: '' as number | '',
-  hassle_log: [] as HassleIncident[],
+  rent_mo: '',
+  basket: '',
+  safety: '',
+  access: '',
+  tomato_score: '' as number | '',
   conditions_line: '',
   commissioned: false,
   funder_credit: '',
@@ -84,9 +71,6 @@ export const AuditManager: React.FC<AuditManagerProps> = ({
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [filter, setFilter] = useState<string>('all');
-  const [newHassleType, setNewHassleType] = useState<HassleIncidentType>('stopped');
-  const [newHassleNote, setNewHassleNote] = useState('');
-  const [newHassleAmount, setNewHassleAmount] = useState<string>('');
 
   const handleEdit = (mission: SecureAdventure) => {
     setSelectedMission(mission);
@@ -108,12 +92,11 @@ export const AuditManager: React.FC<AuditManagerProps> = ({
       story_slug: mission.story_slug || '',
       score: mission.score ?? '',
       verdict_line: mission.verdict_line || '',
-      actual_spend_gbp: mission.actual_spend_gbp ?? '',
-      kebab_index_gbp: mission.kebab_index_gbp ?? '',
-      tomato_index_gbp: mission.tomato_index_gbp ?? '',
-      exchanges_count: mission.exchanges_count ?? '',
-      free_pins_found_count: mission.free_pins_found_count ?? '',
-      hassle_log: Array.isArray(mission.hassle_log) ? [...mission.hassle_log] : [],
+      rent_mo: mission.rent_mo || '',
+      basket: mission.basket || '',
+      safety: mission.safety || '',
+      access: mission.access || '',
+      tomato_score: mission.tomato_score ?? '',
       conditions_line: mission.conditions_line || '',
       commissioned: !!mission.commissioned,
       funder_credit: mission.funder_credit || '',
@@ -129,27 +112,6 @@ export const AuditManager: React.FC<AuditManagerProps> = ({
       episode_number: missions.filter(m => m.episode_number).length + 1
     });
     setIsEditorOpen(true);
-  };
-
-  const handleAddHassle = () => {
-    const incident: HassleIncident = {
-      type: newHassleType,
-      note: newHassleNote.trim() || undefined,
-      amount: newHassleType === 'fined' && newHassleAmount ? Number(newHassleAmount) : undefined
-    };
-    setForm(prev => ({
-      ...prev,
-      hassle_log: [...prev.hassle_log, incident]
-    }));
-    setNewHassleNote('');
-    setNewHassleAmount('');
-  };
-
-  const handleRemoveHassle = (index: number) => {
-    setForm(prev => ({
-      ...prev,
-      hassle_log: prev.hassle_log.filter((_, i) => i !== index)
-    }));
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -181,12 +143,12 @@ export const AuditManager: React.FC<AuditManagerProps> = ({
       story_slug: form.story_slug.trim() || null,
       score: form.score !== '' ? Number(form.score) : null,
       verdict_line: form.verdict_line.trim() || null,
-      actual_spend_gbp: form.actual_spend_gbp !== '' ? Number(form.actual_spend_gbp) : null,
-      kebab_index_gbp: form.kebab_index_gbp !== '' ? Number(form.kebab_index_gbp) : null,
-      tomato_index_gbp: form.tomato_index_gbp !== '' ? Number(form.tomato_index_gbp) : null,
-      exchanges_count: form.exchanges_count !== '' ? Number(form.exchanges_count) : 0,
-      free_pins_found_count: form.free_pins_found_count !== '' ? Number(form.free_pins_found_count) : 0,
-      hassle_log: form.hassle_log,
+      place: form.title.trim(),
+      rent_mo: form.rent_mo.trim() || null,
+      basket: form.basket.trim() || null,
+      safety: form.safety.trim() || null,
+      access: form.access.trim() || null,
+      tomato_score: form.tomato_score !== '' ? Number(form.tomato_score) : null,
       conditions_line: form.conditions_line.trim() || null,
       commissioned: form.commissioned,
       funder_credit: form.commissioned ? form.funder_credit.trim() || null : null,
@@ -607,144 +569,32 @@ export const AuditManager: React.FC<AuditManagerProps> = ({
                   </div>
                 </div>
 
-                {/* Evidence Ledger Numbers */}
+                {/* League audit fields */}
                 <div className="space-y-2">
-                  <span className="text-xs font-mono uppercase text-neutral-400 font-bold block">
-                    Fixed Evidence Ledger
+                  <span className="block text-xs font-mono font-bold uppercase text-neutral-400">
+                    League Table Fields
                   </span>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-5">
                     <div className="space-y-1">
-                      <label className="text-[10px] font-mono uppercase text-neutral-500">Spend (£)</label>
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={form.actual_spend_gbp}
-                        onChange={e => setForm({ ...form, actual_spend_gbp: e.target.value === '' ? '' : parseFloat(e.target.value) })}
-                        placeholder="11.20"
-                        className="w-full bg-neutral-900 border border-neutral-800 rounded-lg p-2.5 text-xs text-white"
-                      />
+                      <label className="text-[10px] font-mono uppercase text-neutral-500">Rent / Mo</label>
+                      <input type="text" value={form.rent_mo} onChange={e => setForm({ ...form, rent_mo: e.target.value })} placeholder="850 GBP 1-bed" className="w-full rounded-lg border border-neutral-800 bg-neutral-900 p-2.5 text-xs text-white" />
                     </div>
-
                     <div className="space-y-1">
-                      <label className="text-[10px] font-mono uppercase text-neutral-500">Kebab (£)</label>
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={form.kebab_index_gbp}
-                        onChange={e => setForm({ ...form, kebab_index_gbp: e.target.value === '' ? '' : parseFloat(e.target.value) })}
-                        placeholder="6.50"
-                        className="w-full bg-neutral-900 border border-neutral-800 rounded-lg p-2.5 text-xs text-white"
-                      />
+                      <label className="text-[10px] font-mono uppercase text-neutral-500">Basket</label>
+                      <input type="text" value={form.basket} onChange={e => setForm({ ...form, basket: e.target.value })} placeholder="38 GBP weekly basics" className="w-full rounded-lg border border-neutral-800 bg-neutral-900 p-2.5 text-xs text-white" />
                     </div>
-
                     <div className="space-y-1">
-                      <label className="text-[10px] font-mono uppercase text-neutral-500">Tomato (£)</label>
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={form.tomato_index_gbp}
-                        onChange={e => setForm({ ...form, tomato_index_gbp: e.target.value === '' ? '' : parseFloat(e.target.value) })}
-                        placeholder="0.85"
-                        className="w-full bg-neutral-900 border border-neutral-800 rounded-lg p-2.5 text-xs text-white"
-                      />
+                      <label className="text-[10px] font-mono uppercase text-neutral-500">Safety</label>
+                      <input type="text" value={form.safety} onChange={e => setForm({ ...form, safety: e.target.value })} placeholder="Mixed - avoid late" className="w-full rounded-lg border border-neutral-800 bg-neutral-900 p-2.5 text-xs text-white" />
                     </div>
-
                     <div className="space-y-1">
-                      <label className="text-[10px] font-mono uppercase text-neutral-500">Exchanges</label>
-                      <input
-                        type="number"
-                        value={form.exchanges_count}
-                        onChange={e => setForm({ ...form, exchanges_count: e.target.value === '' ? '' : parseInt(e.target.value) })}
-                        placeholder="5"
-                        className="w-full bg-neutral-900 border border-neutral-800 rounded-lg p-2.5 text-xs text-white"
-                      />
+                      <label className="text-[10px] font-mono uppercase text-neutral-500">Access</label>
+                      <input type="text" value={form.access} onChange={e => setForm({ ...form, access: e.target.value })} placeholder="Walkable; buses limited" className="w-full rounded-lg border border-neutral-800 bg-neutral-900 p-2.5 text-xs text-white" />
                     </div>
-
                     <div className="space-y-1">
-                      <label className="text-[10px] font-mono uppercase text-neutral-500">Free Finds</label>
-                      <input
-                        type="number"
-                        value={form.free_pins_found_count}
-                        onChange={e => setForm({ ...form, free_pins_found_count: e.target.value === '' ? '' : parseInt(e.target.value) })}
-                        placeholder="3"
-                        className="w-full bg-neutral-900 border border-neutral-800 rounded-lg p-2.5 text-xs text-emerald-400 font-bold"
-                      />
+                      <label className="text-[10px] font-mono uppercase text-neutral-500">Tomato Score (1-10)</label>
+                      <input type="number" min="1" max="10" value={form.tomato_score} onChange={e => setForm({ ...form, tomato_score: e.target.value === '' ? '' : Number(e.target.value) })} placeholder="7" className="w-full rounded-lg border border-neutral-800 bg-neutral-900 p-2.5 text-xs text-white" />
                     </div>
-                  </div>
-                </div>
-
-                {/* Hassle Log Editor */}
-                <div className="space-y-3 pt-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-mono uppercase text-neutral-400 font-bold">
-                      Hassle Log Incidents
-                    </span>
-                    <span className="text-[10px] font-mono text-neutral-500">
-                      {form.hassle_log.length} logged
-                    </span>
-                  </div>
-
-                  {/* List of current hassle incidents */}
-                  <div className="flex flex-wrap gap-2">
-                    {form.hassle_log.map((inc, i) => (
-                      <div
-                        key={i}
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-neutral-900 border border-neutral-700 text-xs font-mono text-neutral-200"
-                      >
-                        <span className="text-red-400 font-bold">{inc.type}</span>
-                        {inc.amount && <span className="text-neutral-400">£{inc.amount}</span>}
-                        {inc.note && <span className="text-neutral-500 truncate max-w-xs">({inc.note})</span>}
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveHassle(i)}
-                          className="ml-1 text-neutral-500 hover:text-red-400"
-                        >
-                          <X className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Add incident line */}
-                  <div className="flex flex-col sm:flex-row gap-2 pt-1">
-                    <select
-                      value={newHassleType}
-                      onChange={e => setNewHassleType(e.target.value as any)}
-                      className="bg-neutral-900 border border-neutral-800 rounded-lg px-3 py-2 text-xs text-white"
-                    >
-                      <option value="scoped">Scoped (surveilled)</option>
-                      <option value="stopped">Stopped & Questioned</option>
-                      <option value="fined">Fined (with amount)</option>
-                      <option value="moved_on">Moved On</option>
-                      <option value="id_demanded">ID Demanded</option>
-                      <option value="cash_refused">Cash Refused</option>
-                    </select>
-
-                    {newHassleType === 'fined' && (
-                      <input
-                        type="number"
-                        placeholder="Fine £"
-                        value={newHassleAmount}
-                        onChange={e => setNewHassleAmount(e.target.value)}
-                        className="w-24 bg-neutral-900 border border-neutral-800 rounded-lg px-3 py-2 text-xs text-white"
-                      />
-                    )}
-
-                    <input
-                      type="text"
-                      placeholder="Optional incident note (e.g. private security at gate)"
-                      value={newHassleNote}
-                      onChange={e => setNewHassleNote(e.target.value)}
-                      className="flex-1 bg-neutral-900 border border-neutral-800 rounded-lg px-3 py-2 text-xs text-white"
-                    />
-
-                    <button
-                      type="button"
-                      onClick={handleAddHassle}
-                      className="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-white rounded-lg text-xs font-mono uppercase"
-                    >
-                      + Add Incident
-                    </button>
                   </div>
                 </div>
 

@@ -21,7 +21,7 @@ export const WatchPage: React.FC = () => {
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Home
               </Link>
-              <h1 className="font-display text-5xl md:text-5xl lg:text-6xl font-bold text-neutral-50 mb-4">
+              <h1 className="font-display text-5xl md:text-7xl font-bold text-neutral-50 mb-4 uppercase tracking-tight">
                 Watch
               </h1>
               <p className="text-xl text-neutral-100">

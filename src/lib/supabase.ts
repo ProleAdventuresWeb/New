@@ -95,11 +95,17 @@ export interface Adventure {
   reward_url?: string;
   is_reward_active?: boolean;
   // Audit fields
+  place?: string | null;
   episode_number?: number | null;
   audit_date?: string | null;
   youtube_id?: string | null;
   story_slug?: string | null;
   score?: number | null;
+  tomato_score?: number | null;
+  rent_mo?: string | null;
+  basket?: string | null;
+  safety?: string | null;
+  access?: string | null;
   verdict_line?: string | null;
   actual_spend_gbp?: number | null;
   kebab_index_gbp?: number | null;
@@ -143,11 +149,17 @@ export interface SecureAdventure {
   reward_url?: string;
   is_reward_active?: boolean;
   // Audit fields
+  place?: string | null;
   episode_number?: number | null;
   audit_date?: string | null;
   youtube_id?: string | null;
   story_slug?: string | null;
   score?: number | null;
+  tomato_score?: number | null;
+  rent_mo?: string | null;
+  basket?: string | null;
+  safety?: string | null;
+  access?: string | null;
   verdict_line?: string | null;
   actual_spend_gbp?: number | null;
   kebab_index_gbp?: number | null;

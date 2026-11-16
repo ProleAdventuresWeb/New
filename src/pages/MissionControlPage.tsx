@@ -688,12 +688,13 @@ export const MissionControlPage: React.FC = () => {
 
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
             <div>
-              <h1 className="font-display text-6xl md:text-8xl font-black text-neutral-50 mb-3 tracking-tighter uppercase">
+              <h1 className="font-display text-5xl md:text-7xl font-bold text-neutral-50 mb-3 tracking-tight uppercase">
                 Prole Control
               </h1>
               <p className="text-xl text-neutral-400 max-w-2xl leading-relaxed">
-                Every adventure needs a budget. Browse active missions, see what's in planning, and
-                help fund the ones worth doing.
+                Back the next mission.<br />
+                Browse upcoming trips, fund the ones you want to see, or buy me dinner for a shout-out in the Prole Foods segment.<br />
+                Every contributor gets behind-the-scenes access.
               </p>
             </div>
           </div>
@@ -1017,20 +1018,6 @@ export const MissionControlPage: React.FC = () => {
         </div>
       </section>
 
-      {/* ─── Footer notice ───────────────────────────────────────────────── */}
-      <section className="px-4 pb-12">
-        <div className="max-w-7xl mx-auto">
-          <div className="glass-subtle rounded-xl p-5 border border-red-500/10 flex items-start gap-3">
-            <Lock className="w-5 h-5 text-red-400/50 flex-shrink-0 mt-0.5" />
-            <p className="text-white text-sm leading-relaxed">
-              <span className="text-red-400 font-semibold">Planning missions</span> have their precise coordinates
-              withheld until officially confirmed — to protect locations ahead of the visit.
-              All contributions go directly toward making the mission happen.{' '}
-              <span className="text-neutral-400 text-xs font-mono uppercase">Secure Encrypted Processing Active</span>
-            </p>
-          </div>
-        </div>
-      </section>
     </div>
   );
 };

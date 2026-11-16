@@ -43,7 +43,7 @@ export const ContactPage: React.FC = () => {
       <section className="py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <div className="glass-elevated rounded-3xl p-12 shadow-glass shadow-investigation backdrop-blur-xl">
-            <h1 className="font-display text-5xl md:text-6xl font-bold text-neutral-50 mb-6">
+            <h1 className="font-display text-5xl md:text-7xl font-bold text-neutral-50 mb-6 uppercase tracking-tight">
               Get in Touch
             </h1>
             <p className="text-xl text-neutral-100 leading-relaxed">

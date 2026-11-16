@@ -10,8 +10,8 @@ export const Navigation: React.FC = () => {
 
   const navItems = [
     { path: '/', label: 'Home', icon: Home },
-    { path: '/league', label: 'League', icon: Trophy },
     { path: '/prole-control', label: 'Prole Control', icon: Shield },
+    { path: '/league', label: 'League', icon: Trophy },
     // { path: '/drops', label: 'Cache', icon: MapPin }, // Temporarily hidden
     { path: '/watch', label: 'Watch', icon: MapPin },
     { path: '/stories', label: 'Read', icon: MapPin },
@@ -36,7 +36,7 @@ export const Navigation: React.FC = () => {
                   key={path}
                   to={path}
                   aria-current={location.pathname === path ? 'page' : undefined}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 flex items-center space-x-2 ${
+                  className={`px-4 py-2 rounded-lg text-sm font-medium uppercase transition-all duration-300 flex items-center space-x-2 ${
                     location.pathname === path
                       ? 'glass-elevated text-neutral-50 shadow-glass shadow-investigation backdrop-blur-xl'
                       : 'glass-subtle text-neutral-100 hover:glass-base shadow-glass shadow-investigation hover:backdrop-blur-xl'
@@ -78,7 +78,7 @@ export const Navigation: React.FC = () => {
                   key={path}
                   to={path}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-base font-medium transition-all duration-300 ${
+                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-base font-medium uppercase transition-all duration-300 ${
                     location.pathname === path
                       ? 'glass-elevated text-neutral-50 shadow-glass shadow-investigation'
                       : 'glass-subtle text-neutral-100 hover:glass-base shadow-glass shadow-investigation'

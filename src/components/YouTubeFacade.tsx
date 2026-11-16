@@ -57,9 +57,7 @@ export const YouTubeFacade: React.FC<YouTubeFacadeProps> = ({
             loading="lazy"
           />
         )}
-        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-          <span className="text-xs font-mono text-neutral-400">Video pending transmission</span>
-        </div>
+        <div className="absolute inset-0 bg-black/40" />
       </div>
     );
   }

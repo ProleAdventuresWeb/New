@@ -27,6 +27,11 @@ export interface AuditRecord {
   id: string;
   episode_number?: number | null;
   place_name: string; // Canonical label used everywhere on-site (adventures.title)
+  rent_mo?: string | null;
+  basket?: string | null;
+  safety?: string | null;
+  access?: string | null;
+  tomato_score?: number | null;
   codename?: string;
   lat: number;
   lng: number;
@@ -85,15 +90,13 @@ export interface LeagueColumn {
 }
 
 export const LEAGUE_COLUMNS: LeagueColumn[] = [
-  { key: 'place_name', label: 'Place', sortable: true, align: 'left', description: 'Canonical location audited' },
-  { key: 'episode_number', label: '#', sortable: true, align: 'center', description: 'Episode number' },
-  { key: 'score', label: 'Score', sortable: true, align: 'center', description: 'Editorial score (1-100, spine §16)' },
-  { key: 'verdict_line', label: 'Verdict', sortable: false, align: 'left', description: 'Audit verdict line' },
-  { key: 'actual_spend_gbp', label: 'Spend', shortLabel: 'Spend (£)', sortable: true, align: 'right', description: 'Actual spend (£)' },
-  { key: 'kebab_index_gbp', label: 'Kebab', shortLabel: 'Kebab (£)', sortable: true, align: 'right', description: 'Standard donor/kebab index (£)' },
-  { key: 'tomato_index_gbp', label: 'Tomato', shortLabel: 'Tomato (£)', sortable: true, align: 'right', description: 'Single loose tomato index (£)' },
-  { key: 'exchanges_count', label: 'Exchanges', sortable: true, align: 'center', description: 'Human interactions / exchanges' },
-  { key: 'free_pins_found_count', label: 'Free Finds', sortable: true, align: 'center', description: 'Free utility / survival resources found' },
-  { key: 'hassle', label: 'Hassle', sortable: true, align: 'left', description: 'Recorded friction incidents' },
-  { key: 'audit_date', label: 'Date', sortable: true, align: 'center', description: 'Audit date (always visible)' },
+  { key: 'place', label: 'PLACE', sortable: true, align: 'left', description: 'Real town or city audited' },
+  { key: 'episode_number', label: 'EPISODE', sortable: true, align: 'center', description: 'Episode number' },
+  { key: 'rent_mo', label: 'RENT / MO', sortable: true, align: 'left', description: 'Entry-level rent' },
+  { key: 'basket', label: 'BASKET', sortable: true, align: 'left', description: 'Everyday basket cost' },
+  { key: 'safety', label: 'SAFETY', sortable: true, align: 'left', description: 'Local safety reality' },
+  { key: 'access', label: 'ACCESS', sortable: true, align: 'left', description: 'Car-free access' },
+  { key: 'score', label: 'SCORE', sortable: true, align: 'center', description: 'Overall verdict out of 100' },
+  { key: 'tomato_score', label: '🍅', sortable: true, align: 'center', description: 'Tomato Index out of 10' },
+  { key: 'audit_date', label: 'DATE', sortable: true, align: 'center', description: 'Audit date' },
 ];
