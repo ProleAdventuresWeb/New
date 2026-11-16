@@ -599,26 +599,12 @@ export const MissionControlPage: React.FC = () => {
         const data = await AdventureService.getSecureAdventures();
         if (isMounted) {
           setAdventures(data);
-          const initialMatch = targetPinId ? data.find(a => a.id === targetPinId || a.story_slug === targetPinId) : null;
-          if (initialMatch) {
-            setSelected(initialMatch);
-            setFlyTrigger(prev => prev + 1);
-          } else if (data.length > 0) {
-            setSelected(data[0]);
-          }
         }
       } catch {
         try {
           const data = await MockAdventureService.getSecureAdventures();
           if (isMounted) {
             setAdventures(data);
-            const initialMatch = targetPinId ? data.find(a => a.id === targetPinId || a.story_slug === targetPinId) : null;
-            if (initialMatch) {
-              setSelected(initialMatch);
-              setFlyTrigger(prev => prev + 1);
-            } else if (data.length > 0) {
-              setSelected(data[0]);
-            }
             setIsDemo(true);
           }
         } catch (err) {
