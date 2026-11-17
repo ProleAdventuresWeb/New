@@ -7,7 +7,7 @@ export const AboutPage: React.FC = () => {
     <div className="pt-16 min-h-screen bg-black">
       <Head 
         title="About" 
-        description="The story behind Prole Adventures. Discovering what's left of freedom in a world that increasingly demands compliance."
+        description="Prole Adventures is social anthropology and archaeology for people working out where they can still make a life."
       />
       {/* Hero Section */}
       <section className="py-20 px-4">
@@ -17,7 +17,7 @@ export const AboutPage: React.FC = () => {
               About Prole Adventures
             </h1>
             <p className="text-xl text-neutral-100 leading-relaxed">
-              Exploring what's left of freedom.
+              Everywhere isn't the same.
             </p>
           </div>
         </div>
@@ -29,35 +29,48 @@ export const AboutPage: React.FC = () => {
           <div className="glass-elevated rounded-3xl p-12 shadow-glass shadow-investigation">
             <div className="max-w-3xl mx-auto">
               <h2 className="font-display text-3xl md:text-4xl font-bold text-neutral-50 mb-6 text-center">
-                The Story Behind the Adventures
+                What Prole Adventures Is
               </h2>
               <div className="space-y-6 text-neutral-100 leading-relaxed">
                 <p>
-                  Prole Adventures is simple: It's what happens when you stop filtering your
-                  perspective on life. The world is saturated with polished content and staged
-                  experiences, this is raw, unfiltered, low level living.
+                  Prole Adventures is social anthropology and archaeology for people trying to
+                  work out where they can still make a life.
                 </p>
                 <p>
-                  Prole Adventures is just here to document my experiences of
-                  ordinary people and overlooked places. From back alleys to sprawling 
-                  landscapes that rarely make the travel brochures, the focus is entirely 
-                  on the authentic. There is a certain kind of beauty in dilapidated structures, 
-                  forgotten infrastructure, and the quiet moments of survival on a budget.
+                  People say it all the time when they are fed up with where they live:
                 </p>
                 <p>
-                  Every adventure is about discovering what's left of freedom in a world
-                  that increasingly demands compliance. It's about breaking free from the 
-                  algorithms that try to tell you where to go, what to consume, and how to 
-                  think. By exploring the fringes, observing the decay, and documenting the 
-                  reality of the streets without corporate sponsorship or an influencer's 
-                  agenda, we reclaim a tiny piece of independence. 
+                  <q>Where can we go? Everywhere&rsquo;s the same.</q>
                 </p>
                 <p>
-                  Whether I am reviewing budget survival gear that actually works, mapping 
-                  out free outdoor routes, or talking to people the system left behind, 
-                  the goal remains the same: keep walking, stay observant, and share the 
-                  truth of what's out there. No flashy editing, no fake drama—just a 
-                  worker navigating the matrix.
+                  But everywhere isn&rsquo;t the same.
+                </p>
+                <p>
+                  Living by the beach in M&aacute;laga, cycling into the mountains in the morning,
+                  swimming in the sea in the afternoon, eating dinner on the terrace in the evening
+                  and being outside every day is not the same as living in a flat in a Midlands market
+                  town, staring at a screen all day, trying to pay the rent and keep the heating on.
+                </p>
+                <p>
+                  Places shape your time, your money, your health, your freedom, your routines and the
+                  kind of future you can imagine.
+                </p>
+                <p>
+                  So this project goes looking for what&rsquo;s still possible.
+                </p>
+                <p>
+                  It visits places, looks beyond property-listing fantasy, and asks what life actually
+                  costs there: rent, food, safety, transport, access, atmosphere and the small daily
+                  frictions that decide whether somewhere feels possible.
+                </p>
+                <p>
+                  It&rsquo;s not pretending to be scientific fact. It&rsquo;s a field guide: a way of comparing
+                  places, starting conversations and proving that the world is not one flat, hopeless
+                  experience.
+                </p>
+                <p>
+                  This is my attempt to dispel the lazy fatalism of <q>Everywhere&rsquo;s the same.</q> and
+                  discover what&rsquo;s left of freedom.
                 </p>
               </div>
             </div>
