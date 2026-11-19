@@ -69,7 +69,7 @@ export const Head: React.FC<HeadProps> = ({
       <meta name="robots" content={robots} />
 
       {/* Favicon */}
-      <link rel="icon" type="image/webp" href="/images/logo-prole.webp" />
+      <link rel="icon" type="image/png" href="/images/favicon.png" />
 
       {/* Umami Analytics */}
       <script defer src="https://cloud.umami.is/script.js" data-website-id="0b134b67-faa1-4e3d-82e3-cdfc96edcfec"></script>

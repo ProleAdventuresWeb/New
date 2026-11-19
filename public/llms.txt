@@ -1,0 +1,23 @@
+# Prole Adventures
+
+> A field guide to places where people can still make a life, based on on-the-ground reporting about cost, safety, access, atmosphere and everyday life.
+
+## Core pages
+
+- [Home](https://proleadventures.com/): Start here for Prole Adventures.
+- [About](https://proleadventures.com/about): What the project is and why places shape the lives people can make.
+- [League](https://proleadventures.com/league): Ranked on-the-ground place audits covering rent, everyday costs, safety and access.
+- [Prole Control](https://proleadventures.com/prole-control): Active and completed field missions and place audits.
+- [Stories](https://proleadventures.com/stories): Field reports, investigations and dispatches.
+
+## Practical resources
+
+- [Gear](https://proleadventures.com/gear): Practical gear used for travel, documentation and field reporting.
+- [Shop](https://proleadventures.com/shop): Clothing and field items that support reporting.
+- [Watch](https://proleadventures.com/watch): Video reports and completed adventures.
+- [Contact](https://proleadventures.com/contact): Share a place, field report or collaboration idea.
+
+## Crawling and indexing
+
+- [Sitemap](https://proleadventures.com/sitemap.xml)
+- [Robots policy](https://proleadventures.com/robots.txt)
