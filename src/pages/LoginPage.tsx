@@ -39,7 +39,7 @@ export const LoginPage: React.FC = () => {
 
   return (
     <div className="pt-24 min-h-screen bg-black flex items-center justify-center p-4">
-      <Head title="Login" description="Sign in to your Prole Adventures account." />
+      <Head title="Login" description="Sign in to your Prole Adventures account." robots="noindex, follow" />
 
       <div className="max-w-md w-full">
         <div className="glass-base rounded-2xl p-8 border border-red-500/10 shadow-investigation">

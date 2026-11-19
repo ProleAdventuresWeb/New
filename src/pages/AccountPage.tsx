@@ -32,7 +32,7 @@ export const AccountPage: React.FC = () => {
 
   return (
     <div className="pt-24 min-h-screen bg-black">
-      <Head title="Account" description="Your Prole Adventures account dashboard." />
+      <Head title="Account" description="Your Prole Adventures account dashboard." robots="noindex, follow" />
 
       <div className="max-w-4xl mx-auto px-4 pb-24">
         {/* Header */}

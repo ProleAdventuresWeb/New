@@ -93,7 +93,7 @@ export const CommunityPage: React.FC = () => {
     <div className="pt-16 min-h-screen">
       <Head 
         title="Community & Command Center" 
-        description="The community behind Prole Adventures. Values, missions, and identity of authentic exploration." 
+        description="The Prole Adventures community: share local knowledge, field reports and practical insight into places where people can still make a life." 
       />
       {/* Header */}
       <section className="py-12 px-4">

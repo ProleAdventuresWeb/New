@@ -18,7 +18,7 @@ export const HomePage: React.FC = () => {
     name: "Prole Adventures",
     url: "https://proleadventures.com",
     logo: "https://proleadventures.com/images/hero-logo.webp",
-    description: "Exploring what's left of freedom through unfiltered perspective on ordinary life.",
+    description: "A field guide to places where people can still make a life, based on on-the-ground reporting about cost, safety, access, atmosphere and everyday life.",
     sameAs: [
       "https://www.youtube.com/@ProleAdventures"
     ]
@@ -28,7 +28,7 @@ export const HomePage: React.FC = () => {
     <div className="pt-0">
       <Head
         title="Home"
-        description="Exploring what's left of freedom through unfiltered perspective on ordinary life. Authentic adventures, urban exploration, and gear testing."
+        description="A field guide to places where people can still make a life, with on-the-ground reporting on cost, safety, access, atmosphere and everyday life."
       />
       <JsonLd type="organization" data={schemaData} />
       {/* Hero Section */}

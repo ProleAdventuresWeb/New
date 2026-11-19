@@ -13,6 +13,9 @@ Allow: /
 User-agent: PerplexityBot
 Allow: /
 
+User-agent: Claude-Web
+Allow: /
+
 # 3. BLOCK AI Training (These bots scrape your content to train models)
 User-agent: GPTBot
 Disallow: /
@@ -21,9 +24,6 @@ User-agent: Google-Extended
 Disallow: /
 
 User-agent: CCBot
-Disallow: /
-
-User-agent: Claude-Web
 Disallow: /
 
 User-agent: anthropic-ai
@@ -35,4 +35,3 @@ Sitemap: https://proleadventures.com/sitemap.xml
 # Disallow private/admin paths
 Disallow: /admin/
 Disallow: /api/
-Disallow: /prole-control/

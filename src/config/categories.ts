@@ -11,43 +11,43 @@ export const BLOG_CATEGORIES: BlogCategory[] = [
     id: 'escape',
     name: 'Escape',
     icon: '🛂',
-    description: 'Answering the question: Is it possible for a Prole to Escape? Border mechanics, purchasing power, and the maths of leaving.',
-    seoTitle: 'Escape Strategy: Border Mechanics & Global Relocation for Proles'
+    description: 'What it takes to leave: border rules, purchasing power and the practical realities of finding a place where a different life is possible.',
+    seoTitle: 'Escape: Borders, Costs and the Reality of Leaving'
   },
   {
     id: 'prolenomics',
     name: 'Prolenomics',
     icon: '📊',
-    description: 'How to survive a hostile financial environment. The structural maths of modern life and the system extraction points.',
-    seoTitle: 'Prolenomics: Financial Survival & System Extraction Analysis'
+    description: 'The economics of everyday life: rent, food, wages and the pressures that determine whether a place is liveable.',
+    seoTitle: 'Prolenomics: The Cost of Everyday Life'
   },
   {
     id: 'decline',
     name: 'Decline',
     icon: '🏚️',
-    description: 'Towns, industries, and infrastructure passing into history. Investigations into the absurdity of the dying West.',
-    seoTitle: 'Decline & Fall: Investigations into Modern Industrial Decay'
+    description: 'Field reports on towns, industries and infrastructure in decline, and what that means for the people still living there.',
+    seoTitle: 'Decline: Towns, Industry and Everyday Consequences'
   },
   {
     id: 'freedom',
     name: 'Freedom',
     icon: '🚌',
-    description: 'Movement under constraint. Buses, bikes, vans, and unusual transport. A live test of freedom of movement.',
-    seoTitle: 'Freedom of Movement: Low-Cost Logistics & Travel Realities'
+    description: 'How people actually get around: buses, bikes, vans and other low-cost routes through the practical limits on movement.',
+    seoTitle: 'Freedom of Movement: Transport and Travel Realities'
   },
   {
     id: 'dispatches',
     name: 'Dispatches',
     icon: '📡',
-    description: 'Field notes, mission updates, and behind the scenes. The bridge between the analytical and the personal.',
-    seoTitle: 'Prole Dispatches: Field Reports & Operations Intelligence'
+    description: 'Field notes, updates and behind-the-scenes reporting from the work of comparing places and everyday possibilities.',
+    seoTitle: 'Prole Dispatches: Field Notes and Place Reports'
   },
   {
     id: 'urban-exploration',
     name: 'Urban Exploration',
     icon: '🏢',
-    description: 'Venturing into the forgotten and forbidden. Investigations into abandoned spaces and the architecture of the overlooked.',
-    seoTitle: 'Urban Exploration: Abandoned Spaces & Architectural Investigations'
+    description: 'Reports from overlooked spaces and changing neighbourhoods, documenting how places are used, abandoned and lived in.',
+    seoTitle: 'Urban Exploration: Overlooked Places and Changing Neighbourhoods'
   }
 ];
 

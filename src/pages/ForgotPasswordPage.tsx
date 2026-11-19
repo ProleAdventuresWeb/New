@@ -29,7 +29,7 @@ export const ForgotPasswordPage: React.FC = () => {
   if (success) {
     return (
       <div className="pt-24 min-h-screen bg-black flex items-center justify-center p-4">
-        <Head title="Check Your Email" description="Password reset link sent" />
+        <Head title="Check Your Email" description="Password reset link sent" robots="noindex, follow" />
         <div className="max-w-md w-full glass-base rounded-2xl p-8 border border-green-500/20 shadow-investigation text-center">
           <div className="w-14 h-14 bg-green-500/10 border border-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
             <CheckCircle className="w-7 h-7 text-green-400" />
@@ -51,7 +51,7 @@ export const ForgotPasswordPage: React.FC = () => {
 
   return (
     <div className="pt-24 min-h-screen bg-black flex items-center justify-center p-4">
-      <Head title="Forgot Password" description="Reset your Prole Adventures account password." />
+      <Head title="Forgot Password" description="Reset your Prole Adventures account password." robots="noindex, follow" />
 
       <div className="max-w-md w-full">
         <div className="glass-base rounded-2xl p-8 border border-red-500/10 shadow-investigation">

@@ -10,6 +10,7 @@ interface HeadProps {
   ogUrl?: string;
   twitterCard?: string;
   canonicalUrl?: string;
+  robots?: string;
 }
 
 import { useLocation } from 'react-router-dom';
@@ -23,23 +24,24 @@ export const Head: React.FC<HeadProps> = ({
   ogUrl,
   twitterCard = 'summary_large_image',
   canonicalUrl,
+  robots = 'index, follow',
 }) => {
   const { pathname } = useLocation();
   const siteTitle = 'Prole Adventures';
   const baseUrl = 'https://proleadventures.com';
   
-  // Requirement: One format (without trailing slash) consistently
   const cleanTitle = title.trim();
   const fullTitle = ogTitle || (cleanTitle ? `${cleanTitle} | ${siteTitle}` : siteTitle);
   
-  // Requirement: Default meta description fallback
-  const fallbackDescription = "Prole Adventures — budget travel, social commentary, and life beyond the system. Real adventures, real talk.";
+  const fallbackDescription = 'A field guide to places where people can still make a life, based on on-the-ground reporting about cost, safety, access, atmosphere and everyday life.';
   const fullDescription = ogDescription || description || fallbackDescription;
   
-  // Requirement: Full HTTPS URL (self-referencing canonical)
-  // Ensure no trailing slash inconsistencies
-  const computedUrl = `${baseUrl}${pathname === '/' ? '' : pathname}`;
-  const currentUrl = (canonicalUrl || ogUrl || computedUrl).replace(/\/$/, "");
+  const normaliseUrl = (url: string) => {
+    const withoutTrailingSlash = url.replace(/\/$/, '');
+    return withoutTrailingSlash === baseUrl ? `${baseUrl}/` : withoutTrailingSlash;
+  };
+  const computedUrl = `${baseUrl}${pathname === '/' ? '/' : pathname}`;
+  const currentUrl = normaliseUrl(canonicalUrl || ogUrl || computedUrl);
   const canonical = currentUrl;
 
   return (
@@ -47,26 +49,24 @@ export const Head: React.FC<HeadProps> = ({
       <title>{fullTitle}</title>
       <meta name="description" content={fullDescription} />
 
-      {/* Requirement: Task 1 - Canonical URL */}
       <link rel="canonical" href={canonical} />
 
-      {/* Requirement: Task 3 - Open Graph */}
       <meta property="og:type" content="website" />
       <meta property="og:url" content={currentUrl} />
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={fullDescription} />
       <meta property="og:image" content={ogImage} />
       <meta property="og:site_name" content={siteTitle} />
+      <meta property="og:locale" content="en_GB" />
 
-      {/* Requirement: Task 4 - Twitter/X Card */}
       <meta name="twitter:card" content={twitterCard} />
       <meta name="twitter:site" content="@ProleAdventures" />
+      <meta name="twitter:url" content={currentUrl} />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={fullDescription} />
       <meta name="twitter:image" content={ogImage} />
 
-      {/* Robots */}
-      <meta name="robots" content="index, follow" />
+      <meta name="robots" content={robots} />
 
       {/* Favicon */}
       <link rel="icon" type="image/webp" href="/images/logo-prole.webp" />

@@ -57,7 +57,7 @@ export const OrdersPage: React.FC = () => {
 
   return (
     <div className="pt-24 min-h-screen bg-black">
-      <Head title="Orders" description="Your order history." />
+      <Head title="Orders" description="Your order history." robots="noindex, follow" />
 
       <div className="max-w-4xl mx-auto px-4 pb-24">
         {/* Back nav */}

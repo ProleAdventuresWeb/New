@@ -155,7 +155,7 @@ export const OrderDetailPage: React.FC = () => {
 
   return (
     <div className="pt-24 min-h-screen bg-black">
-      <Head title={`Order ${order.order_number}`} description="View your order details and tracking." />
+      <Head title={`Order ${order.order_number}`} description="View your order details and tracking." robots="noindex, follow" />
 
       <div className="max-w-4xl mx-auto px-4 pb-24">
         <Link to="/account/orders" className="inline-flex items-center gap-2 text-neutral-500 hover:text-neutral-300 text-sm mb-6 transition-colors">

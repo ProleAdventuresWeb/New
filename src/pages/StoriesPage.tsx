@@ -89,7 +89,7 @@ export const StoriesPage: React.FC = () => {
       <Head 
         title={selectedCategory === 'all' ? 'Stories & Chronicles' : BLOG_CATEGORIES.find(c => c.id === selectedCategory)?.seoTitle || 'Stories'} 
         description={selectedCategory === 'all' 
-          ? 'Read the latest authentic adventure stories and urban explorations from around the world.' 
+          ? 'Field reports and stories about places, everyday life and what remains possible beyond the usual property-listing fantasy.' 
           : BLOG_CATEGORIES.find(c => c.id === selectedCategory)?.description}
       />
       

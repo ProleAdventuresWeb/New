@@ -70,7 +70,7 @@ export const GearPage: React.FC = () => {
     <div className="pt-16 min-h-screen">
       <Head 
         title="Prole Gear" 
-        description="Minimaleast gear because that's what I've got. Practical gear tested in the field by real proles." 
+        description="Practical, minimal gear tested in the real conditions of travelling, documenting places and making a life on the move." 
       />
       {/* Header */}
       <section className="py-12 px-4">

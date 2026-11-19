@@ -12,6 +12,7 @@ export const ShopSuccessPage: React.FC = () => {
       <Head 
         title="Mission Success — Order Confirmed" 
         description="Your mission-critical gear has been ordered. Mission confirmed." 
+        robots="noindex, follow"
       />
 
       {/* Decorative Background Elements */}

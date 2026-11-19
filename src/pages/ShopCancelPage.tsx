@@ -9,6 +9,7 @@ export const ShopCancelPage: React.FC = () => {
       <Head 
         title="Operation Suspended — Order Cancelled" 
         description="The order process was aborted. Visit the shop when ready." 
+        robots="noindex, follow"
       />
 
       {/* Decorative Background Elements */}

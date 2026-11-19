@@ -7,7 +7,7 @@ export const WatchPage: React.FC = () => {
     <div className="pt-16 min-h-screen">
       <Head 
         title="Watch" 
-        description="Completed adventures and exploration stories. Watch authentic urban exploration and discovery." 
+        description="Watch on-the-ground reports from places being assessed for what life there really costs and what remains possible." 
       />
       {/* Header */}
       <section className="py-12 px-4">

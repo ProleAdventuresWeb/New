@@ -37,7 +37,7 @@ export const ContactPage: React.FC = () => {
     <div className="pt-16 min-h-screen bg-black">
       <Head 
         title="Contact" 
-        description="Get in touch with Prole Adventures for collaborations or story sharing." 
+        description="Get in touch to share a place, a field report or a collaboration that helps people work out where they can still make a life." 
       />
       {/* Hero Section */}
       <section className="py-20 px-4">

@@ -657,8 +657,8 @@ export const MissionControlPage: React.FC = () => {
   return (
     <div className="pt-16 min-h-screen bg-black">
       <Head
-        title="Prole Control | Mission Briefings & Funding"
-        description="Direct funding for Prole Adventures. Browse active missions, see what's in planning, and help fund the clandestine operations."
+        title="Prole Control | Place Audits & Field Missions"
+        description="Browse on-the-ground place audits and field missions examining rent, food, safety, transport, access and the realities of everyday life."
       />
 
       {/* ─── Header ─────────────────────────────────────────────────────── */}

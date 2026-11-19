@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { AuditManager } from '../components/admin/AuditManager';
+import { Head } from '../components/Head';
 import {
   getAllPostsAdmin,
   createPost,
@@ -348,6 +349,7 @@ export const AdminPage: React.FC = () => {
   if (authLoading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center p-4">
+      <Head title="Admin" description="Prole Adventures administration." robots="noindex, nofollow" />
         <div className="glass-elevated p-8 rounded-3xl border border-neutral-800 shadow-glass text-center max-w-sm w-full animate-pulse">
           <Loader2 className="w-12 h-12 text-red-500 mx-auto mb-6 animate-spin" />
           <h2 className="text-2xl font-bold text-neutral-50 mb-2">Checking access...</h2>
@@ -360,6 +362,7 @@ export const AdminPage: React.FC = () => {
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center p-4">
+        <Head title="Admin" description="Prole Adventures administration." robots="noindex, nofollow" />
         <div className="glass-elevated p-10 rounded-3xl border border-red-500/20 shadow-glass text-center max-w-md w-full">
           <div className="w-20 h-20 bg-red-950/20 rounded-2xl flex items-center justify-center mx-auto mb-8 border border-red-500/30">
             <AlertCircle className="w-10 h-10 text-red-500" />
@@ -381,6 +384,7 @@ export const AdminPage: React.FC = () => {
 
   return (
     <div className="pt-24 min-h-screen bg-black pb-20 px-4">
+      <Head title="Admin" description="Prole Adventures administration." robots="noindex, nofollow" />
       <div className="max-w-7xl mx-auto">
         <header className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>

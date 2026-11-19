@@ -214,8 +214,8 @@ export const ShopPage: React.FC = () => {
   return (
     <div className="pt-24 min-h-screen bg-black">
       <Head 
-        title="Prole Artefacts — Support the Cause" 
-        description="Exclusive gear and intel. Every purchase funds future missions." 
+        title="Prole Artefacts | Support Field Reporting" 
+        description="Prole Adventures clothing and field items. Every purchase helps fund on-the-ground reporting about where people can still make a life." 
       />
 
       <header className="max-w-7xl mx-auto px-4 py-16 text-center">
@@ -255,7 +255,7 @@ export const ShopPage: React.FC = () => {
                     availability: 'https://schema.org/InStock',
                     hasMerchantReturnPolicy: {
                       applicableCountry: 'GB',
-                      returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnPeriod',
+                      returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
                       merchantReturnDays: 30,
                       returnMethod: 'https://schema.org/ReturnByMail',
                       returnFees: 'https://schema.org/FreeReturn'

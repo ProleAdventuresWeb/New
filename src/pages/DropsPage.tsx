@@ -230,7 +230,7 @@ export const DropsPage: React.FC = () => {
     <div className="pt-16 min-h-screen bg-black">
       <Head
         title="Prole Cache"
-        description="Mystery items hidden across real locations. Follow the clues. Find the cache. Claim it."
+        description="Field caches hidden in real places. Follow the clues, explore the area and claim the item when you find it."
       />
 
       {/* Hero */}
