@@ -23,8 +23,9 @@ ALTER TABLE adventures ENABLE ROW LEVEL SECURITY;
 -- Drop existing view if it exists with SECURITY DEFINER
 DROP VIEW IF EXISTS public.adventures_secure;
 
--- Create a secure view that filters sensitive data for scouting missions
--- SECURITY INVOKER ensures RLS policies are respected (default behavior)
+-- Create a public projection. It intentionally never exposes raw lat/lng.
+-- Default (security-definer) view behavior lets anonymous users read this
+-- projection without granting them access to the base table.
 CREATE VIEW public.adventures_secure AS
 SELECT 
     id,
@@ -48,8 +49,6 @@ SELECT
         WHEN status = 'scouting' THEN lng + (random() - 0.5) * 0.02
         ELSE lng
     END as display_lng,
-    lat,
-    lng,
     bounty_target,
     bounty_current,
     created_at,

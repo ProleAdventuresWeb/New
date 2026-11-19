@@ -105,8 +105,6 @@ SELECT
         WHEN status = 'scouting' THEN lng + (random() - 0.5) * 0.02
         ELSE lng
     END as display_lng,
-    lat,
-    lng,
     bounty_target,
     bounty_current,
     reward_type,

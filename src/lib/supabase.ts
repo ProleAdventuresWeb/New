@@ -186,7 +186,7 @@ export const getAdventures = async (): Promise<SecureAdventure[]> => {
   if (!supabase) throw new Error('Supabase not configured');
 
   const { data, error } = await supabase
-    .from('adventures')
+    .from('adventures_secure')
     .select('*')
     .order('created_at', { ascending: false });
 
@@ -198,11 +198,11 @@ export const getAdventures = async (): Promise<SecureAdventure[]> => {
   return data || [];
 };
 
-export const getAdventureById = async (id: string): Promise<Adventure | null> => {
+export const getAdventureById = async (id: string): Promise<SecureAdventure | null> => {
   if (!supabase) throw new Error('Supabase not configured');
 
   const { data, error } = await supabase
-    .from('adventures')
+    .from('adventures_secure')
     .select('*')
     .eq('id', id)
     .single();
@@ -298,7 +298,7 @@ export const getCompletedAudits = async (): Promise<SecureAdventure[]> => {
   if (!supabase) throw new Error('Supabase not configured');
 
   const { data, error } = await supabase
-    .from('adventures')
+    .from('adventures_secure')
     .select('*')
     .eq('status', 'complete')
     .not('score', 'is', null)
@@ -317,7 +317,7 @@ export const getAuditByStorySlug = async (slug: string): Promise<SecureAdventure
   if (!supabase) throw new Error('Supabase not configured');
 
   const { data, error } = await supabase
-    .from('adventures')
+    .from('adventures_secure')
     .select('*')
     .eq('story_slug', slug)
     .maybeSingle();

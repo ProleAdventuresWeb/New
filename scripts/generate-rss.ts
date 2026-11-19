@@ -34,7 +34,7 @@ async function generateRss() {
   // Load environment variables
   // In Node, we use process.env.
   // Note: Vite's VITE_ variables are often accessible here during build depending on the environment.
-  const siteUrl = process.env.RSS_SITE_URL || 'https://proleadventures.example';
+  const siteUrl = process.env.RSS_SITE_URL || 'https://proleadventures.com';
   const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
   const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_KEY;
 
