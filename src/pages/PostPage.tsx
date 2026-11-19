@@ -241,7 +241,6 @@ const TemplateLayout: React.FC<{ data: TemplateData; title: string }> = ({ data,
             href={data.affiliateUrl || '#'}
             target="_blank"
             rel="noopener noreferrer"
-            data-umami-event="affiliate_click"
             className="block glass-elevated rounded-2xl overflow-hidden border border-red-500/20 shadow-lg shadow-red-950/10 group cursor-pointer"
           >
             <img src={data.affiliateImageUrl} alt="Recommended Gear" className="w-full h-auto group-hover:scale-[1.02] transition-transform duration-500" />
@@ -267,8 +266,6 @@ const TemplateLayout: React.FC<{ data: TemplateData; title: string }> = ({ data,
                 href={data.tweetUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                data-umami-event="outbound_click"
-                data-umami-event-type="tweet"
                 className="inline-block w-full py-3 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 text-center rounded-xl font-bold text-xs uppercase tracking-widest border border-sky-500/20 transition-all duration-300"
               >
                 Inspect Original Entry
@@ -694,12 +691,9 @@ export const PostPage: React.FC = () => {
                               : <pre className="bg-neutral-950 p-6 rounded-2xl border border-neutral-800 overflow-x-auto mb-10 shadow-glass"><code className="text-neutral-300 font-mono text-sm leading-relaxed" {...props} /></pre>
                           ),
                           a: ({node, ...props}) => {
-                            const isAffiliate = props.href?.includes('amazon') || props.href?.includes('amzn.to');
                             return (
                               <a
                                 className="text-red-400 hover:text-red-300 underline decoration-red-500/40 underline-offset-8 transition-all duration-300 font-medium"
-                                data-umami-event={isAffiliate ? 'affiliate_click' : 'outbound_click'}
-                                data-umami-event-url={props.href}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 {...props}
@@ -903,12 +897,9 @@ export const PostPage: React.FC = () => {
                         : <pre className="bg-neutral-950 p-6 rounded-2xl border border-neutral-800 overflow-x-auto mb-10 shadow-glass"><code className="text-neutral-300 font-mono text-sm leading-relaxed" {...props} /></pre>
                     ),
                     a: ({node, ...props}) => {
-                      const isAffiliate = props.href?.includes('amazon') || props.href?.includes('amzn.to');
                       return (
                         <a
                           className="text-red-400 hover:text-red-300 underline decoration-red-500/40 underline-offset-8 transition-all duration-300 font-medium"
-                          data-umami-event={isAffiliate ? 'affiliate_click' : 'outbound_click'}
-                          data-umami-event-url={props.href}
                           target="_blank"
                           rel="noopener noreferrer"
                           {...props}

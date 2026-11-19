@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from './supabase';
-import { analytics } from './analytics';
 
 // Types
 export interface Profile {
@@ -114,11 +113,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           session,
           loading: false,
         }));
-
-        // Track analytics events
-        if (event === 'SIGNED_IN') {
-          analytics.login();
-        }
       }
     );
 
@@ -140,10 +134,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           emailRedirectTo: `${window.location.origin}/account`,
         },
       });
-
-      if (!error) {
-        analytics.accountCreated();
-      }
 
       return { error: error ? new Error(error.message) : null };
     } catch (err) {

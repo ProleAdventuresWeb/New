@@ -45,8 +45,6 @@ export const Footer: React.FC = () => {
                 title="YouTube" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                data-umami-event="outbound_click"
-                data-umami-event-platform="youtube"
                 className="w-8 h-8 bg-neutral-700 hover:bg-red-600 rounded-lg flex items-center justify-center transition-colors"
               >
                 <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -60,8 +58,6 @@ export const Footer: React.FC = () => {
                 title="Instagram" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                data-umami-event="outbound_click"
-                data-umami-event-platform="instagram"
                 className="w-8 h-8 bg-neutral-700 hover:bg-pink-600 rounded-lg flex items-center justify-center transition-colors"
               >
                 <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -75,8 +71,6 @@ export const Footer: React.FC = () => {
                 title="X (Twitter)" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                data-umami-event="outbound_click"
-                data-umami-event-platform="x"
                 className="w-8 h-8 bg-neutral-700 hover:bg-black rounded-lg flex items-center justify-center transition-colors"
               >
                 <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -90,8 +84,6 @@ export const Footer: React.FC = () => {
                 title="TikTok" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                data-umami-event="outbound_click"
-                data-umami-event-platform="tiktok"
                 className="w-8 h-8 bg-neutral-700 hover:bg-gray-900 rounded-lg flex items-center justify-center transition-colors"
               >
                 <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">

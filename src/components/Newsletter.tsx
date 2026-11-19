@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Mail } from 'lucide-react';
-import { supabase } from '../lib/supabase';
 
 interface NewsletterProps {
   className?: string;
@@ -32,10 +31,6 @@ export const Newsletter: React.FC<NewsletterProps> = ({
       });
 
       if (response.ok) {
-        // Track Umami event on successful signup
-        if (window.umami) {
-          window.umami.track('email_signup');
-        }
         setSubmitStatus('success');
         setEmail('');
       } else {

@@ -1,7 +1,9 @@
 import { supabase } from './supabase';
 import type { Post, PostPreview, PostCategory } from '../types/post';
 
-const POST_PREVIEW_SELECT = 'id, slug, title, excerpt, category, cover_image_url, read_time, published_at, layout, is_gated';
+// Keep public catalog reads aligned with the live posts schema. Gating fields are
+// intentionally omitted because the production table does not currently expose them.
+const POST_PREVIEW_SELECT = 'id, slug, title, excerpt, category, cover_image_url, read_time, published_at, layout';
 
 /**
  * Fetches all published posts for catalog display.

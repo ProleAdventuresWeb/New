@@ -1,5 +1,8 @@
 import { supabase, getAdventures, createAdventure, updateAdventureBounty, SecureAdventure, Adventure } from '../lib/supabase';
 
+const hasValidDisplayCoordinates = (adventure: Pick<SecureAdventure, 'display_lat' | 'display_lng'>): boolean =>
+  Number.isFinite(Number(adventure.display_lat)) && Number.isFinite(Number(adventure.display_lng));
+
 // Sample adventure data for testing the Prole Control system
 export const sampleAdventures: Omit<Adventure, 'id' | 'created_at' | 'updated_at'>[] = [
   {
@@ -145,30 +148,16 @@ export class AdventureService {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const rawDescription = (adventure as any).description ?? adventure.display_description ?? 'Mission brief pending.';
 
-        if (adventure.status === 'scouting') {
-          // Jitter coordinates to obscure exact location — but show real description
-          const jitterLat = Number(adventure.lat) + (Math.random() - 0.5) * 0.025;
-          const jitterLng = Number(adventure.lng) + (Math.random() - 0.5) * 0.025;
-
-          return {
-            ...adventure,
-            display_lat: jitterLat,
-            display_lng: jitterLng,
-            display_title: adventure.codename,
-            display_description: rawDescription,
-          };
-        }
-
         return {
           ...adventure,
-          display_lat: Number(adventure.lat),
-          display_lng: Number(adventure.lng),
+          display_lat: Number(adventure.display_lat),
+          display_lng: Number(adventure.display_lng),
           display_title: adventure.codename,
           display_description: rawDescription,
           video_url: (adventure as any).video_url,
           thumbnail_url: (adventure as any).thumbnail_url
         };
-      });
+      }).filter(hasValidDisplayCoordinates);
     } catch (error) {
       console.error('Failed to fetch secure adventures, falling back to mock data:', error);
       // Fallback to mock data on any error
@@ -213,11 +202,13 @@ export class AdventureService {
       }
 
       // Check if coordinates appear to be exact (this is a simplified check)
-      const latDiff = Math.abs(adventure.lat - adventure.display_lat);
-      const lngDiff = Math.abs(adventure.lng - adventure.display_lng);
+      if (adventure.lat !== undefined && adventure.lng !== undefined) {
+        const latDiff = Math.abs(adventure.lat - adventure.display_lat);
+        const lngDiff = Math.abs(adventure.lng - adventure.display_lng);
 
-      if (latDiff < 0.001 && lngDiff < 0.001) {
-        warnings.push('Coordinates may not be sufficiently obfuscated for scouting mission');
+        if (latDiff < 0.001 && lngDiff < 0.001) {
+          warnings.push('Coordinates may not be sufficiently obfuscated for scouting mission');
+        }
       }
     }
 

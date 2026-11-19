@@ -5,7 +5,7 @@
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   X-XSS-Protection: 1; mode=block
-  Content-Security-Policy: upgrade-insecure-requests; default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://www.youtube.com https://js.stripe.com https://cloud.umami.is; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com https://frontend-cdn.perplexity.ai; img-src 'self' data: https: blob:; connect-src 'self' https://*.supabase.co https://apis.google.com https://www.googleapis.com https://api.stripe.com https://api.brevo.com https://api.printful.com https://cloud.umami.is https://api-gateway.umami.dev; frame-src https://www.youtube.com https://youtube.com https://js.stripe.com https://checkout.stripe.com; worker-src 'self' blob:
+  Content-Security-Policy: upgrade-insecure-requests; default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://www.youtube.com https://js.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com https://frontend-cdn.perplexity.ai; img-src 'self' data: https: blob:; connect-src 'self' https://*.supabase.co https://apis.google.com https://www.googleapis.com https://api.stripe.com https://api.brevo.com https://api.printful.com; frame-src https://www.youtube.com https://youtube.com https://js.stripe.com https://checkout.stripe.com; worker-src 'self' blob:
 
 /images/*
   Cache-Control: public, max-age=31536000, immutable

@@ -139,8 +139,8 @@ export class MockAdventureService {
       codename: secureAdventure.codename,
       status: secureAdventure.status,
       description: secureAdventure.display_description,
-      lat: secureAdventure.lat,
-      lng: secureAdventure.lng,
+      lat: secureAdventure.lat ?? secureAdventure.display_lat,
+      lng: secureAdventure.lng ?? secureAdventure.display_lng,
       bounty_target: secureAdventure.bounty_target,
       bounty_current: amount,
       created_at: secureAdventure.created_at,
@@ -184,8 +184,8 @@ export class MockAdventureService {
       title: updated.display_title,
       codename: updated.codename,
       status: updated.status,
-      lat: updated.lat,
-      lng: updated.lng,
+      lat: updated.lat ?? updated.display_lat,
+      lng: updated.lng ?? updated.display_lng,
       bounty_target: updated.bounty_target,
       bounty_current: updated.bounty_current,
       created_at: updated.created_at,
@@ -229,11 +229,13 @@ export class MockAdventureService {
         warnings.push('Full description exposed in scouting mission');
       }
 
-      const latDiff = Math.abs(adventure.lat - adventure.display_lat);
-      const lngDiff = Math.abs(adventure.lng - adventure.display_lng);
+      if (adventure.lat !== undefined && adventure.lng !== undefined) {
+        const latDiff = Math.abs(adventure.lat - adventure.display_lat);
+        const lngDiff = Math.abs(adventure.lng - adventure.display_lng);
 
-      if (latDiff < 0.001 && lngDiff < 0.001) {
-        warnings.push('Coordinates may not be sufficiently obfuscated for scouting mission');
+        if (latDiff < 0.001 && lngDiff < 0.001) {
+          warnings.push('Coordinates may not be sufficiently obfuscated for scouting mission');
+        }
       }
     }
 

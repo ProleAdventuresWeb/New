@@ -3,7 +3,6 @@ import { ShoppingBag, Loader2, Info, ArrowLeft, ArrowRight } from 'lucide-react'
 import { Head } from '../components/Head';
 import { JsonLd } from '../components/JsonLd';
 import { useAuth } from '../lib/auth';
-import { analytics } from '../lib/analytics';
 import { supabase } from '../lib/supabase';
 
 export interface ProductVariant {
@@ -103,7 +102,6 @@ export const ShopPage: React.FC = () => {
   // Track page view and fetch products
   useEffect(() => {
     let isMounted = true;
-    analytics.pageView('shop');
     
     const fetchProducts = async () => {
       if (!supabase) {
@@ -141,14 +139,6 @@ export const ShopPage: React.FC = () => {
             variants: item.product_variants || []
           }));
           setProducts(mappedProducts);
-          
-          // Track Umami product views
-          if (window.umami) {
-            mappedProducts.forEach(p => {
-              window.umami.track('product_view', { product: p.name });
-            });
-          }
-
           // Pre-select the first variant for each product
           const initialSelections: Record<string, ProductVariant> = {};
           mappedProducts.forEach(p => {
@@ -179,7 +169,6 @@ export const ShopPage: React.FC = () => {
     const finalPrice = selectedVariant?.price_override_pence || product.price;
 
     setLoadingId(product.id);
-    analytics.beginCheckout(finalPrice, 1);
     try {
       const response = await fetch('/create-checkout-session', {
         method: 'POST',
@@ -332,8 +321,6 @@ export const ShopPage: React.FC = () => {
 
                   <button
                     onClick={() => handleBuyNow(product)}
-                    data-umami-event="checkout_click"
-                    data-umami-event-product={product.name}
                     disabled={loadingId !== null}
                     className="
                       w-full py-4 px-6 rounded-xl flex items-center justify-center gap-3

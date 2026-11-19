@@ -12,7 +12,6 @@ Prole Adventures is a content, mission-funding, and small-commerce web applicati
 - **Payments:** Stripe Checkout and verified Stripe webhooks
 - **Fulfilment:** Printful API and fulfilment webhooks
 - **Email:** Brevo transactional and newsletter delivery
-- **Analytics:** Umami client-side and server-side event tracking
 - **Hosting/runtime:** Cloudflare Pages with Pages Functions
 
 ## Repository layout
@@ -21,7 +20,7 @@ Prole Adventures is a content, mission-funding, and small-commerce web applicati
 web-main/
 |- src/                    # React application
 |  |- components/          # Shared UI, guards, SEO, checkout, and admin UI
-|  |- lib/                 # Auth, Supabase, posts, analytics, and utilities
+|  |- lib/                 # Auth, Supabase, posts, and utilities
 |  |- pages/               # Route-level React pages
 |  |- services/            # Mission/adventure data services and fallbacks
 |  |- types/               # Shared frontend domain types
@@ -132,8 +131,6 @@ STRIPE_WEBHOOK_SECRET=
 PRINTFUL_API_KEY=
 BREVO_API_KEY=
 BREVO_SENDER_EMAIL=
-UMAMI_WEBSITE_ID=
-UMAMI_ENDPOINT=
 ZOHO_SMTP_USER=
 ZOHO_SMTP_PASS=
 ```

@@ -110,36 +110,6 @@ async function sendTransactionalEmail(
   }
 }
 
-// ── Umami server-side event tracking ────────────────────────────────────────
-async function trackUmamiEvent(
-  env: Env,
-  eventName: string,
-  url: string,
-  data?: Record<string, string | number>
-): Promise<void> {
-  if (!env.UMAMI_ENDPOINT || !env.UMAMI_WEBSITE_ID) return;
-  try {
-    await fetch(env.UMAMI_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        type: 'event',
-        payload: {
-          website: env.UMAMI_WEBSITE_ID,
-          name: eventName,
-          url,
-          hostname: 'proleadventures.com',
-          language: 'en-GB',
-          screen: '1920x1080',
-          ...(data ? { data } : {}),
-        },
-      }),
-    });
-  } catch (err) {
-    console.error('Umami tracking error:', err);
-  }
-}
-
 // ── Operational inbox alert via Zoho SMTP (no Brevo credits) ─────────────────
 // Uses Zoho's SMTP-to-HTTP relay. Cloudflare Workers cannot open raw TCP sockets
 // so we POST to an authenticated Zoho Mail API endpoint instead.
@@ -404,12 +374,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
           }
         }
 
-        // Fire Umami + operational alert for mission contribution
+        // Send an operational alert for mission contribution.
         const contribAmountGBP = `£${contributionData.amount.toFixed(2)}`;
-        await trackUmamiEvent(env, 'mission_contribution', '/mission-control', {
-          mission: contributionData.mission_name,
-          amount: contributionData.amount,
-        });
         await sendOperationalAlert(
           env,
           `SIGNAL: Operation Funded ${contribAmountGBP}`,
@@ -519,12 +485,6 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
           `\n— This is your pre-filming briefing. Good luck.`
         );
 
-        await trackUmamiEvent(env, 'prole_foods_claimed', '/prole-control', {
-          mission: missionName,
-          tier: foodTier,
-          amount: amountGBP,
-        });
-
       } else {
         const customerEmail = session.customer_details?.email || 'unknown';
         const profileId = session.metadata?.profile_id || null;
@@ -630,12 +590,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
             }
           }
 
-          // Fire Umami + operational alert for shop sale
+          // Send an operational alert for shop sale.
           const saleAmountGBP = `£${((session.amount_total || 0) / 100).toFixed(2)}`;
-          await trackUmamiEvent(env, 'shop_sale', '/gear', {
-            order_number: order.order_number,
-            amount: (session.amount_total || 0) / 100,
-          });
           await sendOperationalAlert(
             env,
             `SIGNAL: Operation Funded ${saleAmountGBP}`,

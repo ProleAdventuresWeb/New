@@ -5,7 +5,6 @@ import { useAuth } from '../lib/auth';
 import { supabase } from '../lib/supabase';
 import { Head } from '../components/Head';
 import { PageLoader } from '../components/PageLoader';
-import { analytics } from '../lib/analytics';
 
 interface OrderDetail {
   id: string;
@@ -85,7 +84,6 @@ export const OrderDetailPage: React.FC = () => {
 
       if (orderData) {
         setOrder(orderData);
-        analytics.orderViewed(orderId);
 
         // Fetch items
         const { data: itemsData } = await supabase

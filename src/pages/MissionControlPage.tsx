@@ -472,7 +472,7 @@ const MapUpdater = ({ selected, trigger }: { selected: SecureAdventure | null, t
   const map = useMap();
 
   useEffect(() => {
-    if (selected) {
+    if (selected && Number.isFinite(selected.display_lat) && Number.isFinite(selected.display_lng)) {
       const targetLatLng: L.LatLngExpression = [selected.display_lat, selected.display_lng];
 
       const timer = setTimeout(() => {
@@ -714,7 +714,7 @@ export const MissionControlPage: React.FC = () => {
 
               <MapUpdater selected={selected} trigger={flyTrigger} />
 
-              {adventures.map(adv => {
+              {adventures.filter(adv => Number.isFinite(adv.display_lat) && Number.isFinite(adv.display_lng)).map(adv => {
                 return (
                   <Marker
                     key={adv.id}
@@ -903,7 +903,6 @@ export const MissionControlPage: React.FC = () => {
                               ) : !isDone && (
                                 <button
                                   onClick={() => scrollToCard(adv)}
-                                  data-umami-event="donation_click"
                                   className="w-full flex items-center justify-center gap-2 py-2.5 bg-neutral-100/5 hover:bg-neutral-100/10 border border-neutral-100/20 rounded-full !text-white text-sm font-bold transition-all"
                                   style={{ color: 'white' }}
                                 >

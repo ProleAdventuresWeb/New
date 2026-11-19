@@ -204,7 +204,6 @@ export const GearPage: React.FC = () => {
                         affiliate_link={item.affiliate_link}
                         externalUrl={item.externalUrl}
                         isAffiliate={item.isAffiliate}
-                        itemName={item.name}
                       />
                     </div>
                   </div>

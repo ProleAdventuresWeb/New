@@ -12,8 +12,6 @@ export interface GearLinkProps {
   externalUrl?: string;
   /** Explicit override flag to force affiliate or non-affiliate mode */
   isAffiliate?: boolean;
-  /** Item name for analytics tracking */
-  itemName?: string;
   /** Custom CSS classes */
   className?: string;
   /** Custom button text or icon children */
@@ -31,7 +29,6 @@ export const GearLink: React.FC<GearLinkProps> = ({
   affiliate_link,
   externalUrl,
   isAffiliate,
-  itemName = 'gear_item',
   className,
   children,
 }) => {
@@ -63,8 +60,6 @@ export const GearLink: React.FC<GearLinkProps> = ({
       href={targetUrl}
       target="_blank"
       rel={relAttribute}
-      data-umami-event={isAffiliateLink ? 'affiliate_click' : 'external_link_click'}
-      data-umami-event-item={itemName}
       className={className || defaultClasses}
     >
       {children || (

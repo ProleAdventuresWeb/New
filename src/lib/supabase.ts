@@ -138,8 +138,10 @@ export interface SecureAdventure {
   thumbnail_url?: string;
   display_lat: number;
   display_lng: number;
-  lat: number;
-  lng: number;
+  // Present for authenticated admin and mock data only; omitted by the public
+  // adventures_secure view and must never be used by public map rendering.
+  lat?: number;
+  lng?: number;
   bounty_target: number;
   bounty_current: number;
   reward_type?: string;

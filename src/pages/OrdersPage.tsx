@@ -5,7 +5,6 @@ import { useAuth } from '../lib/auth';
 import { supabase } from '../lib/supabase';
 import { Head } from '../components/Head';
 import { PageLoader } from '../components/PageLoader';
-import { analytics } from '../lib/analytics';
 
 interface OrderSummary {
   id: string;
@@ -91,7 +90,6 @@ export const OrdersPage: React.FC = () => {
               <Link
                 key={order.id}
                 to={`/account/orders/${order.id}`}
-                onClick={() => analytics.orderViewed(order.id)}
                 className="flex items-center gap-4 p-5 glass-subtle rounded-xl border border-red-500/5 hover:border-red-500/20 transition-all duration-300 group"
               >
                 <div className="w-10 h-10 bg-neutral-800 group-hover:bg-red-500/10 rounded-lg flex items-center justify-center transition-colors">
