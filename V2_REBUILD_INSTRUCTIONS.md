@@ -117,6 +117,10 @@ Use explicit query functions, domain types, and validation at system boundaries.
 
 Generate or maintain types directly from the Supabase schema. Avoid UI code assuming fields exist when a view/query does not return them. The V1 `display_lat` versus `lat` issue is an example of the kind of drift V2 should prevent.
 
+### PostgreSQL migration validation
+
+V1 database-backed flows are working; this is not a V1 stability blocker. For V2, keep schema changes as reviewed, versioned Supabase/Postgres migrations and validate them against a disposable local or staging Postgres database before production. Do not rely on generic `.sql` editor diagnostics where the active extension may be using a different dialect (for example, SQL Server/T-SQL) rather than PostgreSQL.
+
 ### Structured content over one-off templates
 
 Build a reusable editorial block system so stories can vary visually without becoming custom code each time. Candidate blocks include:
@@ -224,6 +228,7 @@ Before calling V2 complete, verify:
 - [ ] League, map, story, and video links all resolve from the same audit/place records.
 - [ ] Existing public URLs either still work or redirect correctly.
 - [ ] Supabase RLS, admin authorization, and storage rules are tested.
+- [ ] Reviewed Supabase/Postgres migrations have been validated against production-equivalent schema and data before production application.
 - [ ] Admin can create/edit audits and confirm the changes appear on the League, map, and associated story.
 - [ ] Stripe checkout, webhook verification, idempotency, orders, mission contributions, and Prole Foods flows pass low-value end-to-end tests.
 - [ ] Printful and email workflows are validated if still active.

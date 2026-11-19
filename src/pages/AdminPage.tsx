@@ -553,7 +553,7 @@ export const AdminPage: React.FC = () => {
                           <Trash2 className="w-4 h-4" />
                         </button>
                         <a
-                          href={`/read/${post.slug}`}
+                          href={`/stories/${post.slug}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="p-2 hover:bg-neutral-800 rounded-lg text-neutral-400 hover:text-red-400 transition-colors"

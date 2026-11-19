@@ -12,7 +12,6 @@ export const Navigation: React.FC = () => {
     { path: '/', label: 'Home', icon: Home },
     { path: '/prole-control', label: 'Prole Control', icon: Shield },
     { path: '/league', label: 'League', icon: Trophy },
-    // { path: '/drops', label: 'Cache', icon: MapPin }, // Temporarily hidden
     { path: '/watch', label: 'Watch', icon: MapPin },
     { path: '/stories', label: 'Read', icon: MapPin },
     { path: '/gear', label: 'Gear', icon: Camera },

@@ -22,11 +22,9 @@ Using a public, sortable **League Table of Audits** as the central narrative spi
 
 During the codebase inspection across `App.tsx`, `MissionControlPage.tsx`, `PostPage.tsx`, `AdminPage.tsx`, `supabase/*.sql`, and the Stripe Cloudflare Workers (`functions/webhook.ts`), several key friction points and architectural mismatches were identified:
 
-### A. Route Mismatch: Map is `/prole-control`, not `/map`
-- **Spec Assumption:** Place clicks navigate to `/map?pin=<id>`.
-- **Codebase Reality:** The interactive mission map is currently mounted at `/prole-control` (`MissionControlPage.tsx`). In `src/App.tsx`, `/map` is not registered at all. (There is an old, disconnected prototype `MapPage.tsx` using mock Australian/Asian data from `locations.json`).
-- **Solution:**
-  1. Add `/map` to `App.tsx` as a direct route or alias pointing to `MissionControlPage`.
+### A. Mission Control Route
+- **Canonical route:** The interactive mission map is mounted at `/prole-control` (`MissionControlPage.tsx`).
+- **Compatibility:** The retired `/map` URL permanently redirects to `/prole-control` at the edge.
   2. Implement deep-link parameter parsing (`?pin=<id>` or `?mission_id=<id>`).
 
 ### B. Deep-Linking on the Map is Currently Incomplete
@@ -37,10 +35,9 @@ During the codebase inspection across `App.tsx`, `MissionControlPage.tsx`, `Post
   It does not inspect `searchParams` on mount to fly the Leaflet camera or trigger the popup for a specific pin ID.
 - **Solution:** Add a `useEffect` that checks the URL search params (`?pin=<id>`), finds the target pin, auto-selects it, scrolls the card into view, and animates the map to center on it with its billboard popup open.
 
-### C. Story Route Mismatch: `/read/:slug` vs `/stories/:slug`
-- **Spec Assumption:** Stories live at `/stories/[slug]`.
-- **Codebase Reality:** In `App.tsx`, `/stories` is the catalog list (`StoriesPage.tsx`), while individual story posts live at `/read/:slug` (`PostPage.tsx`).
-- **Solution:** Add a route `/stories/:slug` in `App.tsx` pointing to `PostPage` (or aliasing `/read/:slug`) so both URL formats work seamlessly.
+### C. Canonical Story Route: `/stories/:slug`
+- **Canonical route:** Individual stories live at `/stories/:slug` (`PostPage.tsx`), while `/stories` remains the catalog and category index.
+- **Compatibility:** The retired `/read/:slug` URL permanently redirects to `/stories/:slug` at the edge.
 
 ### D. Content Gating: All-or-Nothing Wall vs. Free Outline + Paid Long Read
 - **Spec Requirement:**
@@ -86,8 +83,8 @@ When ready to begin implementation, we will proceed with:
    - Add types in `src/types/` and `src/lib/supabase.ts`.
 2. **Routing Adjustments (`App.tsx`):**
    - Register `/league` route for `LeaguePage`.
-   - Alias `/map` to `MissionControlPage`.
-   - Alias `/stories/:slug` to `PostPage`.
+   - Register `/prole-control` for `MissionControlPage`.
+   - Register `/stories/:slug` for `PostPage`.
 3. **League Table Page (`/league`):**
    - Create sortable table (Place, #, Score, Verdict, Spend, Kebab, Tomato, Exchanges, Free Finds, Hassle, Date).
    - Clicking place navigates to `/map?pin=<id>`.

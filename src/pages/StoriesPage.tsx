@@ -208,7 +208,7 @@ export const StoriesPage: React.FC = () => {
                 </h2>
 
                 <Link 
-                  to={`/read/${featuredPost.slug}`}
+                  to={`/stories/${featuredPost.slug}`}
                   className="block glass-base shadow-glass shadow-investigation rounded-2xl overflow-hidden hover:glass-elevated transition-all duration-300 group"
                 >
                   <div className="grid grid-cols-1 lg:grid-cols-2">
@@ -277,7 +277,7 @@ export const StoriesPage: React.FC = () => {
                   {otherPosts.map(post => (
                     <Link
                       key={post.id}
-                      to={`/read/${post.slug}`}
+                      to={`/stories/${post.slug}`}
                       className="glass-elevated shadow-glass shadow-investigation rounded-2xl overflow-hidden hover:glass-elevated transition-all duration-300 transform hover:scale-105 group backdrop-blur-xl"
                     >
                       <div className="aspect-video overflow-hidden">

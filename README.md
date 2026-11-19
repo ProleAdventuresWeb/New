@@ -71,13 +71,10 @@ The `supabase/` directory contains manually applied SQL scripts for application 
 | `/` | Home |
 | `/watch` | Video/watch landing page |
 | `/prole-control` | Mission Control map, mission funding, and Prole Foods |
-| `/map` | Alias for Mission Control |
 | `/league` | Audit/League table |
 | `/gear` | Gear and affiliate recommendations |
 | `/stories` | Published story index |
-| `/stories/:slug` and `/read/:slug` | Individual story/dispatch |
-| `/community` | Community page |
-| `/drops` | Dead-drop and clue system |
+| `/stories/:slug` | Individual story/dispatch |
 | `/shop` | Shop catalog |
 | `/shop/success`, `/shop/cancel` | Checkout outcomes |
 | `/about`, `/contact`, `/privacy-policy`, `/terms` | Informational/legal pages |

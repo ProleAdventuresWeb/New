@@ -17,7 +17,6 @@ const routes: SitemapUrl[] = [
   { url: '/watch', changefreq: 'weekly', priority: 0.8 },
   { url: '/gear', changefreq: 'monthly', priority: 0.7 },
   { url: '/stories', changefreq: 'weekly', priority: 0.9 },
-  { url: '/community', changefreq: 'weekly', priority: 0.8 },
   { url: '/about', changefreq: 'monthly', priority: 0.6 },
   { url: '/contact', changefreq: 'monthly', priority: 0.5 },
   { url: '/privacy-policy', changefreq: 'yearly', priority: 0.3 },

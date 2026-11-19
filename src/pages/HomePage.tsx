@@ -90,7 +90,7 @@ export const HomePage: React.FC = () => {
               posts.map((post) => (
                 <Link
                   key={post.id}
-                  to={`/read/${post.slug}`}
+                  to={`/stories/${post.slug}`}
                   className="group glass-base rounded-2xl overflow-hidden hover:glass-elevated transition-all duration-300 transform hover:scale-105 shadow-glass shadow-investigation"
                 >
                   <div className="aspect-video overflow-hidden">

@@ -344,7 +344,7 @@ export const PostPage: React.FC = () => {
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [unlockError, setUnlockError] = useState<string | null>(null);
 
-  const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const currentUrl = slug ? `https://proleadventures.com/stories/${slug}` : 'https://proleadventures.com/stories';
   const absoluteImageUrl = post?.cover_image_url.startsWith('http')
     ? post.cover_image_url
     : typeof window !== 'undefined'
@@ -520,7 +520,7 @@ export const PostPage: React.FC = () => {
         title={post.title}
         description={post.excerpt}
         ogImage={absoluteImageUrl}
-        ogUrl={currentUrl}
+        canonicalUrl={`https://proleadventures.com/stories/${post.slug}`}
         twitterCard="summary_large_image"
       />
 
@@ -930,7 +930,7 @@ export const PostPage: React.FC = () => {
         <section className="mb-24 grid grid-cols-1 md:grid-cols-2 gap-6">
           {adjacent.prev ? (
             <Link
-              to={`/read/${adjacent.prev.slug}`}
+              to={`/stories/${adjacent.prev.slug}`}
               className="glass-elevated p-8 rounded-3xl border border-neutral-800/50 hover:border-red-500/30 transition-all duration-300 group flex items-center gap-6 text-left"
             >
               <div className="w-12 h-12 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center group-hover:bg-red-500/10 group-hover:border-red-500/50 transition-colors">
@@ -945,7 +945,7 @@ export const PostPage: React.FC = () => {
 
           {adjacent.next && (
             <Link
-              to={`/read/${adjacent.next.slug}`}
+              to={`/stories/${adjacent.next.slug}`}
               className="glass-elevated p-8 rounded-3xl border border-neutral-800/50 hover:border-red-500/30 transition-all duration-300 group flex items-center gap-6 text-right"
             >
               <div className="flex-1 min-w-0">
@@ -1020,7 +1020,7 @@ export const PostPage: React.FC = () => {
               {relatedPosts.map(rp => (
                 <Link
                   key={rp.id}
-                  to={`/read/${rp.slug}`}
+                  to={`/stories/${rp.slug}`}
                   className="group glass-base rounded-3xl overflow-hidden hover:glass-elevated transition-all duration-500 shadow-glass border border-neutral-800/40 transform hover:-translate-y-2"
                 >
                   <div className="aspect-[4/3] overflow-hidden relative">

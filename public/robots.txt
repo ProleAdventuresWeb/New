@@ -31,7 +31,6 @@ Disallow: /
 
 # Sitemap location
 Sitemap: https://proleadventures.com/sitemap.xml
-Agentmap: https://proleadventures.com/.well-known/ard.json
 
 # Disallow private/admin paths
 Disallow: /admin/

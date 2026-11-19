@@ -80,7 +80,7 @@ async function generateRss() {
   for (const post of items) {
     if (!post.published_at) continue;
 
-    const postUrl = `${siteUrl}/read/${post.slug}`;
+    const postUrl = `${siteUrl}/stories/${post.slug}`;
     const pubDate = toRfc1123(post.published_at);
     
     rssXml += `

@@ -16,12 +16,10 @@ const WatchPage = lazy(() => import('./pages/WatchPage').then(module => ({ defau
 const MissionControlPage = lazy(() => import('./pages/MissionControlPage').then(module => ({ default: module.MissionControlPage })));
 const GearPage = lazy(() => import('./pages/GearPage').then(module => ({ default: module.GearPage })));
 const StoriesPage = lazy(() => import('./pages/StoriesPage').then(module => ({ default: module.StoriesPage })));
-const CommunityPage = lazy(() => import('./pages/CommunityPage').then(module => ({ default: module.CommunityPage })));
 const AboutPage = lazy(() => import('./pages/AboutPage').then(module => ({ default: module.AboutPage })));
 const ContactPage = lazy(() => import('./pages/ContactPage').then(module => ({ default: module.ContactPage })));
 const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage').then(module => ({ default: module.PrivacyPolicyPage })));
 const TermsPage = lazy(() => import('./pages/TermsPage').then(module => ({ default: module.TermsPage })));
-const DropsPage = lazy(() => import('./pages/DropsPage').then(module => ({ default: module.DropsPage })));
 const ShopPage = lazy(() => import('./pages/ShopPage').then(module => ({ default: module.ShopPage })));
 const ShopSuccessPage = lazy(() => import('./pages/ShopSuccessPage').then(module => ({ default: module.ShopSuccessPage })));
 const ShopCancelPage = lazy(() => import('./pages/ShopCancelPage').then(module => ({ default: module.ShopCancelPage })));
@@ -57,20 +55,16 @@ function App() {
                   <Route path="/league" element={<LeaguePage />} />
                   <Route path="/watch" element={<WatchPage />} />
                   <Route path="/prole-control" element={<MissionControlPage />} />
-                  <Route path="/map" element={<MissionControlPage />} />
                   <Route path="/gear" element={<GearPage />} />
                   <Route path="/stories" element={<StoriesPage />} />
                   <Route path="/stories/:slug" element={<PostPage />} />
-                  <Route path="/community" element={<CommunityPage />} />
                   <Route path="/about" element={<AboutPage />} />
                   <Route path="/contact" element={<ContactPage />} />
                   <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
                   <Route path="/terms" element={<TermsPage />} />
-                  <Route path="/drops" element={<DropsPage />} />
                   <Route path="/shop" element={<ShopPage />} />
                   <Route path="/shop/success" element={<ShopSuccessPage />} />
                   <Route path="/shop/cancel" element={<ShopCancelPage />} />
-                  <Route path="/read/:slug" element={<PostPage />} />
                   <Route path="/admin" element={<AdminGuard><AdminPage /></AdminGuard>} />
 
                   {/* Auth routes */}

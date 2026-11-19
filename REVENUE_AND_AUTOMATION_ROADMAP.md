@@ -8,7 +8,6 @@
 
 The Prole Adventures codebase already contains advanced, high-engagement building blocks that set it apart from standard blogs:
 * **Interactive Mission Control Engine** (`src/pages/MissionControlPage.tsx`): Bounties, backer targets, status workflows (`scouting`, `greenlit`, `active`, `complete`), and location obfuscation (`applyCoordinateJitter`).
-* **Real-World Dead-Drop / Geocaching System** (`src/pages/DropsPage.tsx`): Tiered clue lists, status tracking (`available`, `claimed`), map radius circles, and claim notifications.
 * **Full-Stack Commerce & Print-on-Demand** (`src/pages/ShopPage.tsx`, `functions/webhook.ts`, `functions/printful-webhook.ts`): Stripe checkout sessions, Brevo transactional notifications, Printful automated fulfillment.
 * **Gated Dispatches & Clearance Code Architecture** (`src/pages/PostPage.tsx`, `supabase/post_access_codes.sql`): `is_gated` posts, `PROLE-XXXX` codes tied to mission contributions.
 * **Affiliate & Gear Matrix** (`public/data/current_gear.json`, `src/components/GearLink.tsx`, `AFFILIATE-LINKS.md`): Centralized rel attributes (`sponsored noopener noreferrer`), fallback handling.

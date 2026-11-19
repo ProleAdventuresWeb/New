@@ -69,8 +69,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
 
     const origin = request.headers.get('origin') || 'https://proleadventures.com';
     const unlockUrl = accessCode 
-      ? `${origin}/read/${slug}?code=${encodeURIComponent(accessCode)}`
-      : `${origin}/read/${slug}`;
+      ? `${origin}/stories/${slug}?code=${encodeURIComponent(accessCode)}`
+      : `${origin}/stories/${slug}`;
 
     const senderEmail = env.BREVO_SENDER_EMAIL || 'contact@proleadventures.com';
 
